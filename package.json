@@ -1,0 +1,19 @@
+{
+  "name": "elm-debug-parser",
+  "version": "0.0.1",
+  "description": "Parser for Elm Debug message to be in JSON format",
+  "main": "index.js",
+  "author": "Tomas Latal",
+  "license": "MIT",
+  "private": false,
+  "scripts":{
+    "test": "mocha"
+  },
+  "dependencies": {
+    "pegjs": "^0.10.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4"
+  }
+}
