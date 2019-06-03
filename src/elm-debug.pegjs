@@ -2,7 +2,7 @@ DebugString
   = tag:Tag ": " expression:Value {return {[tag]: expression};}
 
 Value
-  = Record / Dict / List / Tuple / Float / Integer / Boolean / Type / String
+  = Record / Dict / List / Tuple / CustomTypeWithParens / Float / Integer / Boolean / Type / Function / String
 
 Record
   = "{}" {return {};}
@@ -24,11 +24,23 @@ Integer =
 	digits:[0-9]+ {return parseInt(digits.join(""), 10);}
 
 Tuple
-  = "(" fst:Value others:("," [ ]* snd:Value {return snd;})+ ")" {return {"Tuple":[fst,...others]};}
+  = "()" {return {"Tuple":{}}}
+  / "(" fst:Value "," [ ]* snd:Value others:("," [ ]* item:Value {return item;})* ")" {if (others.length == 0) return {"Tuple":{"fst":fst, "snd":snd}}; else return {"Tuple":{"fst":fst, "snd": snd, "others": others}};}
+
+CustomTypeWithParens
+  = "(" customType:CustomType ")" {return customType;}
+  / CustomType
+
+CustomType 
+  = main:Type values:(" " value:Value {return value;})+ {if (values.length == 1) return {[main]: values[0]}; else return {[main]: values};}
+  / main:Type " (" customType:CustomType ")" {return {[main]: customType}}
 
 Boolean
   = "True" {return true;}
   / "False" {return false;}
+
+Function
+  = "<function>" {return "(func..)";}
 
 String =
   "\"" chars:([^\"])* "\"" {return chars.join("");}

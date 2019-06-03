@@ -24,14 +24,20 @@ describe('Parsing', () => {
   });
 
   describe('Tuples', () => {
+    it('Empty tuple', () => {
+      parser.parse("tuple: ()").should.deep.equal({"tuple": {"Tuple":{}}});
+    });
+
     it('Basic tuple', () => {
-      parser.parse("tuple: (123, False)").should.deep.equal({"tuple": {"Tuple":[123, false]}});
+      parser.parse("tuple: (123, False)").should.deep.equal({"tuple": {"Tuple":{"fst": 123, "snd":false}}});
     });
+
     it('Arbitrary long tuple', () => {
-      parser.parse('tuple: (123, "Some string.", True, 12.34)').should.deep.equal({"tuple": {"Tuple": [123, "Some string.", true, 12.34]}});
+      parser.parse('tuple: (123, "Some string.", True, 12.34)').should.deep.equal({"tuple": {"Tuple": {"fst": 123, "snd":"Some string.", "others": [true, 12.34]}}});
     });
+
     it('Tuple in tuple', () => {
-      parser.parse('tuple in tuple: (123, "Some string.", (True, 12.34))').should.deep.equal({"tuple in tuple": {"Tuple": [123, "Some string.",  {"Tuple": [true, 12.34]}]}});
+      parser.parse('tuple in tuple: (123, (True, 12.34))').should.deep.equal({"tuple in tuple": {"Tuple": {"fst": 123, "snd": {"Tuple": {"fst": true, "snd": 12.34}}}}});
     });
   });
 
@@ -47,7 +53,7 @@ describe('Parsing', () => {
       parser.parse("list: [\"s1\",\"s2\",\"s3\",\"s4\"]").should.deep.equal({"list": ["s1", "s2", "s3", "s4"]});
     });
     it('List of tuples', () => {
-      parser.parse("list: [(\"s1\",\"s2\"),(\"s3\",\"s4\")]").should.deep.equal({"list": [{"Tuple":["s1", "s2"]}, {"Tuple":["s3", "s4"]}]});
+      parser.parse("list: [(\"s1\",\"s2\"),(\"s3\",\"s4\")]").should.deep.equal({"list": [{"Tuple":{"fst":"s1", "snd": "s2"}}, {"Tuple":{"fst": "s3", "snd":"s4"}}]});
     });
   });
 
@@ -56,7 +62,7 @@ describe('Parsing', () => {
       parser.parse("dict: Dict.fromList []").should.deep.equal({"dict": {"Dict": []}});
     });
     it('Filled dict', () => {
-      parser.parse("dict: Dict.fromList [(1,\"a\"),(2,\"b\")]").should.deep.equal({"dict": {"Dict": [{"Tuple":[1,"a"]},{"Tuple":[2,"b"]}]}});
+      parser.parse("dict: Dict.fromList [(1,\"a\"),(2,\"b\")]").should.deep.equal({"dict": {"Dict": [{"Tuple":{"fst": 1,"snd":"a"}},{"Tuple":{"fst":2,"snd":"b"}}]}});
     });
   });
 
@@ -75,5 +81,28 @@ describe('Parsing', () => {
     });
   });
 
+  describe('Custom types', () => {
+    it('Custom type with one value', () => {
+      parser.parse("custom type: User \"Adam\"").should.deep.equal({"custom type": {"User": "Adam"}});
+    });
+    it('Custom type with more values', () => {
+      parser.parse("custom type: User \"Adam\" 123 (1,False)").should.deep.equal({"custom type": {"User": ["Adam", 123, {"Tuple": {"fst": 1, "snd": false}}]}});
+    });
+    it('Custom type in parenthesis', () => {
+      parser.parse("custom type: (User (Data \"Adam\" 123 (1,False)))").should.deep.equal({"custom type": {"User": {"Data": ["Adam", 123, {"Tuple": {"fst": 1, "snd": false}}]}}});
+    });
+    it('Custom type in parenthesis with record', () => {
+      parser.parse("custom type: (User { age = 23 })").should.deep.equal({"custom type": {"User": {"age": 23}}});
+    });
+    it('Custom type with more values in parenthesis', () => {
+      parser.parse("custom type: User (Data \"Adam\" 123 (1,False))").should.deep.equal({"custom type": {"User": {"Data": ["Adam", 123, {"Tuple": {"fst": 1, "snd": false}}]}}});
+    });
+  });
+
+  describe('Function', () => {
+    it('Function value', () => {
+      parser.parse("custom type: <function>").should.deep.equal({"custom type": "(func..)"});
+    });
+  });
   
 });
