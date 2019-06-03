@@ -1,5 +1,5 @@
 DebugString 
-  = tag:Tag ": " expression:Value {return {[tag]: expression};}
+  = tag:Tag ": " value:Value {return {type: "ElmDebug", tag: tag, value: value};}
 
 Value
   = Record / Dict / List / Tuple / CustomTypeWithParens / Float / Integer / Boolean / Type / Function / String
