@@ -6,8 +6,8 @@ const parser = peg.generate(fs.readFileSync("src/elm-debug.pegjs", "utf8"));
 
 describe('Parsing', () => {
   describe('Basic type parsing',() => {
-    it('Basic type',()=>{
-      parser.parse("tag string: True").should.deep.equal({"tag string": "True"});
+    it('Boolean',()=>{
+      parser.parse("tag string: True").should.deep.equal({"tag string": true});
     });
 
     it('Integer',()=>{
@@ -25,19 +25,55 @@ describe('Parsing', () => {
 
   describe('Tuples', () => {
     it('Basic tuple', () => {
-      parser.parse("tuple: (123, True)").should.deep.equal({"tuple": {"Tuple":[123,"True"]}});
+      parser.parse("tuple: (123, False)").should.deep.equal({"tuple": {"Tuple":[123, false]}});
     });
     it('Arbitrary long tuple', () => {
-      parser.parse('tuple: (123, "Some string.", True, 12.34)').should.deep.equal({"tuple": {"Tuple": [123, "Some string.",  "True", 12.34]}});
+      parser.parse('tuple: (123, "Some string.", True, 12.34)').should.deep.equal({"tuple": {"Tuple": [123, "Some string.", true, 12.34]}});
     });
     it('Tuple in tuple', () => {
-      parser.parse('tuple in tuple: (123, "Some string.", (True, 12.34))').should.deep.equal({"tuple in tuple": {"Tuple": [123, "Some string.",  {"Tuple": ["True", 12.34]}]}});
+      parser.parse('tuple in tuple: (123, "Some string.", (True, 12.34))').should.deep.equal({"tuple in tuple": {"Tuple": [123, "Some string.",  {"Tuple": [true, 12.34]}]}});
     });
   });
 
-  describe('Union types', () => {
-    it('Maybe', () => {
-      parser.parse("maybe: (Just (1,2), Nothing)").should.deep.equal({"maybe": {"Tuple":[{"Just":[{"Tuple":[1,2]}]},"Nothing"]}});
+  describe('List', () => {
+    it('Empty list', () => {
+      parser.parse("list: []").should.deep.equal({"list": []});
+    });
+
+    it('Singleton', () => {
+      parser.parse("singleton: [1]").should.deep.equal({"singleton": [1]});
+    });
+    it('List', () => {
+      parser.parse("list: [\"s1\",\"s2\",\"s3\",\"s4\"]").should.deep.equal({"list": ["s1", "s2", "s3", "s4"]});
+    });
+    it('List of tuples', () => {
+      parser.parse("list: [(\"s1\",\"s2\"),(\"s3\",\"s4\")]").should.deep.equal({"list": [{"Tuple":["s1", "s2"]}, {"Tuple":["s3", "s4"]}]});
     });
   });
+
+  describe('Dict', () => {
+    it('Empty dict', () => {
+      parser.parse("dict: Dict.fromList []").should.deep.equal({"dict": {"Dict": []}});
+    });
+    it('Filled dict', () => {
+      parser.parse("dict: Dict.fromList [(1,\"a\"),(2,\"b\")]").should.deep.equal({"dict": {"Dict": [{"Tuple":[1,"a"]},{"Tuple":[2,"b"]}]}});
+    });
+  });
+
+  describe('Record', () => {
+    it('Empty record', () => {
+      parser.parse("record: {}").should.deep.equal({"record": {}});
+    });
+    it('Record', () => {
+      parser.parse("record: { name = \"Name\" }").should.deep.equal({"record": {"name": "Name"}});
+    });
+    it('Record with more values', () => {
+      parser.parse("record: { name = \"Name\", warning = Nothing, waves = [] }").should.deep.equal({"record": {"name": "Name", "warning": "Nothing", "waves": []}});
+    });
+    it('Nested records', () => {
+      parser.parse("record: { name = \"Name\", warning = { name = Nothing, waves = [] } }").should.deep.equal({"record": {"name": "Name", "warning": {"name": "Nothing", "waves": []}}});
+    });
+  });
+
+  
 });
