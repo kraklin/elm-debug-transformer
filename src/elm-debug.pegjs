@@ -1,3 +1,7 @@
+{
+  function toStr(chars) {return chars.join("")};
+}
+
 DebugString 
   = tag:Tag ": " value:Value {return {type: "ElmDebug", tag: tag, value: value};}
 
@@ -6,11 +10,11 @@ Value
 
 Record
   = "{}" {return {};}
-  / "{ " chars:[a-zA-Z]+ " = " value:Value " }" {return {[chars.join("")]: value}}
-  / "{ " chars:[a-zA-Z]+ " = " value:Value values:(", " tag:[a-zA-Z]+ " = " otherVal:Value {return {[tag.join("")]: otherVal};})* " }" {return [{[chars.join("")]: value},...values].reduce((item, obj) => {return {...item,...obj} },{});}
+  / "{ " chars:[a-zA-Z]+ " = " value:Value " }" {return {[toStr(chars)]: value}}
+  / "{ " chars:[a-zA-Z]+ " = " value:Value values:(", " tag:[a-zA-Z]+ " = " otherVal:Value {return {[toStr(tag)]: otherVal};})* " }" {return [{[toStr(chars)]: value},...values].reduce((item, obj) => {return {...item,...obj} },{});}
 
 Dict
-  = "Dict.fromList " dict:List {return {"Dict": dict}}
+  = "Dict.fromList " values:List {return {type: "Dict", values: values.map((item) => { return {key: item.fst, value: item.snd};})}}
 
 List
   = "[]" {return [];} 
@@ -18,22 +22,22 @@ List
   / "[" head:Value tail:("," value:Value {return value;})+ "]" {return [head, ...tail]}
   
 Float =
-  digits:[0-9\.]+ {return parseFloat(digits.join(""));}
+  digits:[0-9\.]+ {return parseFloat(toStr(digits));}
 
 Integer = 
-	digits:[0-9]+ {return parseInt(digits.join(""), 10);}
+	digits:[0-9]+ {return parseInt(toStr(digits), 10);}
 
 Tuple
-  = "()" {return {"Tuple":{}}}
-  / "(" fst:Value "," [ ]* snd:Value others:("," [ ]* item:Value {return item;})* ")" {if (others.length == 0) return {"Tuple":{"fst":fst, "snd":snd}}; else return {"Tuple":{"fst":fst, "snd": snd, "others": others}};}
+  = "()" {return {type:"EmptyTuple"}}
+  / "(" fst:Value "," [ ]* snd:Value others:("," [ ]* item:Value {return item;})* ")" {if (others.length == 0) return {type: "Tuple", "fst":fst, "snd":snd}; else return {type: "Tuple", "fst":fst, "snd": snd, "others": others};}
 
 CustomTypeWithParens
   = "(" customType:CustomType ")" {return customType;}
   / CustomType
 
 CustomType 
-  = main:Type values:(" " value:Value {return value;})+ {if (values.length == 1) return {[main]: values[0]}; else return {[main]: values};}
-  / main:Type " (" customType:CustomType ")" {return {[main]: customType}}
+  = main:Type values:(" " value:Value {return value;})+ {return {type: "Custom", name: main, values: values};}
+  / main:Type " (" customType:CustomType ")" {return {type: "Custom", name: main, values: customType};}
 
 Boolean
   = "True" {return true;}
@@ -43,11 +47,11 @@ Function
   = "<function>" {return "(func..)";}
 
 String =
-  "\"" chars:([^\"])* "\"" {return chars.join("");}
+  "\"" chars:([^\"])* "\"" {return toStr(chars);}
 
 Type = 
-	type:[a-zA-Z]+ {return type.join("");}
+	type:[a-zA-Z]+ {return toStr(type);}
 
 Tag =
-	tag:[a-zA-Z ]+ {return tag.join("");}
+	tag:[a-zA-Z ]+ {return toStr(tag);}
 
