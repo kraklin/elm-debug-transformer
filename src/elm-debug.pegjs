@@ -1,3 +1,4 @@
+// Set.toList, Array.toList
 {
   function toStr(chars) {return chars.join("")};
 }
@@ -6,7 +7,7 @@ DebugString
   = tag:Tag ": " value:Value {return {type: "ElmDebug", tag: tag, value: value};}
 
 Value
-  = Record / Dict / List / Tuple / CustomTypeWithParens / Float / Integer / Boolean / Type / Function / String
+  = Record / Array / Set / Dict / List / Tuple / CustomTypeWithParens / Float / Integer / Boolean / Type / Function / String
 
 Record
   = "{}" {return {};}
@@ -15,6 +16,13 @@ Record
 
 Dict
   = "Dict.fromList " values:List {return {type: "Dict", values: values.map((item) => { return {key: item.fst, value: item.snd};})}}
+
+Set
+  = "Set.fromList " values:List {return {type: "Set", values: values};}
+
+Array
+  = "Array.fromList " values:List {return {type: "Array", values: values};}
+
 
 List
   = "[]" {return [];} 

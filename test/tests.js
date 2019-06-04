@@ -66,6 +66,24 @@ describe('Parsing', () => {
     });
   });
 
+  describe('Set', () => {
+    it('Empty Set', () => {
+      parser.parse("Set: Set.fromList []").value.should.deep.equal({type:"Set", values: []});
+    });
+    it('Filled set', () => {
+      parser.parse("Set: Set.fromList [1,2,3]").value.should.deep.equal({type:"Set", values: [1,2,3]});
+    });
+  });
+
+  describe('Array', () => {
+    it('Empty Array', () => {
+      parser.parse("Array: Array.fromList []").value.should.deep.equal({type:"Array", values: []});
+    });
+    it('Filled Array', () => {
+      parser.parse("Array: Array.fromList [\"1\",\"2\",\"3\"]").value.should.deep.equal({type:"Array", values: ["1","2","3"]});
+    });
+  });
+
   describe('Record', () => {
     it('Empty record', () => {
       parser.parse("record: {}").value.should.deep.equal({});
