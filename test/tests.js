@@ -14,12 +14,24 @@ describe('Parsing', () => {
       parser.parse("integer: 123").value.should.deep.equal(123);
     });
 
+    it('Negative Integer',()=>{
+      parser.parse("integer: - 123").value.should.deep.equal(-123);
+    });
+
     it('Float',()=>{
       parser.parse("float: 123.45").value.should.deep.equal(123.45);
     });
 
+    it('Negative Float',()=>{
+      parser.parse("float: - 123.45").value.should.deep.equal(-123.45);
+    });
+
     it('String',()=>{
       parser.parse('string: "Lorem Ipsum."').value.should.deep.equal("Lorem Ipsum.");
+    });
+
+    it('String with escaped quotes',()=>{
+      parser.parse('string: "Lorem Ipsum. \\\"with some quotes\\\""').value.should.deep.equal('Lorem Ipsum. "with some quotes"');
     });
   });
 
@@ -119,7 +131,7 @@ describe('Parsing', () => {
 
   describe('Function', () => {
     it('Function value', () => {
-      parser.parse("custom type: <function>").value.should.deep.equal("(func..)");
+      parser.parse("custom type: <function>").value.should.deep.equal({type: "Function"});
     });
   });
   

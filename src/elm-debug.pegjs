@@ -23,43 +23,68 @@ Set
 Array
   = "Array.fromList " values:List {return {type: "Array", values: values};}
 
+Tuple
+  = "()" {return {type:"EmptyTuple"}}
+  / "(" fst:Value "," [ ]* snd:Value others:(_ "," _ item:Value {return item;})* ")" {if (others.length == 0) return {type: "Tuple", "fst":fst, "snd":snd}; else return {type: "Tuple", "fst":fst, "snd": snd, "others": others};}
+
+CustomTypeWithParens
+  = "(" _ customType:CustomType _ ")" {return customType;}
+  / CustomType
+
+CustomType 
+  = main:Type values:(_ value:Value {return value;})+ {return {type: "Custom", name: main, values: values};}
+  / main:Type _ "(" _ customType:CustomType _ ")" {return {type: "Custom", name: main, values: customType};}
 
 List
   = "[]" {return [];} 
   / list:("[" singleton:Value "]" {return singleton;}) {return [list];}
-  / "[" head:Value tail:("," value:Value {return value;})+ "]" {return [head, ...tail]}
+  / "[" head:Value tail:("," _ value:Value {return value;})+ "]" {return [head, ...tail]}
   
+
+Function
+  = "<function>" {return {type: "Function"};}
+
 Float =
   digits:[0-9\.]+ {return parseFloat(toStr(digits));}
+	/ "-" _ digits:[0-9\.]+ {return parseFloat("-"+toStr(digits));}
 
 Integer = 
 	digits:[0-9]+ {return parseInt(toStr(digits), 10);}
-
-Tuple
-  = "()" {return {type:"EmptyTuple"}}
-  / "(" fst:Value "," [ ]* snd:Value others:("," [ ]* item:Value {return item;})* ")" {if (others.length == 0) return {type: "Tuple", "fst":fst, "snd":snd}; else return {type: "Tuple", "fst":fst, "snd": snd, "others": others};}
-
-CustomTypeWithParens
-  = "(" customType:CustomType ")" {return customType;}
-  / CustomType
-
-CustomType 
-  = main:Type values:(" " value:Value {return value;})+ {return {type: "Custom", name: main, values: values};}
-  / main:Type " (" customType:CustomType ")" {return {type: "Custom", name: main, values: customType};}
+	/ "-" _ digits:[0-9]+ {return parseInt("-"+toStr(digits), 10);}
 
 Boolean
   = "True" {return true;}
   / "False" {return false;}
-
-Function
-  = "<function>" {return "(func..)";}
-
-String =
-  "\"" chars:([^\"])* "\"" {return toStr(chars);}
 
 Type = 
 	type:[a-zA-Z]+ {return toStr(type);}
 
 Tag =
 	tag:[a-zA-Z ]+ {return toStr(tag);}
+
+String
+  = '"' chars:DoubleStringCharacter* '"' { return chars.join(''); }
+  / "'" chars:SingleStringCharacter* "'" { return chars.join(''); }
+
+DoubleStringCharacter
+  = !('"' / "\\") char:. { return char; }
+  / "\\" sequence:EscapeSequence { return sequence; }
+
+SingleStringCharacter
+  = !("'" / "\\") char:. { return char; }
+  / "\\" sequence:EscapeSequence { return sequence; }
+
+EscapeSequence
+  = "'"
+  / '"'
+  / "\\"
+  / "b"  { return "\b";   }
+  / "f"  { return "\f";   }
+  / "n"  { return "\n";   }
+  / "r"  { return "\r";   }
+  / "t"  { return "\t";   }
+  / "v"  { return "\x0B"; }
+
+_ "whitespace"
+  = [ \t\n\r]*
 
