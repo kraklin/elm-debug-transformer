@@ -98,16 +98,16 @@ describe('Parsing', () => {
 
   describe('Record', () => {
     it('Empty record', () => {
-      parser.parse("record: {}").value.should.deep.equal({});
+      parser.parse("record: {}").value.should.deep.equal({type: "Record", value: {}});
     });
     it('Record', () => {
-      parser.parse("record: { name = \"Name\" }").value.should.deep.equal({"name": "Name"});
+      parser.parse("record: { name = \"Name\" }").value.should.deep.equal({type: "Record", value: {"name": "Name"}});
     });
     it('Record with more values', () => {
-      parser.parse("record: { name = \"Name\", warning = Nothing, waves = [] }").value.should.deep.equal({"name": "Name", "warning": {type: "Type", name:"Nothing"}, "waves": {type: "List", value: []}});
+      parser.parse("record: { name = \"Name\", warning = Nothing, waves = [] }").value.should.deep.equal({type: "Record", value: {"name": "Name", "warning": {type: "Type", name:"Nothing"}, "waves": {type: "List", value: []}}});
     });
     it('Nested records', () => {
-      parser.parse("record: { name = \"Name\", warning = { name = Nothing, waves = [] } }").value.should.deep.equal({"name": "Name", "warning": {"name": {type: "Type", name: "Nothing"}, "waves": {type: "List", value: []}}});
+      parser.parse("record: { name = \"Name\", warning = { name = Nothing, waves = [] } }").value.should.deep.equal({type: "Record", value: {"name": "Name", "warning": {type: "Record", value: {"name": {type: "Type", name: "Nothing"}, "waves": {type: "List", value: []}}}}});
     });
   });
 
@@ -122,7 +122,7 @@ describe('Parsing', () => {
       parser.parse("custom type: (User (Data \"Adam\" 123 (1,False)))").value.should.deep.equal({type: "Custom", name: "User", value: [{type: "Custom", name: "Data", value: ["Adam", {type: "Number", value: 123}, {type: "Tuple", value: [{type: "Number", value: 1}, false]}]}]});
     });
     it('Custom type in parenthesis with record', () => {
-      parser.parse("custom type: (User { age = 23 })").value.should.deep.equal({type: "Custom", name: "User", value: [{"age": {type: "Number", value:  23}}]});
+      parser.parse("custom type: (User { age = 23 })").value.should.deep.equal({type: "Custom", name: "User", value: [{type: "Record", value: {"age": {type: "Number", value:  23}}}]});
     });
     it('Custom type with more values in parenthesis', () => {
       parser.parse("custom type: User (Data \"(tuple, in, string)\" 123 (1,False))").value.should.deep.equal({type: "Custom", name: "User", value: [{type: "Custom", name: "Data", value: ["(tuple, in, string)", {type: "Number", value: 123}, {type: "Tuple", value: [{type: "Number", value: 1}, false]}]}]});

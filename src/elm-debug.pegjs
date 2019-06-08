@@ -10,9 +10,9 @@ Value
   = Record / Array / Set / Dict / List / CustomTypeWithParens / Tuple / Number / Boolean / Type / Function / String
 
 Record
-  = "{}" {return {};}
-  / "{ " chars:[a-zA-Z]+ " = " value:Value " }" {return {[toStr(chars)]: value}}
-  / "{ " chars:[a-zA-Z]+ " = " value:Value values:(", " tag:[a-zA-Z]+ " = " otherVal:Value {return {[toStr(tag)]: otherVal};})* " }" {return [{[toStr(chars)]: value},...values].reduce((item, obj) => {return {...item,...obj} },{});}
+  = "{}" {return {type: "Record", value: {}};}
+  / "{ " chars:[a-zA-Z]+ " = " value:Value " }" {return {type: "Record", value: {[toStr(chars)]: value}}}
+  / "{ " chars:[a-zA-Z]+ " = " value:Value values:(", " tag:[a-zA-Z]+ " = " otherVal:Value {return {[toStr(tag)]: otherVal};})* " }" { var composed = [{[toStr(chars)]: value},...values].reduce((item, obj) => {return {...item,...obj} },{}); return {type: "Record", value: composed}}
 
 Dict
   = "Dict.fromList " values:ListValue {return {type: "Dict", value: values.map((tuple) => { return {key: tuple.value[0], value: tuple.value[1]};})}}
