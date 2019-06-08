@@ -1,11 +1,13 @@
 import * as Parser from './parser.js';
 import * as _ from 'lodash';
 
-function keyValueLine(key, value) {
+function keyValueLine(key, value, margin) {
+  if(!margin) margin = 0;
+
   return [
     'div',
-    {},
-    ['span', { style: 'color: purple; font-weight: bold' }, key],
+    {style: `margin-left: ${margin}px`},
+    ['span', { style: `color: purple; font-weight: bold` }, key],
     ['span', {}, ' = '], value 
   ];
 }
@@ -21,9 +23,16 @@ function getFinalValue(value) {
     return value.value
 }
 
+function indentValue(level){
+  return 10 * level;
+}
+
 function handleHeader(value, config) {
   if (!value.type || !value.value) {
-    return null;
+      if(isFinalValue(value))
+        return getFinalValue(value)
+      else
+        return null;
   }
 
   switch (value.type) {
@@ -41,15 +50,42 @@ function handleHeader(value, config) {
 
       return `{ ${_.truncate(keys.join(', '))} }`;
 
-    case 'String':
-      return `"${value.value}"`;
+    case 'Tuple':
+      const tupleValues = value.value
+        .map((v) => { return handleHeader(v, config); })
+
+      return `( ${(tupleValues.join(', '))} )`;
+    case 'Custom':
+      const typeValues = value.value.map((v) => {return handleHeader(v, config);})
+      if (typeValues.length === 0)
+        return value.name;
+      else
+        return `${value.name} ${typeValues.join(" ")}`;
+
+    case 'Array':
+      return `Array(${value.value.length})`
+
+    case 'Set':
+      return `Set(${value.value.length})`
+
+    case 'Dict':
+      return `Dict(${value.value.length})`
+
+    case 'List':
+      return `List(${value.value.length})`
+
+    case 'Number':
+      return getFinalValue(value);
 
     default:
-      return toString(value);
+        return toString(value);
   }
 }
 
 function handleBody(value, config) {
+  //const c = (!!config) ? config : {elmFormat: true, level: 0} ;
+  const level = (!config || !config.level)? 1 : config.level+1;
+
   if (!value.type || !value.value) {
     return ['div', {}, 'end'];
   }
@@ -61,12 +97,12 @@ function handleBody(value, config) {
       const values = _.chain(value.value)
         .mapValues((v, k) => {
           if (isFinalValue(v)) {
-            return keyValueLine(k, getFinalValue(v));
+            return keyValueLine(k, getFinalValue(v), indentValue(level)+24);
           }
           return [
             'div',
-            {},
-            ['object', { object: v, config: { key: k, elmFormat: true } }]
+            {style: `margin-left:${indentValue(level)}px`},
+            ['object', { object: v , config: {elmFormat: true, key: k, level: level} }]
           ];
         })
         .values()
@@ -75,7 +111,7 @@ function handleBody(value, config) {
       return ['div', {}].concat(values);
 
     default:
-      return ['div', {}, JSON.stringify({ o: {}, v: value })];
+      return ['div', {}, JSON.stringify({v: value, c: config})];
   }
 
   return ['div', {}, 'body'];
@@ -92,9 +128,9 @@ export function register() {
           (!!config && config.elmFormat)
         ) {
           if (!!config && !!config.key) {
-            return keyValueLine(config.key, handleHeader(obj, config));
+            return keyValueLine(config.key, handleHeader(obj, config), indentValue(config.level));
           } else {
-            return ['div', {}, '(h)', handleHeader(obj, config)];
+            return ['div', {}, handleHeader(obj, config)];
           }
         } else {
           return null;
@@ -104,7 +140,7 @@ export function register() {
         return true;
       },
       body: function(obj, config) {
-        return ['div', {}, '(b)', handleBody(obj, config)];
+        return ['div', {}, handleBody(obj, config)];
       }
     }
   ];
@@ -113,6 +149,7 @@ export function register() {
     try {
       const parsed = Parser.parse(msg);
       _log.call(console, JSON.parse(JSON.stringify(parsed)));
+      
       // for debug only
       _log.call(console, parsed.value);
     } catch (err) {
