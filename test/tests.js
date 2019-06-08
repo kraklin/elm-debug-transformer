@@ -55,17 +55,17 @@ describe('Parsing', () => {
 
   describe('List', () => {
     it('Empty list', () => {
-      parser.parse("list: []").value.should.deep.equal([]);
+      parser.parse("list: []").value.should.deep.equal({type: "List", value: []});
     });
 
     it('Singleton', () => {
-      parser.parse("singleton: [1]").value.should.deep.equal([{type: "Number", value: 1}]);
+      parser.parse("singleton: [1]").value.should.deep.equal({type: "List", value: [{type: "Number", value: 1}]});
     });
     it('List', () => {
-      parser.parse("list: [\"s1\",\"s2\",\"s3\",\"s4\"]").value.should.deep.equal(["s1", "s2", "s3", "s4"]);
+      parser.parse("list: [\"s1\",\"s2\",\"s3\",\"s4\"]").value.should.deep.equal({type: "List", value: ["s1", "s2", "s3", "s4"]});
     });
     it('List of tuples', () => {
-      parser.parse("list: [(\"s1\",\"s2\"),(\"s3\",\"s4\")]").value.should.deep.equal([{type: "Tuple", value: ["s1", "s2"]}, {type: "Tuple", value: ["s3", "s4"]}]);
+      parser.parse("list: [(\"s1\",\"s2\"),(\"s3\",\"s4\")]").value.should.deep.equal({type: "List", value: [{type: "Tuple", value: ["s1", "s2"]}, {type: "Tuple", value: ["s3", "s4"]}]});
     });
   });
 
@@ -104,10 +104,10 @@ describe('Parsing', () => {
       parser.parse("record: { name = \"Name\" }").value.should.deep.equal({"name": "Name"});
     });
     it('Record with more values', () => {
-      parser.parse("record: { name = \"Name\", warning = Nothing, waves = [] }").value.should.deep.equal({"name": "Name", "warning": "Nothing", "waves": []});
+      parser.parse("record: { name = \"Name\", warning = Nothing, waves = [] }").value.should.deep.equal({"name": "Name", "warning": {type: "Type", name:"Nothing"}, "waves": {type: "List", value: []}});
     });
     it('Nested records', () => {
-      parser.parse("record: { name = \"Name\", warning = { name = Nothing, waves = [] } }").value.should.deep.equal({"name": "Name", "warning": {"name": "Nothing", "waves": []}});
+      parser.parse("record: { name = \"Name\", warning = { name = Nothing, waves = [] } }").value.should.deep.equal({"name": "Name", "warning": {"name": {type: "Type", name: "Nothing"}, "waves": {type: "List", value: []}}});
     });
   });
 

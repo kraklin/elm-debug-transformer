@@ -15,13 +15,13 @@ Record
   / "{ " chars:[a-zA-Z]+ " = " value:Value values:(", " tag:[a-zA-Z]+ " = " otherVal:Value {return {[toStr(tag)]: otherVal};})* " }" {return [{[toStr(chars)]: value},...values].reduce((item, obj) => {return {...item,...obj} },{});}
 
 Dict
-  = "Dict.fromList " values:List {return {type: "Dict", value: values.map((tuple) => { return {key: tuple.value[0], value: tuple.value[1]};})}}
+  = "Dict.fromList " values:ListValue {return {type: "Dict", value: values.map((tuple) => { return {key: tuple.value[0], value: tuple.value[1]};})}}
 
 Set
-  = "Set.fromList " values:List {return {type: "Set", value: values};}
+  = "Set.fromList " values:ListValue {return {type: "Set", value: values};}
 
 Array
-  = "Array.fromList " values:List {return {type: "Array", value: values};}
+  = "Array.fromList " values:ListValue {return {type: "Array", value: values};}
 
 Tuple
   = "()" {return {type:"EmptyTuple"}}
@@ -32,17 +32,12 @@ CustomTypeWithParens
   / CustomType
 
 CustomType 
-  = main:Type values:(_ value:Value {return value;})+ {return {type: "Custom", name: main, value: values};}
-  / main:Type _ "(" _ customType:CustomType _ ")" {return {type: "Custom", name: main, value: customType};}
+  = mainType:Type values:(_ value:Value {return value;})+ {return {type: "Custom", name: mainType.name, value: values};}
+  / mainType:Type _ "(" _ customType:CustomType _ ")" {return {type: "Custom", name: mainType.name, value: customType};}
 
-List
-  = "[]" {return [];} 
-  / list:("[" singleton:Value "]" {return singleton;}) {return [list];}
-  / "[" head:Value tail:("," _ value:Value {return value;})+ "]" {return [head, ...tail]}
-  
+List 
+  = list:ListValue {return {type: "List", value: list};}
 
-Function
-  = "<function>" {return {type: "Function"};}
 
 Number =
   digits:[0-9\.]+ {return {type: "Number", value: parseFloat(toStr(digits))};}
@@ -52,8 +47,11 @@ Boolean
   = "True" {return true;}
   / "False" {return false;}
 
+Function
+  = "<function>" {return {type: "Function"};}
+
 Type = 
-	type:[a-zA-Z]+ {return toStr(type);}
+	type:[a-zA-Z]+ {return {type: "Type", name: toStr(type)};}
 
 Tag =
 	tag:[a-zA-Z ]+ {return toStr(tag);}
@@ -61,6 +59,13 @@ Tag =
 String
   = '"' chars:DoubleStringCharacter* '"' { return chars.join(''); }
   / "'" chars:SingleStringCharacter* "'" { return chars.join(''); }
+
+
+ListValue
+  = "[]" {return [];} 
+  / list:("[" singleton:Value "]" {return singleton;}) {return [list];}
+  / "[" head:Value tail:("," _ value:Value {return value;})+ "]" {return [head, ...tail]}
+  
 
 DoubleStringCharacter
   = !('"' / "\\") char:. { return char; }
