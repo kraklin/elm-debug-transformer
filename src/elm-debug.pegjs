@@ -7,7 +7,7 @@ DebugString
   = tag:Tag ": " value:Value {return {type: "ElmDebug", tag: tag, value: value};}
 
 Value
-  = Record / Array / Set / Dict / List / Tuple / CustomTypeWithParens / Float / Integer / Boolean / Type / Function / String
+  = Record / Array / Set / Dict / List / CustomTypeWithParens / Tuple / Number / Boolean / Type / Function / String
 
 Record
   = "{}" {return {};}
@@ -15,25 +15,25 @@ Record
   / "{ " chars:[a-zA-Z]+ " = " value:Value values:(", " tag:[a-zA-Z]+ " = " otherVal:Value {return {[toStr(tag)]: otherVal};})* " }" {return [{[toStr(chars)]: value},...values].reduce((item, obj) => {return {...item,...obj} },{});}
 
 Dict
-  = "Dict.fromList " values:List {return {type: "Dict", values: values.map((item) => { return {key: item.fst, value: item.snd};})}}
+  = "Dict.fromList " values:List {return {type: "Dict", value: values.map((tuple) => { return {key: tuple.value[0], value: tuple.value[1]};})}}
 
 Set
-  = "Set.fromList " values:List {return {type: "Set", values: values};}
+  = "Set.fromList " values:List {return {type: "Set", value: values};}
 
 Array
-  = "Array.fromList " values:List {return {type: "Array", values: values};}
+  = "Array.fromList " values:List {return {type: "Array", value: values};}
 
 Tuple
   = "()" {return {type:"EmptyTuple"}}
-  / "(" fst:Value "," [ ]* snd:Value others:(_ "," _ item:Value {return item;})* ")" {if (others.length == 0) return {type: "Tuple", "fst":fst, "snd":snd}; else return {type: "Tuple", "fst":fst, "snd": snd, "others": others};}
+  / "(" head:Value others:(_ "," _ item:Value {return item;})* ")" {return {type: "Tuple", value: [head,...others]};}
 
 CustomTypeWithParens
   = "(" _ customType:CustomType _ ")" {return customType;}
   / CustomType
 
 CustomType 
-  = main:Type values:(_ value:Value {return value;})+ {return {type: "Custom", name: main, values: values};}
-  / main:Type _ "(" _ customType:CustomType _ ")" {return {type: "Custom", name: main, values: customType};}
+  = main:Type values:(_ value:Value {return value;})+ {return {type: "Custom", name: main, value: values};}
+  / main:Type _ "(" _ customType:CustomType _ ")" {return {type: "Custom", name: main, value: customType};}
 
 List
   = "[]" {return [];} 
@@ -44,13 +44,9 @@ List
 Function
   = "<function>" {return {type: "Function"};}
 
-Float =
-  digits:[0-9\.]+ {return parseFloat(toStr(digits));}
-	/ "-" _ digits:[0-9\.]+ {return parseFloat("-"+toStr(digits));}
-
-Integer = 
-	digits:[0-9]+ {return parseInt(toStr(digits), 10);}
-	/ "-" _ digits:[0-9]+ {return parseInt("-"+toStr(digits), 10);}
+Number =
+  digits:[0-9\.]+ {return {type: "Number", value: parseFloat(toStr(digits))};}
+	/ "-" _ digits:[0-9\.]+ {return {type: "Number", value: parseFloat("-"+toStr(digits))};}
 
 Boolean
   = "True" {return true;}

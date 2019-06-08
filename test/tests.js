@@ -11,19 +11,19 @@ describe('Parsing', () => {
     });
 
     it('Integer',()=>{
-      parser.parse("integer: 123").value.should.deep.equal(123);
+      parser.parse("integer: 123").value.should.deep.equal({type: "Number", value: 123});
     });
 
     it('Negative Integer',()=>{
-      parser.parse("integer: - 123").value.should.deep.equal(-123);
+      parser.parse("integer: - 123").value.should.deep.equal({type: "Number", value: -123});
     });
 
     it('Float',()=>{
-      parser.parse("float: 123.45").value.should.deep.equal(123.45);
+      parser.parse("float: 123.45").value.should.deep.equal({type: "Number", value: 123.45});
     });
 
     it('Negative Float',()=>{
-      parser.parse("float: - 123.45").value.should.deep.equal(-123.45);
+      parser.parse("float: - 123.45").value.should.deep.equal({type: "Number", value: -123.45});
     });
 
     it('String',()=>{
@@ -41,15 +41,15 @@ describe('Parsing', () => {
     });
 
     it('Basic tuple', () => {
-      parser.parse("tuple: (123, False)").value.should.deep.equal({type:"Tuple", "fst": 123, "snd":false});
+      parser.parse("tuple: (123, False)").value.should.deep.equal({type:"Tuple", value: [{type: "Number", value: 123}, false]});
     });
 
     it('Arbitrary long tuple', () => {
-      parser.parse('tuple: (123, "Some string.", True, 12.34)').value.should.deep.equal({type: "Tuple", "fst": 123, "snd":"Some string.", "others": [true, 12.34]});
+      parser.parse('tuple: (123, "Some string.", True, 12.34)').value.should.deep.equal({type: "Tuple", value: [{type: "Number", value: 123}, "Some string.", true, {type: "Number", value: 12.34}]});
     });
 
     it('Tuple in tuple', () => {
-      parser.parse('tuple in tuple: (123, (True, 12.34))').value.should.deep.equal({type: "Tuple", "fst": 123, "snd": {type: "Tuple", "fst": true, "snd": 12.34}});
+      parser.parse('tuple in tuple: (123, (True, 12.34))').value.should.deep.equal({type: "Tuple", value: [{type: "Number", value: 123}, {type: "Tuple", value:[true, {type: "Number", value: 12.34}]}]});
     });
   });
 
@@ -59,40 +59,40 @@ describe('Parsing', () => {
     });
 
     it('Singleton', () => {
-      parser.parse("singleton: [1]").value.should.deep.equal([1]);
+      parser.parse("singleton: [1]").value.should.deep.equal([{type: "Number", value: 1}]);
     });
     it('List', () => {
       parser.parse("list: [\"s1\",\"s2\",\"s3\",\"s4\"]").value.should.deep.equal(["s1", "s2", "s3", "s4"]);
     });
     it('List of tuples', () => {
-      parser.parse("list: [(\"s1\",\"s2\"),(\"s3\",\"s4\")]").value.should.deep.equal([{type: "Tuple", "fst":"s1", "snd": "s2"}, {type: "Tuple", "fst": "s3", "snd":"s4"}]);
+      parser.parse("list: [(\"s1\",\"s2\"),(\"s3\",\"s4\")]").value.should.deep.equal([{type: "Tuple", value: ["s1", "s2"]}, {type: "Tuple", value: ["s3", "s4"]}]);
     });
   });
 
   describe('Dict', () => {
     it('Empty dict', () => {
-      parser.parse("dict: Dict.fromList []").value.should.deep.equal({type:"Dict", values: []});
+      parser.parse("dict: Dict.fromList []").value.should.deep.equal({type:"Dict", value: []});
     });
     it('Filled dict', () => {
-      parser.parse("dict: Dict.fromList [(1,\"a\"),(2,\"b\")]").value.should.deep.equal({type:"Dict", values: [{"key": 1,"value":"a"},{"key":2,"value":"b"}]});
+      parser.parse("dict: Dict.fromList [(1,\"a\"),(2,\"b\")]").value.should.deep.equal({type:"Dict", value: [{"key": {type: "Number", value: 1},"value":"a"},{"key":{type: "Number", value: 2},"value":"b"}]});
     });
   });
 
   describe('Set', () => {
     it('Empty Set', () => {
-      parser.parse("Set: Set.fromList []").value.should.deep.equal({type:"Set", values: []});
+      parser.parse("Set: Set.fromList []").value.should.deep.equal({type:"Set", value: []});
     });
     it('Filled set', () => {
-      parser.parse("Set: Set.fromList [1,2,3]").value.should.deep.equal({type:"Set", values: [1,2,3]});
+      parser.parse("Set: Set.fromList [\"1\",\"2\",\"3\"]").value.should.deep.equal({type:"Set", value: ["1","2","3"]});
     });
   });
 
   describe('Array', () => {
     it('Empty Array', () => {
-      parser.parse("Array: Array.fromList []").value.should.deep.equal({type:"Array", values: []});
+      parser.parse("Array: Array.fromList []").value.should.deep.equal({type:"Array", value: []});
     });
     it('Filled Array', () => {
-      parser.parse("Array: Array.fromList [\"1\",\"2\",\"3\"]").value.should.deep.equal({type:"Array", values: ["1","2","3"]});
+      parser.parse("Array: Array.fromList [\"1\",\"2\",\"3\"]").value.should.deep.equal({type:"Array", value: ["1","2","3"]});
     });
   });
 
@@ -113,19 +113,19 @@ describe('Parsing', () => {
 
   describe('Custom types', () => {
     it('Custom type with one value', () => {
-      parser.parse("custom type: User \"Adam\"").value.should.deep.equal({type: "Custom", name: "User", values: ["Adam"]});
+      parser.parse("custom type: User \"Adam\"").value.should.deep.equal({type: "Custom", name: "User", value: ["Adam"]});
     });
     it('Custom type with more values', () => {
-      parser.parse("custom type: User \"Adam\" 123 (1,False)").value.should.deep.equal({type: "Custom", name: "User", values: ["Adam", 123, {type: "Tuple","fst": 1, "snd": false}]});
+      parser.parse("custom type: User \"Adam\" 123 (1,False)").value.should.deep.equal({type: "Custom", name: "User", value: ["Adam", {type: "Number", value: 123}, {type: "Tuple", value: [{type: "Number", value: 1},  false]}]});
     });
     it('Custom type in parenthesis', () => {
-      parser.parse("custom type: (User (Data \"Adam\" 123 (1,False)))").value.should.deep.equal({type: "Custom", name: "User", values: [{type: "Custom", name: "Data", values: ["Adam", 123, {type: "Tuple", "fst": 1, "snd": false}]}]});
+      parser.parse("custom type: (User (Data \"Adam\" 123 (1,False)))").value.should.deep.equal({type: "Custom", name: "User", value: [{type: "Custom", name: "Data", value: ["Adam", {type: "Number", value: 123}, {type: "Tuple", value: [{type: "Number", value: 1}, false]}]}]});
     });
     it('Custom type in parenthesis with record', () => {
-      parser.parse("custom type: (User { age = 23 })").value.should.deep.equal({type: "Custom", name: "User", values: [{"age": 23}]});
+      parser.parse("custom type: (User { age = 23 })").value.should.deep.equal({type: "Custom", name: "User", value: [{"age": {type: "Number", value:  23}}]});
     });
     it('Custom type with more values in parenthesis', () => {
-      parser.parse("custom type: User (Data \"Adam\" 123 (1,False))").value.should.deep.equal({type: "Custom", name: "User", values: [{type: "Custom", name: "Data", values: ["Adam", 123, {type: "Tuple", "fst": 1, "snd": false}]}]});
+      parser.parse("custom type: User (Data \"(tuple, in, string)\" 123 (1,False))").value.should.deep.equal({type: "Custom", name: "User", value: [{type: "Custom", name: "Data", value: ["(tuple, in, string)", {type: "Number", value: 123}, {type: "Tuple", value: [{type: "Number", value: 1}, false]}]}]});
     });
   });
 
