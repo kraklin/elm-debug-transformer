@@ -27,7 +27,7 @@ function indentValue(level){
   return 10 * level;
 }
 
-function handleHeader(value, config) {
+function handleHeader(value) {
   if (!value.type || !value.value) {
       if(isFinalValue(value))
         return getFinalValue(value)
@@ -38,12 +38,11 @@ function handleHeader(value, config) {
   switch (value.type) {
     case 'ElmDebug':
       const tag = !!value.tag ? value.tag + ': ' : '';
-
-      return tag + handleHeader(value.value, config);
+        return tag + handleHeader(value.value);
     case 'Record':
       const keys = _.chain(value.value)
         .mapValues((v, k) => {
-          return k + ' = ' + handleHeader(v, config);
+          return k + ' = ' + handleHeader(v);
         })
         .values()
         .value();
@@ -52,11 +51,12 @@ function handleHeader(value, config) {
 
     case 'Tuple':
       const tupleValues = value.value
-        .map((v) => { return handleHeader(v, config); })
+        .map((v) => { return handleHeader(v); })
 
       return `( ${(tupleValues.join(', '))} )`;
+
     case 'Custom':
-      const typeValues = value.value.map((v) => {return handleHeader(v, config);})
+      const typeValues = value.value.map((v) => {return handleHeader(v);})
       if (typeValues.length === 0)
         return value.name;
       else
@@ -80,6 +80,24 @@ function handleHeader(value, config) {
     default:
         return toString(value);
   }
+}
+
+function listBody(value, level){
+  
+      const listValues = value
+        .map((v, i) => {
+          if (isFinalValue(v)) {
+            return keyValueLine(i, getFinalValue(v), indentValue(level)+24);
+          }
+          return [
+            'div',
+            {style: `margin-left:${indentValue(level)}px`},
+            ['object', { object: v , config: {elmFormat: true, key: i, level: level} }]
+          ];
+        })
+
+      return ['div', {}].concat(listValues);
+
 }
 
 function handleBody(value, config) {
@@ -110,6 +128,28 @@ function handleBody(value, config) {
 
       return ['div', {}].concat(values);
 
+    case 'Array':
+    case 'Set':
+    case 'Tuple':
+      return listBody(value.value, level);
+
+    case 'Dict':
+      const dictValues = value.value
+        .map((item) => {
+          let key = (isFinalValue(item.key)) ? getFinalValue(item.key) : handleHeader(item.key);
+          if (isFinalValue(item.value)) {
+            return keyValueLine(key, getFinalValue(item.value), indentValue(level)+24);
+          }
+
+          return [
+            'div',
+            {style: `margin-left:${indentValue(level)}px`},
+            ['object', { object: item.value , config: {elmFormat: true, key: key, level: level} }]
+          ];
+        
+        })
+      return ['div', {}].concat(dictValues);
+
     default:
       return ['div', {}, JSON.stringify({v: value, c: config})];
   }
@@ -128,9 +168,9 @@ export function register() {
           (!!config && config.elmFormat)
         ) {
           if (!!config && !!config.key) {
-            return keyValueLine(config.key, handleHeader(obj, config), indentValue(config.level));
+            return keyValueLine(config.key, handleHeader(obj), indentValue(config.level));
           } else {
-            return ['div', {}, handleHeader(obj, config)];
+            return ['div', {}, handleHeader(obj)];
           }
         } else {
           return null;
