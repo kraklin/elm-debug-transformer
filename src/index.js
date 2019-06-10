@@ -15,6 +15,7 @@ function keyValueLine(key, value, margin) {
 function isFinalValue(value) {
   return (_.isString(value) 
     || value.type === "Type" 
+    || value.type === "Unit"
     || value.type === "Number"
     || value.type === "Function")
 }
@@ -24,6 +25,8 @@ function getFinalValue(value) {
     return `"${value}"`;
   else if (value.type === 'Type')
     return value.name;
+  else if (value.type === 'Unit')
+    return "()";
   else if (value.type === 'Function')
     return "<function>";
   else
@@ -211,9 +214,6 @@ export function register() {
     try {
       const parsed = parse(msg);
       _log.call(console, JSON.parse(JSON.stringify(parsed)));
-      
-      // for debug only
-      _log.call(console, parsed.value);
     } catch (err) {
       _log.call(console, msg);
     }

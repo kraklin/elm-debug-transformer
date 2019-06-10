@@ -24,7 +24,7 @@ Array
   = "Array.fromList " values:ListValue {return {type: "Array", value: values};}
 
 Tuple
-  = "()" {return {type:"EmptyTuple"}}
+  = "()" {return {type:"Unit"}}
   / "(" head:Value others:(_ "," _ item:Value {return item;})* ")" {return {type: "Tuple", value: [head,...others]};}
 
 CustomTypeWithParens
