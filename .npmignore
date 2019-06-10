@@ -2,6 +2,7 @@ elm-app/
 node_modules/
 src/
 test/
+img/
 
 webpack.config.js
 .babelrc

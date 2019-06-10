@@ -1,6 +1,13 @@
 # elm-debug-transformer
 Transform Elm Debug.log output into nice log object with custom formatter
 
+The standard Elm `Debug.log` console output:
+![Elm Debug.log in console without formatter](img/ugly_output.png)
+
+and the same output with this package 
+![Elm Debug.log with this package and custom formatter enabled in Chrome](img/nice_output.png)
+
+
 ## Installation
 
 Just install this module with:
