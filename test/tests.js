@@ -37,7 +37,7 @@ describe('Parsing', () => {
 
   describe('Tuples', () => {
     it('Empty tuple', () => {
-      parser.parse("tuple: ()").value.should.deep.equal({type:"EmptyTuple"});
+      parser.parse("tuple: ()").value.should.deep.equal({type:"Unit"});
     });
 
     it('Basic tuple', () => {
