@@ -1,5 +1,5 @@
-import * as Parser from './parser.js';
 import * as _ from 'lodash';
+import { parse } from './elm-debug.pegjs';
 
 function keyValueLine(key, value, margin) {
   if(!margin) margin = 0;
@@ -13,12 +13,19 @@ function keyValueLine(key, value, margin) {
 }
 
 function isFinalValue(value) {
-  return (_.isString(value) || (value.type == "Number"))
+  return (_.isString(value) 
+    || value.type === "Type" 
+    || value.type === "Number"
+    || value.type === "Function")
 }
 
 function getFinalValue(value) {
   if (_.isString(value) )
     return `"${value}"`;
+  else if (value.type === 'Type')
+    return value.name;
+  else if (value.type === 'Function')
+    return "<function>";
   else
     return value.value
 }
@@ -72,7 +79,10 @@ function handleHeader(value) {
       return `Dict(${value.value.length})`
 
     case 'List':
-      return `List(${value.value.length})`
+      if (value.value.length === 0)
+        return '[]'
+      else
+        return `List(${value.value.length})`
 
     case 'Number':
       return getFinalValue(value);
@@ -83,29 +93,27 @@ function handleHeader(value) {
 }
 
 function listBody(value, level){
-  
-      const listValues = value
-        .map((v, i) => {
-          if (isFinalValue(v)) {
-            return keyValueLine(i, getFinalValue(v), indentValue(level)+24);
-          }
-          return [
-            'div',
-            {style: `margin-left:${indentValue(level)}px`},
-            ['object', { object: v , config: {elmFormat: true, key: i, level: level} }]
-          ];
-        })
+  const listValues = value
+    .map((v, i) => {
+      if (isFinalValue(v)) {
+        return keyValueLine(i, getFinalValue(v), 34);
+      }
 
-      return ['div', {}].concat(listValues);
+      return [
+        'div',
+        {style: `margin-left:10px`},
+        ['object', { object: v , config: {elmFormat: true, key: i, level: level} }]
+      ];
+    })
 
+  return ['div', {}].concat(listValues);
 }
 
 function handleBody(value, config) {
-  //const c = (!!config) ? config : {elmFormat: true, level: 0} ;
   const level = (!config || !config.level)? 1 : config.level+1;
 
   if (!value.type || !value.value) {
-    return ['div', {}, 'end'];
+    return ['div',{}];
   }
 
   switch (value.type) {
@@ -115,11 +123,11 @@ function handleBody(value, config) {
       const values = _.chain(value.value)
         .mapValues((v, k) => {
           if (isFinalValue(v)) {
-            return keyValueLine(k, getFinalValue(v), indentValue(level)+24);
+            return keyValueLine(k, getFinalValue(v), 34);
           }
           return [
             'div',
-            {style: `margin-left:${indentValue(level)}px`},
+            {style: `margin-left:10px`},
             ['object', { object: v , config: {elmFormat: true, key: k, level: level} }]
           ];
         })
@@ -133,22 +141,36 @@ function handleBody(value, config) {
     case 'Tuple':
       return listBody(value.value, level);
 
+    case 'List':
+      if (value.value.length === 0)
+        return null;
+      else 
+        return listBody(value.value, level);
+
     case 'Dict':
       const dictValues = value.value
         .map((item) => {
           let key = (isFinalValue(item.key)) ? getFinalValue(item.key) : handleHeader(item.key);
           if (isFinalValue(item.value)) {
-            return keyValueLine(key, getFinalValue(item.value), indentValue(level)+24);
+            return keyValueLine(key, getFinalValue(item.value), 34);
           }
 
           return [
             'div',
-            {style: `margin-left:${indentValue(level)}px`},
+            {style: `margin-left:10px`},
             ['object', { object: item.value , config: {elmFormat: true, key: key, level: level} }]
           ];
         
         })
       return ['div', {}].concat(dictValues);
+
+    case 'Custom':
+      if(value.value.length === 0) {
+        return null
+      }
+
+      return listBody(value.value, level);
+
 
     default:
       return ['div', {}, JSON.stringify({v: value, c: config})];
@@ -167,8 +189,8 @@ export function register() {
           (!!obj.type && obj.type === 'ElmDebug') ||
           (!!config && config.elmFormat)
         ) {
-          if (!!config && !!config.key) {
-            return keyValueLine(config.key, handleHeader(obj), indentValue(config.level));
+          if (!(_.isNil(config)) && !(_.isNil(config.key))) {
+            return keyValueLine(config.key, handleHeader(obj), 10);
           } else {
             return ['div', {}, handleHeader(obj)];
           }
@@ -187,7 +209,7 @@ export function register() {
 
   console.log = msg => {
     try {
-      const parsed = Parser.parse(msg);
+      const parsed = parse(msg);
       _log.call(console, JSON.parse(JSON.stringify(parsed)));
       
       // for debug only

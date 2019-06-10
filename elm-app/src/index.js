@@ -1,14 +1,14 @@
 import './main.css';
 import { Elm } from './Main.elm';
 import registerServiceWorker from './registerServiceWorker';
-import * as ElmDebug from '../../src/index.js';
+import { register } from '../../dist/elm-console-debug.js';
 
-ElmDebug.register();
+debugger;
+register();
+
 
 Elm.Main.init({
   node: document.getElementById('root')
 });
-
-console.log('some value');
 
 registerServiceWorker();

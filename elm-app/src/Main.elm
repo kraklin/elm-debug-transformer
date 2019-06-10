@@ -29,6 +29,10 @@ type alias Model =
     , complexTuple : ( Int, ( String, ( String, Int ) ) )
     , int : Int
     , string : String
+    , list : List (Maybe (List String))
+    , listSingleton : List String
+    , listOfLists : List (List (List String))
+    , function : Int -> String
     }
 
 
@@ -42,6 +46,10 @@ init =
       , complexTuple = ( 1, ( "longer string", ( "much longer string", 1 ) ) )
       , int = 123
       , string = "Some string"
+      , list = [ Nothing, Just [ "String" ], Nothing, Nothing ]
+      , listSingleton = [ "Singleton" ]
+      , listOfLists = [ [ [ "a", "b" ], [ "c", "d" ] ], [ [ "e", "f" ], [ "g", "h" ] ] ]
+      , function = String.fromInt
       }
     , Cmd.none
     )
