@@ -26,12 +26,14 @@ yarn add -D elm-debug-transformer
 
 ## Usage
 
-In your `index.js` register it with:
+Register the console debugger in your main JS file before you initialize Elm application:
 
 ```
 import ElmDebugger from 'elm-debug-transformer';
 
 ElmDebugger.register();
+
+// rest of application
 ```
 
 ### Enable custom formatters in Chrome dev tools
@@ -47,6 +49,8 @@ If your browser have Chrome dev toools, you can enable custom formatters so you 
   - Close DevTools
   - Open DevTools
 
+Note: You might need to refresh the page first time you open Console panel with existing logs - custom formatters are applied only to newly printed console messages.
+
 ### Simple object output
 
 ```
@@ -54,10 +58,13 @@ import ElmDebugger from 'elm-debug-transformer';
 
 ElmDebugger.register({simple_mode: true});
 ```
-If you are not a fan of Chromium based browser you can pass option `{simple_mode: true}` to the `register` function. That way the `Debug.log` would output simpler JS object without `type` information. `Tuple`, `Set`, `Array` and `List` would become arrays and `Dict` would become JS object with keys and values.
 
+If you are not a fan of Chromium based browser you can pass option to the `register` function. 
+```
+register({simple_mode: true});
+``` 
 
-Note: You might need to refresh the page first time you open Console panel with existing logs - custom formatters are applied only to newly printed console messages.
+That way the `Debug.log` would output simpler JS object without `type` information. `Tuple`, `Set`, `Array` and `List` would become arrays and `Dict` would become JS object with keys and values.
 
 ## Credits
 
