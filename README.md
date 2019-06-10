@@ -1,5 +1,10 @@
-# elm-debug-transformer
-Transform Elm Debug.log output into nice log object with custom formatter
+<div align="center">
+    <h1>Elm Debug Transformer</h1>
+    <a href="https://badge.fury.io/js/elm-debug-transformer">
+      <img src="https://badge.fury.io/js/elm-debug-transformer.svg" alt="version">
+    </a>
+    <p>Transform Elm Debug.log output into nice log object with custom formatter</p>
+</div>
 
 The standard Elm `Debug.log` console output:
 
@@ -9,12 +14,15 @@ and the same output with this package
 
 ![Elm Debug.log with this package and custom formatter enabled in Chrome](img/nice_output.png)
 
+The main module exposes `register()` function that replaces your `console.log()` and try to parse each incoming message with Elm parser. If it fails, it would pass the original message.
 
 ## Installation
 
 Just install this module with:
 
-```yarn add -D elm-debug-transformer```
+```
+yarn add -D elm-debug-transformer
+```
 
 ## Usage
 
@@ -25,8 +33,6 @@ import ElmDebugger from 'elm-debug-transformer';
 
 ElmDebugger.register();
 ```
-
-This would hook up your `console.log()` and try to parse each incoming message with Elm parser. If it fails, it would pass the original message.
 
 ### Enable custom formatters in Chrome dev tools
 Available in Chrome 47 and higher.
@@ -53,4 +59,7 @@ If you are not a fan of Chromium based browser you can pass option `{simple_mode
 
 Note: You might need to refresh the page first time you open Console panel with existing logs - custom formatters are applied only to newly printed console messages.
 
+## Credits
+
+This would probably not see the light of the day without [Matt Zeunert](https://github.com/mattzeunert) and his [blogpost](https://www.mattzeunert.com/2016/02/19/custom-chrome-devtools-object-formatters.html) about writing custom formatters. Thank you!
 
