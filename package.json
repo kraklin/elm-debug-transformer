@@ -8,7 +8,8 @@
   "private": false,
   "scripts": {
     "test": "mocha",
-    "build": "webpack"
+    "build": "webpack",
+    "prepublish": "yarn run test && yarn run build"
   },
   "devDependencies": {
     "lodash": "^4.17.11",
