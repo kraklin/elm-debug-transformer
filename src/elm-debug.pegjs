@@ -4,7 +4,8 @@
 }
 
 DebugString 
-  = tag:Tag ": " value:Value {return {type: "ElmDebug", tag: tag, value: value};}
+  = tag:Tag (":" _ )+ value:Value {return {type: "ElmDebug", tag: tag, value: value};}
+  / ":" _ value:Value {return {type: "ElmDebug", tag: "", value: value};}
 
 Value
   = Record / Array / Set / Dict / List / CustomTypeWithParens / Tuple / Number / Boolean / Type / Function / String

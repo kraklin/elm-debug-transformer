@@ -67,7 +67,7 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( Debug.log "Model" model, Cmd.none )
+    ( Debug.log "debug: " model, Cmd.none )
 
 
 

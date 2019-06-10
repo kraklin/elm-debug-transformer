@@ -6,6 +6,15 @@ const parser = peg.generate(fs.readFileSync("src/elm-debug.pegjs", "utf8"));
 
 describe('Parsing', () => {
   describe('Basic type parsing',() => {
+
+    it('without tag tag',()=>{
+      parser.parse(": True").value.should.deep.equal(true);
+    });
+    
+    it('with multiple `:` in the tag',()=>{
+      parser.parse("tag string :: : True").value.should.deep.equal(true);
+    });
+
     it('Boolean',()=>{
       parser.parse("tag string: True").value.should.deep.equal(true);
     });
