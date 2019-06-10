@@ -24,6 +24,7 @@ type alias Model =
     { array : Array Int
     , set : Set String
     , dict : Dict Int String
+    , dictWithTuples : Dict ( Int, Int ) String
     , bools : ( Bool, Bool )
     , custom : CustomType
     , tuple : ( Int, Int )
@@ -43,6 +44,7 @@ init =
       , set = Set.fromList [ "a", "b", "Some really long string with some nonsense" ]
       , bools = ( True, False )
       , dict = Dict.fromList [ ( 1, "a" ), ( 2, "b" ), ( 234, "String longer than one char" ) ]
+      , dictWithTuples = Dict.fromList [ ( ( 0, 1 ), "a" ), ( ( 2, 3 ), "b" ), ( ( 4, 5 ), "String longer than one char" ) ]
       , custom = Complex [ ( 1, Some "text" 1 ), ( 2, Recursive (Complex []) ), ( 3, None ) ]
       , tuple = ( 1, 2 )
       , complexTuple = ( 1, ( "longer string", ( "much longer string", 1 ) ) )

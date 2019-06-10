@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import { parse } from './elm-debug.pegjs';
+import ElmDebug from './elm-debug.pegjs';
+import ElmDebugSimple from './elm-debug-simple.pegjs';
 
 function keyValueLine(key, value, margin) {
   if(!margin) margin = 0;
@@ -185,41 +186,44 @@ function handleBody(value, config) {
   return ['div', {}, 'body'];
 }
 
-export function register() {
+export function register(opts = {simple_mode: false}) {
   const _log = console.log;
 
-  window.devtoolsFormatters = [
-    {
-      header: function(obj, config) {
-        if (
-          (!!obj.type && obj.type === 'ElmDebug') ||
-          (!!config && config.elmFormat)
-        ) {
-          if (!(_.isNil(config)) && !(_.isNil(config.key))) {
-            return keyValueLine(config.key, handleHeader(obj), 10);
+  if(!opts.simple_mode){
+    window.devtoolsFormatters = [
+      {
+        header: function(obj, config) {
+          if (
+            (!!obj.type && obj.type === 'ElmDebug') ||
+            (!!config && config.elmFormat)
+          ) {
+            if (!(_.isNil(config)) && !(_.isNil(config.key))) {
+              return keyValueLine(config.key, handleHeader(obj), 10);
+            } else {
+              return ['div', {}, handleHeader(obj)];
+            }
           } else {
-            return ['div', {}, handleHeader(obj)];
+            return null;
           }
-        } else {
-          return null;
+        },
+        hasBody: function(obj) {
+          return true;
+        },
+        body: function(obj, config) {
+          return ['div', {}, handleBody(obj, config)];
         }
-      },
-      hasBody: function(obj) {
-        return true;
-      },
-      body: function(obj, config) {
-        return ['div', {}, handleBody(obj, config)];
       }
-    }
-  ];
+    ];
+  }
 
   console.log = msg => {
     try {
-      const parsed = parse(msg);
+      const parsed = (!!opts.simple_mode) ? ElmDebugSimple.parse(msg) : ElmDebug.parse(msg);
       _log.call(console, JSON.parse(JSON.stringify(parsed)));
     } catch (err) {
       _log.call(console, msg);
     }
   };
 }
+
 

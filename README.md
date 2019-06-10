@@ -16,7 +16,9 @@ Just install this module with:
 
 ```yarn add -D elm-debug-transformer```
 
-And in your `index.js` register it with:
+## Usage
+
+In your `index.js` register it with:
 
 ```
 import ElmDebugger from 'elm-debug-transformer';
@@ -38,6 +40,16 @@ If your browser have Chrome dev toools, you can enable custom formatters so you 
   - Check-in "Enable custom formatters"
   - Close DevTools
   - Open DevTools
+
+### Simple object output
+
+```
+import ElmDebugger from 'elm-debug-transformer';
+
+ElmDebugger.register({simple_mode: true});
+```
+If you are not a fan of Chromium based browser you can pass option `{simple_mode: true}` to the `register` function. That way the `Debug.log` would output simpler JS object without `type` information. `Tuple`, `Set`, `Array` and `List` would become arrays and `Dict` would become JS object with keys and values.
+
 
 Note: You might need to refresh the page first time you open Console panel with existing logs - custom formatters are applied only to newly printed console messages.
 
