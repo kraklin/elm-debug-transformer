@@ -42,4 +42,7 @@ If your browser have Chrome dev toools, you can enable custom formatters so you 
 
 Note: You might need to refresh the page first time you open Console panel with existing logs - custom formatters are applied only to newly printed console messages.
 
+## Credits
+
+This would probably not see the light of the day without [Matt Zeunert](https://github.com/mattzeunert) and his [blogpost](https://www.mattzeunert.com/2016/02/19/custom-chrome-devtools-object-formatters.html) about writing custom formatters. Thank you!
 
