@@ -1,5 +1,10 @@
-# elm-debug-transformer
-Transform Elm Debug.log output into nice log object with custom formatter
+<div align="center">
+    <h1>Elm Debug Transformer</h1>
+    <a href="https://badge.fury.io/js/elm-debug-transformer">
+      <img src="https://badge.fury.io/js/elm-debug-transformer.svg" alt="version">
+    </a>
+    <p>Transform Elm Debug.log output into nice log object with custom formatter</p>
+</div>
 
 The standard Elm `Debug.log` console output:
 
