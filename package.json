@@ -4,6 +4,8 @@
   "description": "Transform Elm Debug.log output into nice log object with custom formatter",
   "main": "dist/elm-console-debug.js",
   "author": "Tomas Latal <tom@tomaslatal.cz>",
+  "repository": "https://github.com/kraklin/elm-debug-transformer",
+	"keywords":["elm", "debug", "console", "parser", "formatter"],
   "license": "MIT",
   "private": false,
   "scripts": {
