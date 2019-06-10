@@ -9,12 +9,15 @@ and the same output with this package
 
 ![Elm Debug.log with this package and custom formatter enabled in Chrome](img/nice_output.png)
 
+The main module exposes `register()` function that replaces your `console.log()` and try to parse each incoming message with Elm parser. If it fails, it would pass the original message.
 
 ## Installation
 
 Just install this module with:
 
-```yarn add -D elm-debug-transformer```
+```
+yarn add -D elm-debug-transformer
+```
 
 And in your `index.js` register it with:
 
@@ -23,8 +26,6 @@ import ElmDebugger from 'elm-debug-transformer';
 
 ElmDebugger.register();
 ```
-
-This would hook up your `console.log()` and try to parse each incoming message with Elm parser. If it fails, it would pass the original message.
 
 ### Enable custom formatters in Chrome dev tools
 Available in Chrome 47 and higher.
