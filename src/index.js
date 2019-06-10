@@ -14,6 +14,7 @@ function keyValueLine(key, value, margin) {
 
 function isFinalValue(value) {
   return (_.isString(value) 
+    || _.isBoolean(value)
     || value.type === "Type" 
     || value.type === "Unit"
     || value.type === "Number"
@@ -23,6 +24,8 @@ function isFinalValue(value) {
 function getFinalValue(value) {
   if (_.isString(value) )
     return `"${value}"`;
+  else if (_.isBoolean(value))
+    return (value)? "True" : "False";
   else if (value.type === 'Type')
     return value.name;
   else if (value.type === 'Unit')
