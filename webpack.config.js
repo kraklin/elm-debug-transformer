@@ -1,8 +1,9 @@
 // rollup.config.js
 const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
-  mode: 'none',
+  mode: 'production',
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -15,5 +16,8 @@ module.exports = {
       { test: /\.pegjs$/, use: [ { loader: 'pegjs-loader' } ]},
       { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }
     ]
+  },
+   optimization: {
+     minimizer: [new TerserPlugin()],
   }
 };
