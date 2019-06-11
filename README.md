@@ -29,7 +29,7 @@ yarn add -D elm-debug-transformer
 Register the console debugger in your main JS file before you initialize Elm application:
 
 ```
-import ElmDebugger from 'elm-debug-transformer';
+import * as ElmDebugger from 'elm-debug-transformer';
 
 ElmDebugger.register();
 
