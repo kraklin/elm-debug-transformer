@@ -54,7 +54,7 @@ Note: You might need to refresh the page first time you open Console panel with 
 ### Simple object output
 
 ```
-import ElmDebugger from 'elm-debug-transformer';
+import * as ElmDebugger from 'elm-debug-transformer';
 
 ElmDebugger.register({simple_mode: true});
 ```
