@@ -16,6 +16,21 @@ and the same output with this package
 
 The main module exposes `register()` function that replaces your `console.log()` and try to parse each incoming message with Elm parser. If it fails, it would pass the original message.
 
+## Limitations
+
+Right now you can insert only alphabet characters and spaces as a Debug.log tag. 
+```
+-- this would parse successfuly
+Debug.log "Some tag string" thingToPrintToConsole
+
+
+-- this would NOT BE PARSED
+Debug.log "Some String (with non [a-zA-Z] chars or numbers in it) " thingToPrintToConsole
+```
+
+This limitation is due to the problem recognizing arbitrary tag text from the rest of the types. I'm aware of that limitation and it is something that would be addressed in the upcoming versions. Thanks for understanding.
+
+
 ## Installation
 
 Just install this module with:
