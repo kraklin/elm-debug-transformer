@@ -1,6 +1,6 @@
 {
   "name": "elm-debug-transformer",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Transform Elm Debug.log output into nice log object with custom formatter",
   "main": "dist/elm-console-debug.js",
   "author": "Tomas Latal <tom@tomaslatal.cz>",
