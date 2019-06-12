@@ -33,6 +33,8 @@ function getFinalValue(value) {
     return "()";
   else if (value.type === 'Function')
     return "<function>";
+  else if (value.type === 'Internals')
+    return "<internals>";
   else
     return value.value
 }
@@ -186,7 +188,7 @@ function handleBody(value, config) {
   return ['div', {}, 'body'];
 }
 
-export function register(opts = {simple_mode: false}) {
+export function register(opts = {simple_mode: false, debug: false}) {
   const _log = console.log;
 
   if(!opts.simple_mode){
@@ -219,8 +221,16 @@ export function register(opts = {simple_mode: false}) {
   console.log = msg => {
     try {
       const parsed = (!!opts.simple_mode) ? ElmDebugSimple.parse(msg) : ElmDebug.parse(msg);
+
+      if (!!opts.debug){
+        _log.call(console, 'ElmDebugger console:');
+      }
+
       _log.call(console, JSON.parse(JSON.stringify(parsed)));
     } catch (err) {
+      if (!!opts.debug){
+        _log.call(console, `Parsing error: ${err}`);
+      }
       _log.call(console, msg);
     }
   };

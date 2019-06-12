@@ -48,8 +48,9 @@ Boolean
   = "True" {return true;}
   / "False" {return false;}
 
-Function
-  = "<function>" {return "<fn>";}
+Internals
+  = "<function>" {return {type: "<function>"};}
+  / "<internals>" {return {type: "<internals>"};}
 
 Type = 
 	type:[a-zA-Z]+ {return toStr(type);}

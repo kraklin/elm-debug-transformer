@@ -138,9 +138,12 @@ describe('Parsing', () => {
     });
   });
 
-  describe('Function', () => {
+  describe('Internals', () => {
     it('Function value', () => {
       parser.parse("custom type: <function>").value.should.deep.equal({type: "Function"});
+    });
+    it('Internals value', () => {
+      parser.parse("custom type: <internals>").value.should.deep.equal({type: "Internals"});
     });
   });
   

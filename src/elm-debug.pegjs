@@ -8,7 +8,7 @@ DebugString
   / ":" _ value:Value {return {type: "ElmDebug", tag: "", value: value};}
 
 Value
-  = Record / Array / Set / Dict / List / CustomTypeWithParens / Tuple / Number / Boolean / Type / Function / String
+  = Record / Array / Set / Dict / List / CustomTypeWithParens / Tuple / Number / Boolean / Type / Internals / String
 
 Record
   = "{}" {return {type: "Record", value: {}};}
@@ -48,8 +48,10 @@ Boolean
   = "True" {return true;}
   / "False" {return false;}
 
-Function
+Internals
   = "<function>" {return {type: "Function"};}
+  / "<internals>" {return {type: "Internals"};}
+
 
 Type = 
 	type:[a-zA-Z]+ {return {type: "Type", name: toStr(type)};}
