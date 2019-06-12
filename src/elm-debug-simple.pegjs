@@ -8,7 +8,7 @@ DebugString
   / ":" _ value:Value {return value;}
 
 Value
-  = Record / Array / Set / Dict / List / CustomTypeWithParens / Tuple / Number / Boolean / Type / Function / String
+  = Record / Array / Set / Dict / List / CustomTypeWithParens / Tuple / Number / Boolean / Type / Internals / String
 
 Record
   = "{}" {return {};}
