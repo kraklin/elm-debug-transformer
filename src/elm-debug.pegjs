@@ -8,12 +8,12 @@ DebugString
   / ":" _ value:Value {return {type: "ElmDebug", tag: "", value: value};}
 
 Value
-  = Record / Array / Set / Dict / List / CustomTypeWithParens / Tuple / Number / Boolean / Type / Internals / String
+  = Record / Array / Set / Dict / List / CustomTypeWithParens / Tuple / Number / Boolean / Type / Internals / Bytes / File / String
 
 Record
   = "{}" {return {type: "Record", value: {}};}
-  / "{ " chars:[a-zA-Z]+ " = " value:Value " }" {return {type: "Record", value: {[toStr(chars)]: value}}}
-  / "{ " chars:[a-zA-Z]+ " = " value:Value values:(", " tag:[a-zA-Z]+ " = " otherVal:Value {return {[toStr(tag)]: otherVal};})* " }" { var composed = [{[toStr(chars)]: value},...values].reduce((item, obj) => {return {...item,...obj} },{}); return {type: "Record", value: composed}}
+  / "{ " key:VariableName " = " value:Value " }" {return {type: "Record", value: {[key]: value}}}
+  / "{ " key:VariableName " = " value:Value values:(", " tag:VariableName " = " otherVal:Value {return {[tag]: otherVal};})* " }" { var composed = [{[key]: value},...values].reduce((item, obj) => {return {...item,...obj} },{}); return {type: "Record", value: composed}}
 
 Dict
   = "Dict.fromList " values:ListValue {return {type: "Dict", value: values.map((tuple) => { return {key: tuple.value[0], value: tuple.value[1]};})}}
@@ -52,7 +52,15 @@ Internals
   = "<function>" {return {type: "Function"};}
   / "<internals>" {return {type: "Internals"};}
 
+Bytes 
+  = "<" digits:[0-9]+ " bytes>" {return {type: "Bytes", value: parseInt(toStr(digits), 10)};}
 
+File
+  = "<" chars:(!('"' / "\\" / "<" / ">") char:. { return char; })+ ">" {return { type: "File", value: chars.join('') };}
+
+VariableName =
+	chars:[a-zA-Z0-9_]+ {return toStr(chars);}
+    
 Type = 
 	type:[a-zA-Z]+ {return {type: "Type", name: toStr(type)};}
 

@@ -118,6 +118,9 @@ describe('Parsing', () => {
     it('Nested records', () => {
       parser.parse("record: { name = \"Name\", warning = { name = Nothing, waves = [] } }").value.should.deep.equal({type: "Record", value: {"name": "Name", "warning": {type: "Record", value: {"name": {type: "Type", name: "Nothing"}, "waves": {type: "List", value: []}}}}});
     });
+    it('Vector', () => {
+      parser.parse("vec: { 0 = 0, 1 = 0, 2 = 0 }").value.should.deep.equal({type: "Record", value: {"0": {type: "Number", value: 0}, "1": {type: "Number", value: 0}, "2": {type: "Number", value: 0}}});
+    });
   });
 
   describe('Custom types', () => {
@@ -144,6 +147,18 @@ describe('Parsing', () => {
     });
     it('Internals value', () => {
       parser.parse("custom type: <internals>").value.should.deep.equal({type: "Internals"});
+    });
+  });
+
+  describe('Bytes', () => {
+    it('Bytes', () => {
+      parser.parse("bytes: <24294 bytes>").value.should.deep.equal({type: "Bytes", value: 24294});
+    });
+  });
+
+  describe('File', () => {
+    it('File', () => {
+      parser.parse("file: <Some-name-[and]_extrachars(0000239649).extension>").value.should.deep.equal({type: "File", value: "Some-name-[and]_extrachars(0000239649).extension"});
     });
   });
   

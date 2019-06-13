@@ -8,12 +8,12 @@ DebugString
   / ":" _ value:Value {return value;}
 
 Value
-  = Record / Array / Set / Dict / List / CustomTypeWithParens / Tuple / Number / Boolean / Type / Internals / String
+  = Record / Array / Set / Dict / List / CustomTypeWithParens / Tuple / Number / Boolean / Type / Internals / Bytes / File / String
 
 Record
   = "{}" {return {};}
-  / "{ " chars:[a-zA-Z]+ " = " value:Value " }" {return {[toStr(chars)]: value}}
-  / "{ " chars:[a-zA-Z]+ " = " value:Value values:(", " tag:[a-zA-Z]+ " = " otherVal:Value {return {[toStr(tag)]: otherVal};})* " }" { var composed = [{[toStr(chars)]: value},...values].reduce((item, obj) => {return {...item,...obj} },{}); return composed}
+  / "{ " key:VariableName " = " value:Value " }" {return {[key]: value}}
+  / "{ " key:VariableName " = " value:Value values:(", " tag:VariableName " = " otherVal:Value {return {[tag]: otherVal};})* " }" { var composed = [{[key]: value},...values].reduce((item, obj) => {return {...item,...obj} },{}); return composed}
 
 Dict
   = "Dict.fromList " values:ListValue {return values.map((tuple) => { return {[tuple[0]]: tuple[1]};})}
@@ -51,6 +51,15 @@ Boolean
 Internals
   = "<function>" {return {type: "<function>"};}
   / "<internals>" {return {type: "<internals>"};}
+
+Bytes 
+  = "<" digits:[0-9]+ " bytes>" {return {type: "Bytes", value: parseInt(toStr(digits), 10)};}
+
+File
+  = "<" chars:(!('"' / "\\" / "<" / ">") char:. { return char; })+ ">" {return { type: "File", value: chars.join('')}; }
+
+VariableName =
+	chars:[a-zA-Z0-9_]+ {return toStr(chars);}
 
 Type = 
 	type:[a-zA-Z]+ {return toStr(type);}
