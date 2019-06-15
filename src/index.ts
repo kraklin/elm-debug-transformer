@@ -1,6 +1,16 @@
 import * as _ from 'lodash';
-import ElmDebug from './elm-debug.pegjs';
-import ElmDebugSimple from './elm-debug-simple.pegjs';
+import * as PegJS from 'pegjs'
+import elmGrammar from '!!raw-loader!./elm-debug.pegjs';
+import {ElmDebug} from './CommonTypes';
+import SimpleFormatter from './formatters/SimpleFormatter';
+
+declare global {
+  interface Window {
+    devtoolsFormatters: any;
+  }
+}
+
+const parser = PegJS.generate(elmGrammar);
 
 function keyValueLine(key, value, margin) {
   if(!margin) margin = 0;
@@ -97,7 +107,7 @@ function handleHeader(value) {
       return getFinalValue(value);
 
     default:
-        return toString(value);
+      return JSON.stringify(value);
   }
 }
 
@@ -220,13 +230,14 @@ export function register(opts = {simple_mode: false, debug: false}) {
 
   console.log = msg => {
     try {
-      const parsed = (!!opts.simple_mode) ? ElmDebugSimple.parse(msg) : ElmDebug.parse(msg);
-
       if (!!opts.debug){
         _log.call(console, 'ElmDebugger console:');
       }
 
-      _log.call(console, JSON.parse(JSON.stringify(parsed)));
+      let parsed = parser.parse(msg) as ElmDebug;
+      const formatter = new SimpleFormatter();
+
+      _log.call(console, JSON.parse(JSON.stringify(formatter.format(parsed))));
     } catch (err) {
       if (!!opts.debug){
         _log.call(console, `Parsing error: ${err}`);

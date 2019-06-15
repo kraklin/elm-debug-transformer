@@ -3,8 +3,8 @@ const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
-  mode: 'production',
-  entry: './src/index.js',
+  mode: 'development',
+  entry: './src/index.ts',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'elm-console-debug.js',
@@ -13,11 +13,16 @@ module.exports = {
   },
   module: {
     rules: [
-      { test: /\.pegjs$/, use: [ { loader: 'pegjs-loader' } ]},
+      { test: /\.tsx?$/, use: 'ts-loader', exclude: /node_modules/ },
       { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }
     ]
   },
-   optimization: {
-     minimizer: [new TerserPlugin()],
+  resolve: {
+    extensions: [ '.ts', '.js' ]
   }
+  //,
+  
+  //optimization: {
+     //minimizer: [new TerserPlugin()],
+  //}
 };
