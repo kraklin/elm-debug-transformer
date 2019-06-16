@@ -61,12 +61,10 @@ describe('Parsing', () => {
         });
 
         it('Basic tuple', () => {
-            parser
-                .parse('tuple: (123, False)')
-                .value.should.deep.equal({
-                    type: 'Tuple',
-                    value: [{ type: 'Number', value: 123 }, false],
-                });
+            parser.parse('tuple: (123, False)').value.should.deep.equal({
+                type: 'Tuple',
+                value: [{ type: 'Number', value: 123 }, false],
+            });
         });
 
         it('Arbitrary long tuple', () => {
@@ -107,12 +105,10 @@ describe('Parsing', () => {
         });
 
         it('Singleton', () => {
-            parser
-                .parse('singleton: [1]')
-                .value.should.deep.equal({
-                    type: 'List',
-                    value: [{ type: 'Number', value: 1 }],
-                });
+            parser.parse('singleton: [1]').value.should.deep.equal({
+                type: 'List',
+                value: [{ type: 'Number', value: 1 }],
+            });
         });
         it('List', () => {
             parser
@@ -193,12 +189,10 @@ describe('Parsing', () => {
                 .value.should.deep.equal({ type: 'Record', value: {} });
         });
         it('Record', () => {
-            parser
-                .parse('record: { name = "Name" }')
-                .value.should.deep.equal({
-                    type: 'Record',
-                    value: { name: 'Name' },
-                });
+            parser.parse('record: { name = "Name" }').value.should.deep.equal({
+                type: 'Record',
+                value: { name: 'Name' },
+            });
         });
         it('Record with more values', () => {
             parser
@@ -249,13 +243,11 @@ describe('Parsing', () => {
 
     describe('Custom types', () => {
         it('Custom type with one value', () => {
-            parser
-                .parse('custom type: User "Adam"')
-                .value.should.deep.equal({
-                    type: 'Custom',
-                    name: 'User',
-                    value: ['Adam'],
-                });
+            parser.parse('custom type: User "Adam"').value.should.deep.equal({
+                type: 'Custom',
+                name: 'User',
+                value: ['Adam'],
+            });
         });
         it('Custom type with more values', () => {
             parser

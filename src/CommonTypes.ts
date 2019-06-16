@@ -1,26 +1,18 @@
-export interface ElmDebug {
-    tag: string;
-    value:
-        | ElmDebugValue
-        | { key: string; value: ElmDebugValue }[]
-        | object
-        | Number
-        | String
-        | Boolean;
-}
+export type ElmDebugValueType =
+    | ElmDebugValue
+    | ElmDebugDictValues
+    | object
+    | string
+    | boolean;
 
-export interface ElmDebugValue {
+export type ElmDebugDictValues = { key: string; value: ElmDebugValueType }[];
+
+export type ElmDebugValue = {
     type: string;
     name?: string;
-    value?:
-        | ElmDebugValue
-        | { key: string; value: ElmDebugValue }[]
-        | object
-        | Number
-        | String
-        | Boolean;
-}
+    value?: ElmDebugValueType;
+};
 
 export interface IFormatter {
-    format(obj: ElmDebug): any;
+    format(obj: ElmDebugValue): any;
 }

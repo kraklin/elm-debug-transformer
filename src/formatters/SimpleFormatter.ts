@@ -1,9 +1,9 @@
-import { ElmDebug, IFormatter } from '../CommonTypes';
+import { ElmDebugValue, IFormatter } from '../CommonTypes';
 import * as _ from 'lodash';
 
 export default class SimpleFormatter implements IFormatter {
-    public format(obj: ElmDebug): any {
-        return this.formatValue(obj.value);
+    public format(obj: ElmDebugValue): any {
+        return { [obj.name]: this.formatValue(obj.value) };
     }
 
     toKey(key: any): string {
@@ -61,6 +61,12 @@ export default class SimpleFormatter implements IFormatter {
 
             case 'Function':
                 return '<function>';
+
+            case 'Internals':
+                return '<internals>';
+
+            case 'Bytes':
+                return formatee.value + ' B';
 
             case 'Custom':
                 return this.formatCustom(formatee);

@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import * as _ from 'lodash';
-import { ElmDebug, ElmDebugValue } from '../src/CommonTypes';
+import { ElmDebugValue } from '../src/CommonTypes';
 import SimpleFormatter from '../src/formatters/SimpleFormatter';
 
-function elmDebug(values): ElmDebug {
-    return { tag: 'Elm Debug', value: values };
+function elmDebug(values): ElmDebugValue {
+    return { type: 'ElmDebug', name: 'Debug', value: values };
 }
 
 function list(values: any[]): ElmDebugValue {
@@ -45,19 +45,21 @@ beforeEach(() => {
 describe('Simple formatting', () => {
     describe('should return values for simple values', () => {
         it('string', () => {
-            expect(formatter.format({ tag: 'str', value: 'string' })).to.equal(
-                'string'
-            );
+            expect(formatter.format(elmDebug('string'))).to.deep.equal({
+                Debug: 'string',
+            });
         });
 
         it('int', () => {
-            expect(formatter.format({ tag: 'int', value: 123 })).to.equal(123);
+            expect(formatter.format(elmDebug(123))).to.deep.equal({
+                Debug: 123,
+            });
         });
 
         it('bool', () => {
-            expect(formatter.format({ tag: 'int', value: false })).to.equal(
-                false
-            );
+            expect(formatter.format(elmDebug(false))).to.deep.equal({
+                Debug: false,
+            });
         });
     });
 
@@ -71,7 +73,7 @@ describe('Simple formatting', () => {
                         })
                     )
                 )
-            ).to.deep.equal({ list: [] });
+            ).to.deep.equal({ Debug: { list: [] } });
         });
 
         it('numbers list', () => {
@@ -83,7 +85,7 @@ describe('Simple formatting', () => {
                         })
                     )
                 )
-            ).to.deep.equal({ list: [1, 2, 3] });
+            ).to.deep.equal({ Debug: { list: [1, 2, 3] } });
         });
     });
 
@@ -97,7 +99,7 @@ describe('Simple formatting', () => {
                         })
                     )
                 )
-            ).to.deep.equal({ list: [] });
+            ).to.deep.equal({ Debug: { list: [] } });
         });
 
         it('list of Maybe types', () => {
@@ -115,14 +117,21 @@ describe('Simple formatting', () => {
                     )
                 )
             ).to.deep.equal({
-                list: ['Nothing', { Just: ['String'] }, 'Nothing', 'Nothing'],
+                Debug: {
+                    list: [
+                        'Nothing',
+                        { Just: ['String'] },
+                        'Nothing',
+                        'Nothing',
+                    ],
+                },
             });
         });
 
         it('Custom with just one value', () => {
             expect(
                 formatter.format(elmDebug(customType('Just', ['String'])))
-            ).to.deep.equal({ Just: 'String' });
+            ).to.deep.equal({ Debug: { Just: 'String' } });
         });
 
         it('Nested custom', () => {
@@ -137,7 +146,9 @@ describe('Simple formatting', () => {
                         ])
                     )
                 )
-            ).to.deep.equal({ Just: { Node: [{ Leaf: 1 }, { Leaf: 2 }] } });
+            ).to.deep.equal({
+                Debug: { Just: { Node: [{ Leaf: 1 }, { Leaf: 2 }] } },
+            });
         });
     });
 
@@ -145,7 +156,7 @@ describe('Simple formatting', () => {
         it('simple record', () => {
             expect(
                 formatter.format(elmDebug(record({ name: 'Name', age: 12 })))
-            ).to.deep.equal({ name: 'Name', age: 12 });
+            ).to.deep.equal({ Debug: { name: 'Name', age: 12 } });
         });
     });
 
@@ -154,17 +165,45 @@ describe('Simple formatting', () => {
             let value = elmDebug(dict({ name: 'Name', age: '12' }));
 
             expect(formatter.format(value)).to.deep.equal({
-                name: 'Name',
-                age: '12',
+                Debug: {
+                    name: 'Name',
+                    age: '12',
+                },
             });
         });
     });
 
     describe('should return values for internals', () => {
-        it('handles simple record', () => {
+        it('Function', () => {
             let value = elmDebug({ type: 'Function' });
 
-            expect(formatter.format(value)).to.deep.equal('<function>');
+            expect(formatter.format(value)).to.deep.equal({
+                Debug: '<function>',
+            });
+        });
+
+        it('Internals', () => {
+            let value = elmDebug({ type: 'Internals' });
+
+            expect(formatter.format(value)).to.deep.equal({
+                Debug: '<internals>',
+            });
+        });
+    });
+
+    describe('should return values for bytes and files', () => {
+        it('Bytes', () => {
+            let value = elmDebug({ type: 'Bytes', value: 1234 });
+
+            expect(formatter.format(value)).to.deep.equal({ Debug: '1234 B' });
+        });
+
+        it('Files', () => {
+            let value = elmDebug({ type: 'File', value: 'Name-of_the.file' });
+
+            expect(formatter.format(value)).to.deep.equal({
+                Debug: 'Name-of_the.file',
+            });
         });
     });
 });
