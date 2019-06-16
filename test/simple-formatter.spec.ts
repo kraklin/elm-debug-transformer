@@ -1,17 +1,22 @@
 import { expect } from 'chai';
 import * as _ from 'lodash';
-import { ElmDebugValue, IFormatter } from '../src/CommonTypes';
+import {
+    ElmDebugListValue,
+    ElmDebugValue,
+    ElmDebugRecordValue,
+    IFormatter,
+} from '../src/CommonTypes';
 import SimpleFormatter from '../src/formatters/SimpleFormatter';
 
 function elmDebug(values: any): ElmDebugValue {
     return { type: 'ElmDebug', name: 'Debug', value: values };
 }
 
-function list(values: any[]): ElmDebugValue {
+function list(values: any[]): ElmDebugListValue {
     return { type: 'List', value: values };
 }
 
-function record(values: object) {
+function record(values: { [key: string]: any }): ElmDebugRecordValue {
     return { type: 'Record', value: values };
 }
 
@@ -62,8 +67,8 @@ describe('Simple formatting', () => {
             });
         });
         it('unit', () => {
-          expect(formatter.format(elmDebug({type: "Unit"}))).to.deep.equal({
-                Debug: "()",
+            expect(formatter.format(elmDebug({ type: 'Unit' }))).to.deep.equal({
+                Debug: '()',
             });
         });
     });

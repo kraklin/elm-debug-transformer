@@ -1,25 +1,16 @@
-import {
-    ElmDebugDictValues,
-    ElmDebugValue,
-    ElmDebugValueType,
-    ElmDebugCustomValue,
-    ElmDebugRecordValue,
-    isElmValue,
-    IFormatter,
-} from '../CommonTypes';
-import * as _ from 'lodash';
+import * as T from '../CommonTypes';
+import { mapValues, defaults } from 'lodash';
 
-
-export default class SimpleFormatter implements IFormatter {
-    public format(obj: ElmDebugValue): object {
+export default class SimpleFormatter implements T.IFormatter {
+    public format(obj: T.ElmDebugValue): object {
         return { [obj.name]: this.formatValue(obj.value) };
     }
 
-    formatArray(array: ElmDebugValueType[]): object[] {
+    formatArray(array: T.ElmDebugValueType[]): object[] {
         return array.map(v => this.formatValue(v));
     }
 
-    formatCustom(custom: ElmDebugCustomValue): { [key: string]: any } {
+    formatCustom(custom: T.ElmDebugCustomValue): { [key: string]: any } {
         return {
             [custom.name]:
                 custom.value.length === 1
@@ -28,41 +19,48 @@ export default class SimpleFormatter implements IFormatter {
         };
     }
 
-    formatValue(formatee: ElmDebugValueType): any {
-        if (!isElmValue(formatee)) {
+    formatValue(formatee: T.ElmDebugValueType): any {
+        if (
+            typeof formatee === 'string' ||
+            typeof formatee == 'number' ||
+            typeof formatee == 'boolean'
+        ) {
             return formatee;
         }
 
+        if (T.isElmCustomValue(formatee)) {
+            return this.formatCustom(formatee);
+        }
+
+        if (T.isElmRecordValue(formatee)) {
+            return mapValues(formatee.value, v => this.formatValue(v));
+        }
+
+        if (T.isElmListValue(formatee)) {
+            return this.formatArray(formatee.value);
+        }
+
+        if (T.isElmDictValue(formatee)) {
+            return formatee.value.reduce(
+                (result, dictItem: { [k: string]: any }) => {
+                    return defaults(
+                        {
+                            [this.formatValue(dictItem.key)]: this.formatValue(
+                                dictItem.value
+                            ),
+                        },
+                        result
+                    );
+                },
+                {}
+            );
+        }
+
+        if (T.isElmTypeValue(formatee)) {
+            return formatee.name;
+        }
+
         switch (formatee.type) {
-            case 'Record':
-                return _.mapValues(<ElmDebugRecordValue>formatee.value, v =>
-                    this.formatValue(v)
-                );
-
-            case 'List':
-            case 'Set':
-            case 'Array':
-            case 'Tuple':
-                return this.formatArray(<ElmDebugValueType[]>formatee.value);
-
-            case 'Dict':
-                return (<ElmDebugDictValues>formatee.value).reduce(
-                    (result, dictItem: { [k: string]: any }) => {
-                        return _.defaults(
-                            {
-                                [this.formatValue(
-                                    dictItem.key
-                                )]: this.formatValue(dictItem.value),
-                            },
-                            result
-                        );
-                    },
-                    {}
-                );
-
-            case 'Type':
-                return formatee.name;
-
             case 'Function':
                 return '<function>';
 
@@ -74,9 +72,6 @@ export default class SimpleFormatter implements IFormatter {
 
             case 'Unit':
                 return '()';
-
-            case 'Custom':
-                return this.formatCustom(<ElmDebugCustomValue>formatee);
 
             default:
                 return formatee.value !== undefined

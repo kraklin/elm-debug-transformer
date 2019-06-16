@@ -20,7 +20,7 @@ export function register(opts = { simple_mode: false, debug: false }) {
                 _log.call(console, 'Original message:', msg);
             }
 
-            const parsed = parser.parse(msg) as ElmDebugValue
+            const parsed = parser.parse(msg) as ElmDebugValue;
 
             _log.call(
                 console,
