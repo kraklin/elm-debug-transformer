@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import * as _ from 'lodash';
-import { ElmDebugValue } from '../src/CommonTypes';
+import { ElmDebugValue, IFormatter } from '../src/CommonTypes';
 import SimpleFormatter from '../src/formatters/SimpleFormatter';
 
-function elmDebug(values): ElmDebugValue {
+function elmDebug(values: any): ElmDebugValue {
     return { type: 'ElmDebug', name: 'Debug', value: values };
 }
 
@@ -23,7 +23,7 @@ function customType(name: String, values: any[]) {
     return { type: 'Custom', name: name, value: values };
 }
 
-function type(name) {
+function type(name: string) {
     return { type: 'Type', name: name };
 }
 
@@ -36,7 +36,7 @@ function dict(dict: object) {
     };
 }
 
-let formatter;
+let formatter: IFormatter;
 
 beforeEach(() => {
     formatter = new SimpleFormatter();

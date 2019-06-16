@@ -7,6 +7,12 @@ declare global {
     }
 }
 
+type Config = {
+  elmFormat: boolean,
+  key: any,
+  level: number
+}
+
 export default class DevToolsFormatter implements IFormatter {
     constructor() {
         window.devtoolsFormatters = [this];
@@ -16,7 +22,7 @@ export default class DevToolsFormatter implements IFormatter {
         return obj;
     }
 
-    header(obj: ElmDebugValue, config) {
+    header(obj: ElmDebugValue, config: Config) {
         if (
             (!!obj.type && obj.type === 'ElmDebug') ||
             (!!config && config.elmFormat)
@@ -34,14 +40,14 @@ export default class DevToolsFormatter implements IFormatter {
             return null;
         }
     }
-    hasBody(obj) {
+    hasBody(obj: any) {
         return true;
     }
-    body(obj, config) {
+    body(obj: any, config: Config) {
         return ['div', {}, this.handleBody(obj, config)];
     }
 
-    keyValueLine(key, value, margin) {
+    keyValueLine(key: any, value: any, margin: number) {
         if (!margin) margin = 0;
 
         return [
@@ -53,7 +59,7 @@ export default class DevToolsFormatter implements IFormatter {
         ];
     }
 
-    isFinalValue(value) {
+    isFinalValue(value: any) {
         return (
             _.isString(value) ||
             _.isBoolean(value) ||
@@ -64,7 +70,7 @@ export default class DevToolsFormatter implements IFormatter {
         );
     }
 
-    getFinalValue(value) {
+    getFinalValue(value: any) {
         if (_.isString(value)) return `"${value}"`;
         else if (_.isBoolean(value)) return value ? 'True' : 'False';
         else if (value.type === 'Type') return value.name;
@@ -74,11 +80,11 @@ export default class DevToolsFormatter implements IFormatter {
         else return value.value;
     }
 
-    indentValue(level) {
+    indentValue(level: number) {
         return 10 * level;
     }
 
-    handleHeader(value) {
+    handleHeader(value: any): any {
         if (!value.type || !value.value) {
             if (this.isFinalValue(value)) return this.getFinalValue(value);
             else return null;
@@ -89,7 +95,7 @@ export default class DevToolsFormatter implements IFormatter {
                 const tag = !!value.name ? value.name + ': ' : '';
                 return tag + this.handleHeader(value.value);
             case 'Record':
-                const keys = _.chain(value.value)
+                const keys:any[] = _.chain(value.value)
                     .mapValues((v, k) => {
                         return k + ' = ' + this.handleHeader(v);
                     })
@@ -99,14 +105,14 @@ export default class DevToolsFormatter implements IFormatter {
                 return `{ ${_.truncate(keys.join(', '))} }`;
 
             case 'Tuple':
-                const tupleValues = value.value.map(v => {
+                const tupleValues = value.value.map((v:any)=> {
                     return this.handleHeader(v);
                 });
 
                 return `( ${tupleValues.join(', ')} )`;
 
             case 'Custom':
-                const typeValues = value.value.map(v => {
+                const typeValues = value.value.map((v:any) => {
                     return this.handleHeader(v);
                 });
                 if (typeValues.length === 0) return value.name;
@@ -133,8 +139,8 @@ export default class DevToolsFormatter implements IFormatter {
         }
     }
 
-    listBody(value, level) {
-        const listValues = value.map((v, i) => {
+    listBody(value: any, level: number) {
+        const listValues = value.map((v:any, i:any) => {
             if (this.isFinalValue(v)) {
                 return this.keyValueLine(i, this.getFinalValue(v), 34);
             }
@@ -155,7 +161,7 @@ export default class DevToolsFormatter implements IFormatter {
         return ['div', {}].concat(listValues);
     }
 
-    handleBody(value, config) {
+    handleBody(value:any, config?: Config):any {
         const level = !config || !config.level ? 1 : config.level + 1;
 
         if (!value.type || !value.value) {
@@ -164,7 +170,7 @@ export default class DevToolsFormatter implements IFormatter {
 
         switch (value.type) {
             case 'ElmDebug':
-                return ['div', {}, this.handleBody(value.value, {})];
+                return ['div', {}, this.handleBody(value.value, null)];
             case 'Record':
                 const values = _.chain(value.value)
                     .mapValues((v, k) => {
@@ -206,7 +212,7 @@ export default class DevToolsFormatter implements IFormatter {
                 else return this.listBody(value.value, level);
 
             case 'Dict':
-                const dictValues = value.value.map(item => {
+            const dictValues = value.value.map((item:{key:any, value:any}) => {
                     let key = this.isFinalValue(item.key)
                         ? this.getFinalValue(item.key)
                         : this.handleHeader(item.key);

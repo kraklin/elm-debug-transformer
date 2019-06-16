@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "./dist/",
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "module": "es6",
     "moduleResolution": "node",
     "types": ["mocha"],
