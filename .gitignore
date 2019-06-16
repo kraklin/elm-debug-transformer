@@ -3,3 +3,4 @@ dist
 
 yarn.lock
 yarn-error.lock
+yarn-error.log
