@@ -61,6 +61,11 @@ describe('Simple formatting', () => {
                 Debug: false,
             });
         });
+        it('unit', () => {
+          expect(formatter.format(elmDebug({type: "Unit"}))).to.deep.equal({
+                Debug: "()",
+            });
+        });
     });
 
     describe('should return values for lists', () => {

@@ -1,11 +1,12 @@
 export type ElmDebugValueType =
     | ElmDebugValue
     | ElmDebugCustomValue
-    | object
+    | ElmDebugDictValues
+    | ElmDebugRecordValue
     | string
+    | number
     | boolean;
 
-export type ElmDebugDictValues = { key: string; value: ElmDebugValueType }[];
 
 export type ElmDebugValue = {
     type: string;
@@ -18,6 +19,10 @@ export type ElmDebugCustomValue = {
     name: string;
     value: ElmDebugValueType[];
 };
+
+export type ElmDebugRecordValue = {[key: string]: ElmDebugValueType};
+
+export type ElmDebugDictValues = { key: string; value: ElmDebugValueType }[];
 
 export interface IFormatter {
     format(obj: ElmDebugValue): any;

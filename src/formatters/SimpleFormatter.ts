@@ -3,10 +3,12 @@ import {
     ElmDebugValue,
     ElmDebugValueType,
     ElmDebugCustomValue,
+    ElmDebugRecordValue,
     isElmValue,
     IFormatter,
 } from '../CommonTypes';
 import * as _ from 'lodash';
+
 
 export default class SimpleFormatter implements IFormatter {
     public format(obj: ElmDebugValue): object {
@@ -33,7 +35,7 @@ export default class SimpleFormatter implements IFormatter {
 
         switch (formatee.type) {
             case 'Record':
-                return _.mapValues(<ElmDebugValue>formatee.value, v =>
+                return _.mapValues(<ElmDebugRecordValue>formatee.value, v =>
                     this.formatValue(v)
                 );
 
@@ -41,7 +43,7 @@ export default class SimpleFormatter implements IFormatter {
             case 'Set':
             case 'Array':
             case 'Tuple':
-                return this.formatArray(<ElmDebugValue[]>formatee.value);
+                return this.formatArray(<ElmDebugValueType[]>formatee.value);
 
             case 'Dict':
                 return (<ElmDebugDictValues>formatee.value).reduce(
@@ -69,6 +71,9 @@ export default class SimpleFormatter implements IFormatter {
 
             case 'Bytes':
                 return formatee.value + ' B';
+
+            case 'Unit':
+                return '()';
 
             case 'Custom':
                 return this.formatCustom(<ElmDebugCustomValue>formatee);

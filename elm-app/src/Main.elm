@@ -38,6 +38,7 @@ type alias Model =
     , nonEmptyList : ( Int, List Int )
     , complexTuple : ( Int, ( String, ( String, Int ) ) )
     , int : Int
+    , unit : ()
     , string : String
     , list : List (Maybe (List String))
     , listSingleton : List String
@@ -65,6 +66,7 @@ init =
       , nonEmptyList = ( 1, [] )
       , function = String.fromInt
       , binaryTree = Node (Node (Leaf None) (Leaf None)) (Node (Leaf None) (Leaf None))
+      , unit = ()
       }
     , Cmd.none
     )
