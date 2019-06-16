@@ -34,7 +34,7 @@ CustomTypeWithParens
 
 CustomType 
   = mainType:Type values:(_ value:Value {return value;})+ {return {type: "Custom", name: mainType.name, value: values};}
-  / mainType:Type _ "(" _ customType:CustomType _ ")" {return {type: "Custom", name: mainType.name, value: customType};}
+  / mainType:Type _ customType:CustomTypeWithParens {return {type: "Custom", name: mainType.name, value: customType};}
 
 List 
   = list:ListValue {return {type: "List", value: list};}
