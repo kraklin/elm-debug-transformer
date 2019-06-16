@@ -1,6 +1,6 @@
 export type ElmDebugValueType =
     | ElmDebugValue
-    | ElmDebugDictValues
+    | ElmDebugCustomValue
     | object
     | string
     | boolean;
@@ -13,6 +13,16 @@ export type ElmDebugValue = {
     value?: ElmDebugValueType;
 };
 
+export type ElmDebugCustomValue = {
+    type: string;
+    name: string;
+    value: ElmDebugValueType[];
+};
+
 export interface IFormatter {
     format(obj: ElmDebugValue): any;
+}
+
+export function isElmValue(value: any): value is ElmDebugValue {
+    return (<ElmDebugValue>value).type !== undefined;
 }

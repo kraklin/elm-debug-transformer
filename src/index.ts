@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as PegJS from 'pegjs';
 import elmGrammar from '!!raw-loader!./elm-debug.pegjs';
-import { ElmDebug } from './CommonTypes';
+import { ElmDebugValue } from './CommonTypes';
 import SimpleFormatter from './formatters/SimpleFormatter';
 import DevToolsFormatter from './formatters/DevToolsFormatter';
 
@@ -20,7 +20,7 @@ export function register(opts = { simple_mode: false, debug: false }) {
                 _log.call(console, 'Original message:', msg);
             }
 
-            const parsed = parser.parse(msg) as ElmDebug;
+            const parsed = parser.parse(msg) as ElmDebugValue
 
             _log.call(
                 console,

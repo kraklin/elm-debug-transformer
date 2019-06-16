@@ -1,23 +1,23 @@
-import { ElmDebugValue, IFormatter } from '../CommonTypes';
+import {
+    ElmDebugDictValues,
+    ElmDebugValue,
+    ElmDebugValueType,
+    ElmDebugCustomValue,
+    isElmValue,
+    IFormatter,
+} from '../CommonTypes';
 import * as _ from 'lodash';
 
 export default class SimpleFormatter implements IFormatter {
-    public format(obj: ElmDebugValue): any {
+    public format(obj: ElmDebugValue): object {
         return { [obj.name]: this.formatValue(obj.value) };
     }
 
-    toKey(key: any): string {
-        return this.formatValue(key);
-    }
-
-    formatArray(array: any[]): any[] {
+    formatArray(array: ElmDebugValueType[]): object[] {
         return array.map(v => this.formatValue(v));
     }
 
-    formatCustom(custom: {
-        name: string;
-        value: any[];
-    }): { [key: string]: any } {
+    formatCustom(custom: ElmDebugCustomValue): { [key: string]: any } {
         return {
             [custom.name]:
                 custom.value.length === 1
@@ -26,29 +26,31 @@ export default class SimpleFormatter implements IFormatter {
         };
     }
 
-    formatValue(formatee: any): any {
-        if (formatee.type === undefined) {
+    formatValue(formatee: ElmDebugValueType): any {
+        if (!isElmValue(formatee)) {
             return formatee;
         }
 
         switch (formatee.type) {
             case 'Record':
-                return _.mapValues(formatee.value, v => this.formatValue(v));
+                return _.mapValues(<ElmDebugValue>formatee.value, v =>
+                    this.formatValue(v)
+                );
 
             case 'List':
             case 'Set':
             case 'Array':
             case 'Tuple':
-                return this.formatArray(formatee.value);
+                return this.formatArray(<ElmDebugValue[]>formatee.value);
 
             case 'Dict':
-                return formatee.value.reduce(
+                return (<ElmDebugDictValues>formatee.value).reduce(
                     (result, dictItem: { [k: string]: any }) => {
                         return _.defaults(
                             {
-                                [this.toKey(dictItem.key)]: this.formatValue(
-                                    dictItem.value
-                                ),
+                                [this.formatValue(
+                                    dictItem.key
+                                )]: this.formatValue(dictItem.value),
                             },
                             result
                         );
@@ -69,7 +71,7 @@ export default class SimpleFormatter implements IFormatter {
                 return formatee.value + ' B';
 
             case 'Custom':
-                return this.formatCustom(formatee);
+                return this.formatCustom(<ElmDebugCustomValue>formatee);
 
             default:
                 return formatee.value !== undefined
