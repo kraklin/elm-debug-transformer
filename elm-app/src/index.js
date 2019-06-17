@@ -3,7 +3,7 @@ import { Elm } from './Main.elm';
 import registerServiceWorker from './registerServiceWorker';
 import { register } from '../../dist/elm-console-debug.js';
 
-register({simple_mode: true, debug: true});
+register();
 
 
 Elm.Main.init({

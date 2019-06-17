@@ -5,14 +5,21 @@ import { ElmDebugValue } from './CommonTypes';
 import SimpleFormatter from './formatters/SimpleFormatter';
 import DevToolsFormatter from './formatters/DevToolsFormatter';
 
+declare global {
+    interface Window {
+        chrome: any;
+    }
+}
+
 export function register(opts = { simple_mode: false, debug: false }) {
     const _log = console.log;
 
     const parser = PegJS.generate(elmGrammar);
 
-    const formatter = !!opts.simple_mode
-        ? new SimpleFormatter()
-        : new DevToolsFormatter();
+    const formatter =
+        !!opts.simple_mode || !window.chrome
+            ? new SimpleFormatter()
+            : new DevToolsFormatter();
 
     console.log = msg => {
         try {

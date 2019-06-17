@@ -2,6 +2,18 @@ export interface IFormatter {
     format(obj: ElmDebugValue): any;
 }
 
+export type Config = {
+    elmFormat: boolean;
+    key: any;
+    level: number;
+};
+
+export interface IChromeConsoleFormatter {
+    handleHeader(obj: ElmDebugValue, config: Config): any;
+    handleBody(obj: ElmDebugValue, config: Config): any;
+    renderLine(key: any, value: any, margin: number): any;
+}
+
 export type ElmDebugValueType =
     | ElmDebugValue
     | ElmDebugCustomValue
@@ -10,7 +22,6 @@ export type ElmDebugValueType =
     | ElmDebugDictValue
     | ElmDebugTypeValueType
     | string
-    | number
     | boolean;
 
 export type ElmDebugValue = {
