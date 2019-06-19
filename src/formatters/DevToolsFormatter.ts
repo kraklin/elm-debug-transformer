@@ -1,31 +1,33 @@
+import * as _ from 'lodash';
 import {
-    Config,
-    ElmDebugValue,
-    IFormatter,
     IChromeConsoleFormatter,
+    IConfig,
+    IElmDebugValue,
+    IFormatter,
 } from '../CommonTypes';
 import ChromeConsoleFormatter from './ChromeConsoleFormatter';
-import * as _ from 'lodash';
 
+/* tslint:disable */
 declare global {
     interface Window {
         devtoolsFormatters: any;
     }
 }
+/* tslint:enable*/
 
 export default class DevToolsFormatter implements IFormatter {
-    formatter: IChromeConsoleFormatter;
+    public formatter: IChromeConsoleFormatter;
 
     constructor() {
         this.formatter = new ChromeConsoleFormatter();
         window.devtoolsFormatters = [this];
     }
 
-    public format(obj: ElmDebugValue): any {
+    public format(obj: IElmDebugValue): any {
         return obj;
     }
 
-    header(obj: ElmDebugValue, config: Config) {
+    public header(obj: IElmDebugValue, config: IConfig) {
         if (
             (!!obj.type && obj.type === 'ElmDebug') ||
             (!!config && config.elmFormat)
@@ -43,10 +45,10 @@ export default class DevToolsFormatter implements IFormatter {
             return null;
         }
     }
-    hasBody(obj: any) {
+    public hasBody(obj: any) {
         return true;
     }
-    body(obj: any, config: Config) {
+    public body(obj: any, config: IConfig) {
         return ['div', {}, this.formatter.handleBody(obj, config)];
     }
 }

@@ -18,7 +18,7 @@
     "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --opts mocha.opts",
     "test:watch": "yarn test --watch",
     "build": "webpack",
-    "prepublish": "yarn run test && yarn run build"
+    "prepublishOnly": "yarn run test && yarn run build"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -39,6 +39,9 @@
     "ts-loader": "^6.0.2",
     "ts-mocha": "^6.0.0",
     "ts-node": "^8.3.0",
+    "tslint": "^5.17.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
     "typescript": "^3.5.2",
     "webpack": "^4.33.0",
     "webpack-cli": "^3.3.3"
@@ -48,5 +51,11 @@
   ],
   "dependencies": {
     "@types/pegjs": "^0.10.1"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": true,
+    "singleQuote": true
   }
 }

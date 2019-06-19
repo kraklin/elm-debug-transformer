@@ -1,20 +1,22 @@
+import ElmGrammar from '!!raw-loader!./elm-debug.pegjs';
 import * as _ from 'lodash';
 import * as PegJS from 'pegjs';
-import elmGrammar from '!!raw-loader!./elm-debug.pegjs';
-import { ElmDebugValue } from './CommonTypes';
-import SimpleFormatter from './formatters/SimpleFormatter';
+import { IElmDebugValue } from './CommonTypes';
 import DevToolsFormatter from './formatters/DevToolsFormatter';
+import SimpleFormatter from './formatters/SimpleFormatter';
 
+/* tslint:disable */
 declare global {
     interface Window {
         chrome: any;
     }
 }
+/* tslint:enable*/
 
 export function register(opts = { simple_mode: false, debug: false }) {
-    const _log = console.log;
+    const log = console.log;
 
-    const parser = PegJS.generate(elmGrammar);
+    const parser = PegJS.generate(ElmGrammar);
 
     const formatter =
         !!opts.simple_mode || !window.chrome
@@ -24,12 +26,12 @@ export function register(opts = { simple_mode: false, debug: false }) {
     console.log = msg => {
         try {
             if (!!opts.debug) {
-                _log.call(console, 'Original message:', msg);
+                log.call(console, 'Original message:', msg);
             }
 
-            const parsed = parser.parse(msg) as ElmDebugValue;
+            const parsed = parser.parse(msg) as IElmDebugValue;
 
-            _log.call(
+            log.call(
                 console,
                 JSON.parse(JSON.stringify(formatter.format(parsed)))
             );
@@ -37,7 +39,7 @@ export function register(opts = { simple_mode: false, debug: false }) {
             if (!!opts.debug) {
                 console.error(`Parsing error: ${err}`);
             }
-            _log.call(console, msg);
+            log.call(console, msg);
         }
     };
 }

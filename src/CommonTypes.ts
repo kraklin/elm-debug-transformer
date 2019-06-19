@@ -1,74 +1,74 @@
 export interface IFormatter {
-    format(obj: ElmDebugValue): any;
+    format(obj: IElmDebugValue): any;
 }
 
-export type Config = {
+export interface IConfig {
     elmFormat: boolean;
     key: any;
     level: number;
-};
+}
 
 export interface IChromeConsoleFormatter {
-    handleHeader(obj: ElmDebugValue, config: Config): any;
-    handleBody(obj: ElmDebugValue, config: Config): any;
+    handleHeader(obj: IElmDebugValue, config: IConfig): any;
+    handleBody(obj: IElmDebugValue, config: IConfig): any;
     renderLine(key: any, value: any, margin: number): any;
 }
 
 export type ElmDebugValueType =
-    | ElmDebugValue
-    | ElmDebugCustomValue
-    | ElmDebugRecordValue
-    | ElmDebugListValue
-    | ElmDebugDictValue
-    | ElmDebugTypeValueType
+    | IElmDebugValue
+    | IElmDebugCustomValue
+    | IElmDebugRecordValue
+    | IElmDebugListValue
+    | IElmDebugDictValue
+    | IElmDebugTypeValueType
     | string
     | boolean;
 
-export type ElmDebugValue = {
+export interface IElmDebugValue {
     type: string;
     name?: string;
     value?: ElmDebugValueType;
-};
-
-export type ElmDebugCustomValue = {
-    type: string;
-    name: string;
-    value: ElmDebugValueType[];
-};
-
-export type ElmDebugTypeValueType = {
-    type: string;
-    name: string;
-};
-
-export type ElmDebugListValue = {
-    type: string;
-    value: ElmDebugValueType[];
-};
-
-export type ElmDebugRecordValue = {
-    type: string;
-    value: { [key: string]: ElmDebugValueType };
-};
-
-export type ElmDebugDictValue = {
-    type: string;
-    value: { key: string; value: ElmDebugValueType }[];
-};
-
-export function isElmValue(value: any): value is ElmDebugValue {
-    return (<ElmDebugValue>value).type !== undefined;
 }
 
-export function isElmCustomValue(value: any): value is ElmDebugCustomValue {
+export interface IElmDebugCustomValue {
+    type: string;
+    name: string;
+    value: ElmDebugValueType[];
+}
+
+export interface IElmDebugTypeValueType {
+    type: string;
+    name: string;
+}
+
+export interface IElmDebugListValue {
+    type: string;
+    value: ElmDebugValueType[];
+}
+
+export interface IElmDebugRecordValue {
+    type: string;
+    value: { [key: string]: ElmDebugValueType };
+}
+
+export interface IElmDebugDictValue {
+    type: string;
+    value: Array<{ key: string; value: ElmDebugValueType }>;
+}
+
+export function isElmValue(value: any): value is IElmDebugValue {
+    return (value as IElmDebugValue).type !== undefined;
+}
+
+export function isElmCustomValue(value: any): value is IElmDebugCustomValue {
     return value.type === 'Custom';
 }
 
-export function isElmRecordValue(value: any): value is ElmDebugRecordValue {
+export function isElmRecordValue(value: any): value is IElmDebugRecordValue {
     return value.type === 'Record';
 }
 
-export function isElmListValue(value: any): value is ElmDebugListValue {
+export function isElmListValue(value: any): value is IElmDebugListValue {
     return (
         value.type === 'List' ||
         value.type === 'Array' ||
@@ -77,10 +77,10 @@ export function isElmListValue(value: any): value is ElmDebugListValue {
     );
 }
 
-export function isElmTypeValue(value: any): value is ElmDebugTypeValueType {
+export function isElmTypeValue(value: any): value is IElmDebugTypeValueType {
     return value.type === 'Type';
 }
 
-export function isElmDictValue(value: any): value is ElmDebugDictValue {
+export function isElmDictValue(value: any): value is IElmDebugDictValue {
     return value.type === 'Dict';
 }

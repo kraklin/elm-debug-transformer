@@ -1,16 +1,18 @@
+import { defaults, mapValues } from 'lodash';
 import * as T from '../CommonTypes';
-import { mapValues, defaults } from 'lodash';
 
 export default class SimpleFormatter implements T.IFormatter {
-    public format(obj: T.ElmDebugValue): object {
+    public format(obj: T.IElmDebugValue): object {
         return { [obj.name]: this.formatValue(obj.value) };
     }
 
-    formatArray(array: T.ElmDebugValueType[]): object[] {
+    public formatArray(array: T.ElmDebugValueType[]): object[] {
         return array.map(v => this.formatValue(v));
     }
 
-    formatCustom(custom: T.ElmDebugCustomValue): { [key: string]: any } {
+    public formatCustom(
+        custom: T.IElmDebugCustomValue
+    ): { [key: string]: any } {
         return {
             [custom.name]:
                 custom.value.length === 1
@@ -19,11 +21,11 @@ export default class SimpleFormatter implements T.IFormatter {
         };
     }
 
-    formatValue(formatee: T.ElmDebugValueType): any {
+    public formatValue(formatee: T.ElmDebugValueType): any {
         if (
             typeof formatee === 'string' ||
-            typeof formatee == 'number' ||
-            typeof formatee == 'boolean'
+            typeof formatee === 'number' ||
+            typeof formatee === 'boolean'
         ) {
             return formatee;
         }

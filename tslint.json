@@ -1,0 +1,13 @@
+{
+    "extends": [
+        "tslint:latest",
+        "tslint-config-prettier"
+    ],
+    "jsRules": {},
+    "rules": { 
+      "no-implicit-dependencies": [true, "dev", ["!!raw-loader!."]],
+      "no-console": [false],
+      "no-submodule-imports": [true, "!!raw-loader!./elm-debug.pegjs"]
+    },
+    "rulesDirectory": [ ]
+}

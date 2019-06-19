@@ -1,41 +1,41 @@
 import { expect } from 'chai';
 import * as _ from 'lodash';
 import {
-    ElmDebugListValue,
-    ElmDebugValue,
-    ElmDebugRecordValue,
+    IElmDebugListValue,
+    IElmDebugRecordValue,
+    IElmDebugValue,
     IFormatter,
 } from '../src/CommonTypes';
 import SimpleFormatter from '../src/formatters/SimpleFormatter';
 
-function elmDebug(values: any): ElmDebugValue {
+function elmDebug(values: any): IElmDebugValue {
     return { type: 'ElmDebug', name: 'Debug', value: values };
 }
 
-function list(values: any[]): ElmDebugListValue {
+function list(values: any[]): IElmDebugListValue {
     return { type: 'List', value: values };
 }
 
-function record(values: { [key: string]: any }): ElmDebugRecordValue {
+function record(values: { [key: string]: any }): IElmDebugRecordValue {
     return { type: 'Record', value: values };
 }
 
-function n(number: number) {
-    return { type: 'Number', value: number };
+function n(val: number) {
+    return { type: 'Number', value: val };
 }
 
-function customType(name: String, values: any[]) {
-    return { type: 'Custom', name: name, value: values };
+function customType(name: string, values: any[]) {
+    return { type: 'Custom', name, value: values };
 }
 
 function type(name: string) {
-    return { type: 'Type', name: name };
+    return { type: 'Type', name };
 }
 
-function dict(dict: object) {
+function dict(dictionary: object) {
     return {
         type: 'Dict',
-        value: _.toPairs(dict).map(item => {
+        value: _.toPairs(dictionary).map(item => {
             return { key: item[0], value: item[1] };
         }),
     };
@@ -172,12 +172,12 @@ describe('Simple formatting', () => {
 
     describe('should return values for dictionaries', () => {
         it('handles simple record', () => {
-            let value = elmDebug(dict({ name: 'Name', age: '12' }));
+            const value = elmDebug(dict({ name: 'Name', age: '12' }));
 
             expect(formatter.format(value)).to.deep.equal({
                 Debug: {
-                    name: 'Name',
                     age: '12',
+                    name: 'Name',
                 },
             });
         });
@@ -185,7 +185,7 @@ describe('Simple formatting', () => {
 
     describe('should return values for internals', () => {
         it('Function', () => {
-            let value = elmDebug({ type: 'Function' });
+            const value = elmDebug({ type: 'Function' });
 
             expect(formatter.format(value)).to.deep.equal({
                 Debug: '<function>',
@@ -193,7 +193,7 @@ describe('Simple formatting', () => {
         });
 
         it('Internals', () => {
-            let value = elmDebug({ type: 'Internals' });
+            const value = elmDebug({ type: 'Internals' });
 
             expect(formatter.format(value)).to.deep.equal({
                 Debug: '<internals>',
@@ -203,13 +203,13 @@ describe('Simple formatting', () => {
 
     describe('should return values for bytes and files', () => {
         it('Bytes', () => {
-            let value = elmDebug({ type: 'Bytes', value: 1234 });
+            const value = elmDebug({ type: 'Bytes', value: 1234 });
 
             expect(formatter.format(value)).to.deep.equal({ Debug: '1234 B' });
         });
 
         it('Files', () => {
-            let value = elmDebug({ type: 'File', value: 'Name-of_the.file' });
+            const value = elmDebug({ type: 'File', value: 'Name-of_the.file' });
 
             expect(formatter.format(value)).to.deep.equal({
                 Debug: 'Name-of_the.file',

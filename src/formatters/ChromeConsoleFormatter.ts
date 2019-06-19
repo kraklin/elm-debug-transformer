@@ -1,14 +1,16 @@
-import {
-    Config,
-    ElmDebugValue,
-    IFormatter,
-    IChromeConsoleFormatter,
-} from '../CommonTypes';
 import * as _ from 'lodash';
+import {
+    IChromeConsoleFormatter,
+    IConfig,
+    IElmDebugValue,
+    IFormatter,
+} from '../CommonTypes';
 
 export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
     public renderLine(key: any, value: any, margin: number) {
-        if (!margin) margin = 0;
+        if (!margin) {
+            margin = 0;
+        }
 
         return [
             'div',
@@ -19,7 +21,7 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
         ];
     }
 
-    isFinalValue(value: any) {
+    public isFinalValue(value: any) {
         return (
             _.isString(value) ||
             _.isBoolean(value) ||
@@ -30,24 +32,35 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
         );
     }
 
-    getFinalValue(value: any) {
-        if (_.isString(value)) return `"${value}"`;
-        else if (_.isBoolean(value)) return value ? 'True' : 'False';
-        else if (value.type === 'Type') return value.name;
-        else if (value.type === 'Unit') return '()';
-        else if (value.type === 'Function') return '<function>';
-        else if (value.type === 'Internals') return '<internals>';
-        else return value.value;
+    public getFinalValue(value: any) {
+        if (_.isString(value)) {
+            return `"${value}"`;
+        } else if (_.isBoolean(value)) {
+            return value ? 'True' : 'False';
+        } else if (value.type === 'Type') {
+            return value.name;
+        } else if (value.type === 'Unit') {
+            return '()';
+        } else if (value.type === 'Function') {
+            return '<function>';
+        } else if (value.type === 'Internals') {
+            return '<internals>';
+        } else {
+            return value.value;
+        }
     }
 
-    indentValue(level: number) {
+    public indentValue(level: number) {
         return 10 * level;
     }
 
     public handleHeader(value: any): any {
         if (!value.type || !value.value) {
-            if (this.isFinalValue(value)) return this.getFinalValue(value);
-            else return null;
+            if (this.isFinalValue(value)) {
+                return this.getFinalValue(value);
+            } else {
+                return null;
+            }
         }
 
         switch (value.type) {
@@ -75,8 +88,11 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
                 const typeValues = value.value.map((v: any) => {
                     return this.handleHeader(v);
                 });
-                if (typeValues.length === 0) return value.name;
-                else return `${value.name} ${typeValues.join(' ')}`;
+                if (typeValues.length === 0) {
+                    return value.name;
+                } else {
+                    return `${value.name} ${typeValues.join(' ')}`;
+                }
 
             case 'Array':
                 return `Array(${value.value.length})`;
@@ -88,8 +104,11 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
                 return `Dict(${value.value.length})`;
 
             case 'List':
-                if (value.value.length === 0) return '[]';
-                else return `List(${value.value.length})`;
+                if (value.value.length === 0) {
+                    return '[]';
+                } else {
+                    return `List(${value.value.length})`;
+                }
 
             case 'Number':
                 return this.getFinalValue(value);
@@ -99,7 +118,7 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
         }
     }
 
-    listBody(value: any, level: number) {
+    public listBody(value: any, level: number) {
         const listValues = value.map((v: any, i: any) => {
             if (this.isFinalValue(v)) {
                 return this.renderLine(i, this.getFinalValue(v), 34);
@@ -111,8 +130,8 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
                 [
                     'object',
                     {
+                        config: { elmFormat: true, key: i, level },
                         object: v,
-                        config: { elmFormat: true, key: i, level: level },
                     },
                 ],
             ];
@@ -121,7 +140,7 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
         return ['div', {}].concat(listValues);
     }
 
-    public handleBody(value: any, config?: Config): any {
+    public handleBody(value: any, config?: IConfig): any {
         const level = !config || !config.level ? 1 : config.level + 1;
 
         if (!value.type || !value.value) {
@@ -147,12 +166,12 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
                             [
                                 'object',
                                 {
-                                    object: v,
                                     config: {
                                         elmFormat: true,
                                         key: k,
-                                        level: level,
+                                        level,
                                     },
+                                    object: v,
                                 },
                             ],
                         ];
@@ -168,13 +187,16 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
                 return this.listBody(value.value, level);
 
             case 'List':
-                if (value.value.length === 0) return null;
-                else return this.listBody(value.value, level);
+                if (value.value.length === 0) {
+                    return null;
+                } else {
+                    return this.listBody(value.value, level);
+                }
 
             case 'Dict':
                 const dictValues = value.value.map(
                     (item: { key: any; value: any }) => {
-                        let key = this.isFinalValue(item.key)
+                        const key = this.isFinalValue(item.key)
                             ? this.getFinalValue(item.key)
                             : this.handleHeader(item.key);
                         if (this.isFinalValue(item.value)) {
@@ -191,12 +213,12 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
                             [
                                 'object',
                                 {
-                                    object: item.value,
                                     config: {
                                         elmFormat: true,
-                                        key: key,
-                                        level: level,
+                                        key,
+                                        level,
                                     },
+                                    object: item.value,
                                 },
                             ],
                         ];
