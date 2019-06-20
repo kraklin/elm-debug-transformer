@@ -1,30 +1,174 @@
 import * as _ from 'lodash';
-import {
-    IChromeConsoleFormatter,
-    IConfig,
-    IElmDebugValue,
-    IFormatter,
-} from '../CommonTypes';
+import * as T from '../CommonTypes';
+import JsonML from '../JsonML';
 
-export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
-    public renderLine(key: any, value: any, margin: number) {
+const keyStyle = 'color: purple; font-weight: bold';
+
+interface IFormatterElement {
+    header(): JsonML;
+}
+
+class StringElement implements IFormatterElement {
+    private elmObj: string;
+    private style = 'color: blue';
+
+    constructor(obj: string) {
+        this.elmObj = obj;
+    }
+
+    public header() {
+        return new JsonML('span')
+            .withStyle(this.style)
+            .withText(`"${this.elmObj}"`);
+    }
+}
+
+class BooleanElement implements IFormatterElement {
+    private elmObj: boolean;
+    private style = 'color: blue';
+
+    constructor(obj: boolean) {
+        this.elmObj = obj;
+    }
+
+    public header() {
+        return new JsonML('span')
+            .withStyle(this.style)
+            .withText(this.elmObj ? 'True' : 'False');
+    }
+}
+
+class NumberElement implements IFormatterElement {
+    private elmObj: T.IElmDebugNumberValue;
+    private numberStyle = 'color: purple';
+
+    constructor(obj: T.IElmDebugNumberValue) {
+        this.elmObj = obj;
+    }
+
+    public header() {
+        return new JsonML('span')
+            .withStyle(this.numberStyle)
+            .withText(this.elmObj.value);
+    }
+}
+
+class ListElement implements IFormatterElement {
+    private elmObj: T.IElmDebugListValue;
+    private arrayNameStyle = 'color: darkgreen';
+    private emptyArrayStyle = 'color: grey';
+
+    constructor(obj: T.IElmDebugListValue) {
+        this.elmObj = obj;
+    }
+
+    public header() {
+        if (this.elmObj.value.length === 0) {
+            return new JsonML('span')
+                .withStyle(this.emptyArrayStyle)
+                .withText('[]');
+        }
+        return new JsonML('span')
+            .withStyle(this.arrayNameStyle)
+            .withText(this.elmObj.type)
+            .withChild(
+                new JsonML('span').withText(`(${this.elmObj.value.length})`)
+            );
+    }
+}
+
+class TupleElement implements IFormatterElement {
+    private elmObj: T.IElmDebugListValue;
+    private formatter: T.IChromeConsoleFormatter;
+
+    constructor(
+        obj: T.IElmDebugListValue,
+        formatter: T.IChromeConsoleFormatter
+    ) {
+        this.elmObj = obj;
+        this.formatter = formatter;
+    }
+
+    public header() {
+        const tuple = new JsonML('span').withText('( ');
+        const children = this.elmObj.value
+            .map(child => this.formatter.handleHeader(child))
+            .reduce(
+                (acc, val) =>
+                    acc
+                        .withChild(new JsonML('span').withText(', '))
+                        .withChild(val),
+                new JsonML('span').withText('( ')
+            );
+
+        return new JsonML('span')
+            .withText('( ')
+            .withChild(children)
+            .withText(' )');
+    }
+}
+
+export default class ChromeConsoleFormatter
+    implements T.IChromeConsoleFormatter {
+    public renderLine(key: string, value: JsonML, margin: number): JsonML {
         if (!margin) {
             margin = 0;
         }
+        const keyJsonML = new JsonML('span').withStyle(keyStyle).withText(key);
 
-        return [
-            'div',
-            { style: `margin-left: ${margin}px` },
-            ['span', { style: `color: purple; font-weight: bold` }, key],
-            ['span', {}, ' = '],
-            value,
-        ];
+        return new JsonML('div')
+            .withStyle(`margin-left: ${margin}px`)
+            .withChild(keyJsonML)
+            .withChild(value);
     }
 
-    public isFinalValue(value: any) {
+    public handleHeader(obj: T.ElmDebugValueType, config?: T.IConfig): JsonML {
+        if (T.isElmValue(obj) && obj.type === 'ElmDebug') {
+            return new JsonML('div')
+                .withChild(new JsonML('span').withText(obj.name + ': '))
+                .withChild(this.handleHeader(obj.value));
+        }
+
+        return this.toElement(obj).header() || new JsonML('span').withText(obj);
+    }
+
+    private toElement(obj: T.ElmDebugValueType): IFormatterElement {
+        if (typeof obj === 'string') {
+            return new StringElement(obj);
+        } else if (typeof obj === 'boolean') {
+            return new BooleanElement(obj);
+        } else if (T.isElmNumberType(obj)) {
+            return new NumberElement(obj);
+        } else if (T.isElmListValue(obj)) {
+            return obj.type === 'Tuple'
+                ? new TupleElement(obj, this)
+                : new ListElement(obj);
+        }
+    }
+}
+
+/*
+export default class ChromeConsoleFormatter
+    implements T.IChromeConsoleFormatter {
+    public renderLine(key: string, value: JsonML, margin: number): JsonML {
+        if (!margin) {
+            margin = 0;
+        }
+        const keyJsonML = new JsonML('span')
+            .setStyle('color: purple; font-weight: bold')
+            .createTextChild(key);
+
+        return new JsonML('div')
+            .setStyle(`margin-left: ${margin}px`)
+            .appendChild(keyJsonML)
+            .appendChild(value);
+    }
+
+    public isFinalValue(value: T.ElmDebugValueType) {
         return (
             _.isString(value) ||
             _.isBoolean(value) ||
+            _.isNumber(value) ||
             value.type === 'Type' ||
             value.type === 'Unit' ||
             value.type === 'Number' ||
@@ -32,30 +176,40 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
         );
     }
 
-    public getFinalValue(value: any) {
+    public getFinalValue(value: T.ElmDebugValueType): JsonML {
+        const jsonML = new JsonML('span').setStyle('color: blue;');
+
         if (_.isString(value)) {
-            return `"${value}"`;
+            return jsonML.createTextChild(value);
+        } else if (_.isNumber(value)) {
+            return jsonML.createTextChild(value);
         } else if (_.isBoolean(value)) {
-            return value ? 'True' : 'False';
-        } else if (value.type === 'Type') {
-            return value.name;
+            return jsonML.createTextChild(value ? 'True' : 'False');
         } else if (value.type === 'Unit') {
-            return '()';
+            return jsonML.createTextChild('()');
         } else if (value.type === 'Function') {
-            return '<function>';
+            return jsonML.createTextChild('<function>');
         } else if (value.type === 'Internals') {
-            return '<internals>';
+            return jsonML.createTextChild('<internals>');
+        } else if (value.type === 'Number') {
+            return jsonML.createTextChild(
+                (value as T.IElmDebugNumberValue).value.toString()
+            );
+        } else if (T.isElmTypeValue(value)) {
+            return jsonML.createTextChild(value.name);
         } else {
-            return value.value;
+            return jsonML.createTextChild((value as any).value.toString());
         }
     }
 
-    public indentValue(level: number) {
-        return 10 * level;
-    }
-
-    public handleHeader(value: any): any {
-        if (!value.type || !value.value) {
+    public handleHeader(value: T.ElmDebugValueType): any {
+        if (
+            (value as T.IElmDebugValue).type === undefined ||
+            (value as T.IElmDebugValue).value === undefined ||
+            _.isString(value) ||
+            _.isNumber(value) ||
+            _.isBoolean(value)
+        ) {
             if (this.isFinalValue(value)) {
                 return this.getFinalValue(value);
             } else {
@@ -65,10 +219,14 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
 
         switch (value.type) {
             case 'ElmDebug':
-                const tag = !!value.name ? value.name + ': ' : '';
-                return tag + this.handleHeader(value.value);
+                const typedValue = value as T.IElmDebugValue;
+                const tag = !!typedValue.name ? typedValue.name + ': ' : '';
+
+                return tag + this.handleHeader(typedValue.value);
             case 'Record':
-                const keys: any[] = _.chain(value.value)
+                const keys: any[] = _.chain(
+                    (value as T.IElmDebugRecordValue).value
+                )
                     .mapValues((v, k) => {
                         return k + ' = ' + this.handleHeader(v);
                     })
@@ -78,36 +236,41 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
                 return `{ ${_.truncate(keys.join(', '))} }`;
 
             case 'Tuple':
-                const tupleValues = value.value.map((v: any) => {
-                    return this.handleHeader(v);
-                });
+                const tupleValues = (value as T.IElmDebugListValue).value.map(
+                    (v: any) => {
+                        return this.handleHeader(v);
+                    }
+                );
 
                 return `( ${tupleValues.join(', ')} )`;
 
             case 'Custom':
-                const typeValues = value.value.map((v: any) => {
+                const customValue = value as T.IElmDebugCustomValue;
+                const typeValues = customValue.value.map((v: any) => {
                     return this.handleHeader(v);
                 });
                 if (typeValues.length === 0) {
-                    return value.name;
+                    return customValue.name;
                 } else {
-                    return `${value.name} ${typeValues.join(' ')}`;
+                    return `${customValue.name} ${typeValues.join(' ')}`;
                 }
 
             case 'Array':
-                return `Array(${value.value.length})`;
+                return `Array(${(value as T.IElmDebugListValue).value.length})`;
 
             case 'Set':
-                return `Set(${value.value.length})`;
+                return `Set(${(value as T.IElmDebugListValue).value.length})`;
 
             case 'Dict':
-                return `Dict(${value.value.length})`;
+                return `Dict(${(value as T.IElmDebugDictValue).value.length})`;
 
             case 'List':
-                if (value.value.length === 0) {
+                if ((value as T.IElmDebugListValue).value.length === 0) {
                     return '[]';
                 } else {
-                    return `List(${value.value.length})`;
+                    return `List(${
+                        (value as T.IElmDebugListValue).value.length
+                    })`;
                 }
 
             case 'Number':
@@ -118,10 +281,10 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
         }
     }
 
-    public listBody(value: any, level: number) {
-        const listValues = value.map((v: any, i: any) => {
+    public listBody(value: T.ElmDebugValueType[], level: number) {
+        const listValues = value.map((v: T.ElmDebugValueType, i: number) => {
             if (this.isFinalValue(v)) {
-                return this.renderLine(i, this.getFinalValue(v), 34);
+                return this.renderLine(i.toString(), this.getFinalValue(v), 34);
             }
 
             return [
@@ -140,7 +303,7 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
         return ['div', {}].concat(listValues);
     }
 
-    public handleBody(value: any, config?: IConfig): any {
+    public handleBody(value: any, config?: T.IConfig): any {
         const level = !config || !config.level ? 1 : config.level + 1;
 
         if (!value.type || !value.value) {
@@ -239,4 +402,4 @@ export default class ChromeConsoleFormatter implements IChromeConsoleFormatter {
 
         return ['div', {}, 'body'];
     }
-}
+}*/

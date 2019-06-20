@@ -82,7 +82,11 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( Debug.log "debug: " model, Cmd.none )
+    let
+        _ =
+            Debug.log "Debug: " ( "", "b", 123 )
+    in
+    ( model, Cmd.none )
 
 
 

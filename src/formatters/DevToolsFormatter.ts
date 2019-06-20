@@ -5,6 +5,7 @@ import {
     IElmDebugValue,
     IFormatter,
 } from '../CommonTypes';
+import JsonML from '../JsonML';
 import ChromeConsoleFormatter from './ChromeConsoleFormatter';
 
 /* tslint:disable */
@@ -33,22 +34,27 @@ export default class DevToolsFormatter implements IFormatter {
             (!!config && config.elmFormat)
         ) {
             if (config !== undefined) {
-                return this.formatter.renderLine(
-                    config.key,
-                    this.formatter.handleHeader(obj, config),
-                    10
-                );
+                return this.formatter
+                    .renderLine(
+                        config.key,
+                        this.formatter.handleHeader(obj),
+                        10
+                    )
+                    .toJSONML();
             } else {
-                return ['div', {}, this.formatter.handleHeader(obj, config)];
+                return new JsonML('div')
+                    .withChild(this.formatter.handleHeader(obj))
+                    .toJSONML();
             }
         } else {
             return null;
         }
     }
     public hasBody(obj: any) {
-        return true;
+        return false;
     }
     public body(obj: any, config: IConfig) {
-        return ['div', {}, this.formatter.handleBody(obj, config)];
+        return;
+        // return this.formatter.handleBody(obj, config).toJSONML();
     }
 }

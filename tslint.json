@@ -7,6 +7,7 @@
     "rules": { 
       "no-implicit-dependencies": [true, "dev", ["!!raw-loader!."]],
       "no-console": [false],
+      "max-classes-per-file": [false],
       "no-submodule-imports": [true, "!!raw-loader!./elm-debug.pegjs"]
     },
     "rulesDirectory": [ ]

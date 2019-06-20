@@ -1,3 +1,5 @@
+import JsonML from './JsonML';
+
 export interface IFormatter {
     format(obj: IElmDebugValue): any;
 }
@@ -9,9 +11,9 @@ export interface IConfig {
 }
 
 export interface IChromeConsoleFormatter {
-    handleHeader(obj: IElmDebugValue, config: IConfig): any;
-    handleBody(obj: IElmDebugValue, config: IConfig): any;
-    renderLine(key: any, value: any, margin: number): any;
+    handleHeader(obj: ElmDebugValueType, config?: IConfig): JsonML;
+    // handleBody(obj: IElmDebugValue, config?: IConfig): any;
+    renderLine(key: string, value: JsonML, margin: number): JsonML;
 }
 
 export type ElmDebugValueType =
@@ -21,6 +23,7 @@ export type ElmDebugValueType =
     | IElmDebugListValue
     | IElmDebugDictValue
     | IElmDebugTypeValueType
+    | IElmDebugNumberValue
     | string
     | boolean;
 
@@ -56,6 +59,11 @@ export interface IElmDebugDictValue {
     value: Array<{ key: string; value: ElmDebugValueType }>;
 }
 
+export interface IElmDebugNumberValue {
+    type: string;
+    value: number;
+}
+
 export function isElmValue(value: any): value is IElmDebugValue {
     return (value as IElmDebugValue).type !== undefined;
 }
@@ -75,6 +83,10 @@ export function isElmListValue(value: any): value is IElmDebugListValue {
         value.type === 'Set' ||
         value.type === 'Tuple'
     );
+}
+
+export function isElmNumberType(value: any): value is IElmDebugNumberValue {
+    return value.type === 'Number';
 }
 
 export function isElmTypeValue(value: any): value is IElmDebugTypeValueType {

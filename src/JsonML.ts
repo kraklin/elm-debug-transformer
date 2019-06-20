@@ -17,27 +17,27 @@ export default class JSONMLElement {
         this.jsonML = [tagName, this.attributes];
     }
 
-    public appendChild(element: JSONMLElement) {
-        this.jsonML.push(element.toJSONML());
-        return element;
+    public toJSONML(): any {
+        return this.jsonML;
     }
 
-    public setStyle(style: string) {
+    public withChild(element: JSONMLElement) {
+        this.jsonML.push(element.toJSONML());
+        return this;
+    }
+
+    public withStyle(style: string) {
         this.attributes.style = style;
         return this;
     }
 
-    public addAttribute(key: string, value: any) {
+    public withAttribute(key: string, value: any) {
         this.attributes[key] = value;
         return this;
     }
 
-    public createTextChild(text: any) {
-        this.jsonML.push(text + '');
+    public withText(value: any) {
+        this.jsonML.push(value + '');
         return this;
-    }
-
-    public toJSONML() {
-        return this.jsonML;
     }
 }

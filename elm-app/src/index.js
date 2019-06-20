@@ -5,9 +5,8 @@ import { register } from '../../dist/elm-console-debug.js';
 
 register();
 
-
 Elm.Main.init({
-  node: document.getElementById('root')
+    node: document.getElementById('root'),
 });
 
 registerServiceWorker();
