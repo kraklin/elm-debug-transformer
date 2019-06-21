@@ -73,6 +73,14 @@ function MLList(typeName: string, length: number): any[] {
     }
 }
 
+function MLCustomType(name: string, value?: any): any[] {
+    if (value === undefined) {
+        return ['span', { style: 'color: darkgreen' }, name];
+    }
+
+    return ['span', { style: 'color: darkgreen' }, name, value];
+}
+
 function MLTuple(values: any[]): any[] {
     // const vals = values.map(v => v);
     const valuesWithCommas = values.reduce((acc: any[], v) => {
@@ -84,6 +92,10 @@ function MLTuple(values: any[]): any[] {
     valuesWithCommas.push(' )');
 
     return ['span', {}, '( ', ...valuesWithCommas];
+}
+
+function MLEllipsis(): any[] {
+    return ['span', { style: 'color: gray' }, '...'];
 }
 
 let formatter: IChromeConsoleFormatter;
@@ -170,98 +182,44 @@ describe('JSONML formatting', () => {
                 ).to.deep.equal(MLDebug(expected));
             });
         });
+        describe('should handle Types and Custom types', () => {
+            it('Type', () => {
+                const value = type('Nothing');
+                const expected = [MLCustomType('Nothing')];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+            it('CustomType without values', () => {
+                const value = customType('CustomType', []);
+                const expected = [MLCustomType('CustomType')];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+            it('CustomType with one value', () => {
+                const value = customType('CustomType', [n(1)]);
+                const expected = [MLCustomType('CustomType', MLNumber(1))];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+            it('CustomType with two values', () => {
+                const value = customType('CustomType', [n(1), n(1)]);
+                const expected = [MLCustomType('CustomType ', MLEllipsis())];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+        });
+        // TODO: Record, Dict, Internals, Function, Unit, Files, Bytes
     });
 });
 /*
-    describe('should return values for lists', () => {
-        it('empty list', () => {
-            expect(
-                formatter.format(
-                    elmDebug(
-                        record({
-                            list: list([]),
-                        })
-                    )
-                )
-            ).to.deep.equal({ Debug: { list: [] } });
-        });
-
-        it('numbers list', () => {
-            expect(
-                formatter.format(
-                    elmDebug(
-                        record({
-                            list: list([n(1), n(2), n(3)]),
-                        })
-                    )
-                )
-            ).to.deep.equal({ Debug: { list: [1, 2, 3] } });
-        });
-    });
-
-    describe('should return values for custom types', () => {
-        it('Simple type', () => {
-            expect(
-                formatter.format(
-                    elmDebug(
-                        record({
-                            list: list([]),
-                        })
-                    )
-                )
-            ).to.deep.equal({ Debug: { list: [] } });
-        });
-
-        it('list of Maybe types', () => {
-            expect(
-                formatter.format(
-                    elmDebug(
-                        record({
-                            list: list([
-                                type('Nothing'),
-                                customType('Just', [list(['String'])]),
-                                type('Nothing'),
-                                type('Nothing'),
-                            ]),
-                        })
-                    )
-                )
-            ).to.deep.equal({
-                Debug: {
-                    list: [
-                        'Nothing',
-                        { Just: ['String'] },
-                        'Nothing',
-                        'Nothing',
-                    ],
-                },
-            });
-        });
-
-        it('Custom with just one value', () => {
-            expect(
-                formatter.format(elmDebug(customType('Just', ['String'])))
-            ).to.deep.equal({ Debug: { Just: 'String' } });
-        });
-
-        it('Nested custom', () => {
-            expect(
-                formatter.format(
-                    elmDebug(
-                        customType('Just', [
-                            customType('Node', [
-                                customType('Leaf', [1]),
-                                customType('Leaf', [2]),
-                            ]),
-                        ])
-                    )
-                )
-            ).to.deep.equal({
-                Debug: { Just: { Node: [{ Leaf: 1 }, { Leaf: 2 }] } },
-            });
-        });
-    });
-
     describe('should return values for records', () => {
         it('simple record', () => {
             expect(

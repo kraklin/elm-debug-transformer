@@ -38,6 +38,59 @@ class BooleanElement implements IFormatterElement {
     }
 }
 
+class TypeElement implements IFormatterElement {
+    private elmObj: T.IElmDebugTypeValueType;
+    private style = 'color: darkgreen';
+
+    constructor(obj: T.IElmDebugTypeValueType) {
+        this.elmObj = obj;
+    }
+
+    public header() {
+        return new JsonML('span')
+            .withStyle(this.style)
+            .withText(this.elmObj.name);
+    }
+}
+
+class CustomTypeElement implements IFormatterElement {
+    private elmObj: T.IElmDebugCustomValue;
+    private formatter: T.IChromeConsoleFormatter;
+    private style = 'color: darkgreen';
+    private ellipsisStyle = 'color: gray';
+
+    constructor(
+        obj: T.IElmDebugCustomValue,
+        formatter: T.IChromeConsoleFormatter
+    ) {
+        this.elmObj = obj;
+        this.formatter = formatter;
+    }
+
+    public header() {
+        if (this.elmObj.value.length === 0) {
+            return new JsonML('span')
+                .withStyle(this.style)
+                .withText(this.elmObj.name);
+        }
+        if (this.elmObj.value.length === 1) {
+            return new JsonML('span')
+                .withStyle(this.style)
+                .withText(this.elmObj.name)
+                .withChild(this.formatter.handleHeader(this.elmObj.value[0]));
+        } else {
+            const ellipsis = new JsonML('span')
+                .withStyle(this.ellipsisStyle)
+                .withText('...');
+
+            return new JsonML('span')
+                .withStyle(this.style)
+                .withText(this.elmObj.name + ' ')
+                .withChild(ellipsis);
+        }
+    }
+}
+
 class NumberElement implements IFormatterElement {
     private elmObj: T.IElmDebugNumberValue;
     private numberStyle = 'color: purple';
@@ -139,6 +192,10 @@ export default class ChromeConsoleFormatter
             return new BooleanElement(obj);
         } else if (T.isElmNumberType(obj)) {
             return new NumberElement(obj);
+        } else if (T.isElmTypeValue(obj)) {
+            return new TypeElement(obj);
+        } else if (T.isElmCustomValue(obj)) {
+            return new CustomTypeElement(obj, this);
         } else if (T.isElmListValue(obj)) {
             return obj.type === 'Tuple'
                 ? new TupleElement(obj, this)
