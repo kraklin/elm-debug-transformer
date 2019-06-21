@@ -83,9 +83,7 @@ function MLTuple(values: any[]): any[] {
     valuesWithCommas.splice(0, 1);
     valuesWithCommas.push(' )');
 
-    const b = ['span', {}, '( ', ...valuesWithCommas];
-    console.log(b);
-    return b;
+    return ['span', {}, '( ', ...valuesWithCommas];
 }
 
 let formatter: IChromeConsoleFormatter;
@@ -95,78 +93,82 @@ beforeEach(() => {
 });
 
 describe('JSONML formatting', () => {
-    describe('should return values for simple values', () => {
-        it('string', () => {
-            const value = 'string';
-            const expected = [MLString('string')];
+    describe('Header values', () => {
+        describe('should return values for simple values', () => {
+            it('string', () => {
+                const value = 'string';
+                const expected = [MLString('string')];
 
-            expect(
-                formatter.handleHeader(elmDebug(value)).toJSONML()
-            ).to.deep.equal(MLDebug(expected));
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+
+            it('number', () => {
+                const value = n(1);
+                const expected = [MLNumber(1)];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+
+            it('boolean True', () => {
+                const value = true;
+                const expected = [MLBool(true)];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+
+            it('boolean False', () => {
+                const value = false;
+                const expected = [MLBool(false)];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
         });
+        describe('should return values for array like structures', () => {
+            it('Empty list', () => {
+                const value = list('List', []);
+                const expected = [MLList('List', 0)];
 
-        it('number', () => {
-            const value = n(1);
-            const expected = [MLNumber(1)];
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
 
-            expect(
-                formatter.handleHeader(elmDebug(value)).toJSONML()
-            ).to.deep.equal(MLDebug(expected));
-        });
+            it('Array with one value', () => {
+                const value = list('Array', [n(1)]);
+                const expected = [MLList('Array', 1)];
 
-        it('boolean True', () => {
-            const value = true;
-            const expected = [MLBool(true)];
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
 
-            expect(
-                formatter.handleHeader(elmDebug(value)).toJSONML()
-            ).to.deep.equal(MLDebug(expected));
-        });
+            it('Set with more values', () => {
+                const value = list('Set', ['a', 'b', 'c']);
+                const expected = [MLList('Set', 3)];
 
-        it('boolean False', () => {
-            const value = false;
-            const expected = [MLBool(false)];
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
 
-            expect(
-                formatter.handleHeader(elmDebug(value)).toJSONML()
-            ).to.deep.equal(MLDebug(expected));
-        });
-    });
-    describe('should return values for array like structures', () => {
-        it('Empty list', () => {
-            const value = list('List', []);
-            const expected = [MLList('List', 0)];
+            it('Tuple with three values', () => {
+                const value = tuple(['a', 'b', 'c']);
+                const expected = [
+                    MLTuple([MLString('a'), MLString('b'), MLString('c')]),
+                ];
 
-            expect(
-                formatter.handleHeader(elmDebug(value)).toJSONML()
-            ).to.deep.equal(MLDebug(expected));
-        });
-
-        it('Array with one value', () => {
-            const value = list('Array', [n(1)]);
-            const expected = [MLList('Array', 1)];
-
-            expect(
-                formatter.handleHeader(elmDebug(value)).toJSONML()
-            ).to.deep.equal(MLDebug(expected));
-        });
-
-        it('Set with more values', () => {
-            const value = list('Set', ['a', 'b', 'c']);
-            const expected = [MLList('Set', 3)];
-
-            expect(
-                formatter.handleHeader(elmDebug(value)).toJSONML()
-            ).to.deep.equal(MLDebug(expected));
-        });
-
-        it.only('Tuple with three values', () => {
-            const value = tuple(['a', 'b']);
-            const expected = [MLTuple([MLString('a'), MLString('b')])];
-
-            expect(
-                formatter.handleHeader(elmDebug(value)).toJSONML()
-            ).to.deep.equal(MLDebug(expected));
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
         });
     });
 });

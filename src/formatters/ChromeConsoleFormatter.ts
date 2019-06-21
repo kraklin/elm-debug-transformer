@@ -93,17 +93,17 @@ class TupleElement implements IFormatterElement {
         const tuple = new JsonML('span').withText('( ');
         const children = this.elmObj.value
             .map(child => this.formatter.handleHeader(child))
-            .reduce(
-                (acc, val) =>
-                    acc
-                        .withChild(new JsonML('span').withText(', '))
-                        .withChild(val),
-                new JsonML('span').withText('( ')
-            );
+            .reduce((acc, child) => {
+                acc.push(new JsonML('span').withText(', '));
+                acc.push(child);
+                return acc;
+            }, []);
+
+        children.splice(0, 1);
 
         return new JsonML('span')
             .withText('( ')
-            .withChild(children)
+            .withChildren(children)
             .withText(' )');
     }
 }

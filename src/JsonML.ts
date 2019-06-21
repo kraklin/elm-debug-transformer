@@ -26,6 +26,12 @@ export default class JSONMLElement {
         return this;
     }
 
+    public withChildren(elements: JSONMLElement[]) {
+        const children = elements.map(child => child.toJSONML());
+        this.jsonML = this.jsonML.concat(children);
+        return this;
+    }
+
     public withStyle(style: string) {
         this.attributes.style = style;
         return this;
