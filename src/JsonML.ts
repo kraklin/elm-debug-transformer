@@ -46,4 +46,24 @@ export default class JSONMLElement {
         this.jsonML.push(value + '');
         return this;
     }
+
+    public toStr(): string {
+        return this.toStrInner(this.jsonML);
+    }
+
+    private toStrInner(jsonML: any[]): string {
+        return jsonML
+            .map((item, index) => {
+                if (index < 2) {
+                    return '';
+                } else if (typeof item === 'string') {
+                    return item;
+                } else if (item instanceof Array) {
+                    return this.toStrInner(item);
+                } else {
+                    return '';
+                }
+            })
+            .join('');
+    }
 }

@@ -10,7 +10,7 @@ interface IFormatterElement {
 
 class StringElement implements IFormatterElement {
     private elmObj: string;
-    private style = 'color: blue';
+    private style = 'color: blue; font-weight: normal;';
 
     constructor(obj: string) {
         this.elmObj = obj;
@@ -25,7 +25,7 @@ class StringElement implements IFormatterElement {
 
 class BooleanElement implements IFormatterElement {
     private elmObj: boolean;
-    private style = 'color: blue';
+    private style = 'color: blue; font-weight: normal;';
 
     constructor(obj: boolean) {
         this.elmObj = obj;
@@ -40,7 +40,7 @@ class BooleanElement implements IFormatterElement {
 
 class TypeElement implements IFormatterElement {
     private elmObj: T.IElmDebugTypeValueType;
-    private style = 'color: darkgreen';
+    private style = 'color: darkgreen; font-weight: normal;';
 
     constructor(obj: T.IElmDebugTypeValueType) {
         this.elmObj = obj;
@@ -56,8 +56,8 @@ class TypeElement implements IFormatterElement {
 class CustomTypeElement implements IFormatterElement {
     private elmObj: T.IElmDebugCustomValue;
     private formatter: T.IChromeConsoleFormatter;
-    private style = 'color: darkgreen';
-    private ellipsisStyle = 'color: gray';
+    private style = 'color: darkgreen; font-weight: normal;';
+    private ellipsisStyle = 'color: gray; font-weight: normal;';
 
     constructor(
         obj: T.IElmDebugCustomValue,
@@ -76,7 +76,7 @@ class CustomTypeElement implements IFormatterElement {
         if (this.elmObj.value.length === 1) {
             return new JsonML('span')
                 .withStyle(this.style)
-                .withText(this.elmObj.name)
+                .withText(this.elmObj.name + ' ')
                 .withChild(this.formatter.handleHeader(this.elmObj.value[0]));
         } else {
             const ellipsis = new JsonML('span')
@@ -91,9 +91,72 @@ class CustomTypeElement implements IFormatterElement {
     }
 }
 
+class RecordElement implements IFormatterElement {
+    private elmObj: T.IElmDebugRecordValue;
+    private formatter: T.IChromeConsoleFormatter;
+    private keyStyle = 'color: purple; font-weight: bold;';
+    private ellipsisStyle = 'color: gray; font-weight: normal;';
+
+    constructor(
+        obj: T.IElmDebugRecordValue,
+        formatter: T.IChromeConsoleFormatter
+    ) {
+        this.elmObj = obj;
+        this.formatter = formatter;
+    }
+
+    public header() {
+        const keys = Object.keys(this.elmObj.value);
+        const children = keys
+            .map(k => {
+                return new JsonML('span')
+                    .withStyle(this.keyStyle)
+                    .withText(k + ': ')
+                    .withChild(
+                        this.formatter.handleHeader(this.elmObj.value[k])
+                    );
+            })
+            .reduce(
+                (accObj, child) => {
+                    const lengthWithChild = accObj.size + child.toStr().length;
+                    if (accObj.hasEllipsis) {
+                        return accObj;
+                    }
+
+                    if (lengthWithChild < 50) {
+                        accObj.acc.push(child);
+                        accObj.size = lengthWithChild;
+                    } else {
+                        const ellipsis = new JsonML('span')
+                            .withStyle(this.ellipsisStyle)
+                            .withText('...');
+
+                        accObj.acc.push(ellipsis);
+                        accObj.hasEllipsis = true;
+                    }
+
+                    return accObj;
+                },
+                { acc: [], size: 0, hasEllipsis: false }
+            )
+            .acc.reduce((acc, child) => {
+                acc.push(new JsonML('span').withText(', '));
+                acc.push(child);
+                return acc;
+            }, []);
+
+        children.splice(0, 1);
+
+        return new JsonML('span')
+            .withText('{ ')
+            .withChildren(children)
+            .withText(' }');
+    }
+}
+
 class NumberElement implements IFormatterElement {
     private elmObj: T.IElmDebugNumberValue;
-    private numberStyle = 'color: purple';
+    private numberStyle = 'color: purple; font-weight: normal;';
 
     constructor(obj: T.IElmDebugNumberValue) {
         this.elmObj = obj;
@@ -108,8 +171,8 @@ class NumberElement implements IFormatterElement {
 
 class ListElement implements IFormatterElement {
     private elmObj: T.IElmDebugListValue;
-    private arrayNameStyle = 'color: darkgreen';
-    private emptyArrayStyle = 'color: grey';
+    private arrayNameStyle = 'color: darkgreen; font-weight: normal;';
+    private emptyArrayStyle = 'color: grey; font-weight: normal;';
 
     constructor(obj: T.IElmDebugListValue) {
         this.elmObj = obj;
@@ -143,7 +206,6 @@ class TupleElement implements IFormatterElement {
     }
 
     public header() {
-        const tuple = new JsonML('span').withText('( ');
         const children = this.elmObj.value
             .map(child => this.formatter.handleHeader(child))
             .reduce((acc, child) => {
@@ -182,7 +244,11 @@ export default class ChromeConsoleFormatter
                 .withChild(this.handleHeader(obj.value));
         }
 
-        return this.toElement(obj).header() || new JsonML('span').withText(obj);
+        if (this.toElement(obj)) {
+            return this.toElement(obj).header();
+        } else {
+            return new JsonML('span').withText(obj);
+        }
     }
 
     private toElement(obj: T.ElmDebugValueType): IFormatterElement {
@@ -200,6 +266,8 @@ export default class ChromeConsoleFormatter
             return obj.type === 'Tuple'
                 ? new TupleElement(obj, this)
                 : new ListElement(obj);
+        } else if (T.isElmRecordValue(obj)) {
+            return new RecordElement(obj, this);
         }
     }
 }

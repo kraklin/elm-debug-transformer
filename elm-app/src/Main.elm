@@ -84,7 +84,9 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
         _ =
-            Debug.log "Debug: " ( "", "b", 123 )
+            Debug.log "Debug: " model
+
+        -- { number = "123", type_ = Just (Just 123) }
     in
     ( model, Cmd.none )
 

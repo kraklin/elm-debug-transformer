@@ -39,6 +39,7 @@ export function register(opts = { simple_mode: false, debug: false }) {
             if (!!opts.debug) {
                 console.error(`Parsing error: ${err}`);
             }
+            console.error(`Parsing error: ${err}`);
             log.call(console, msg);
         }
     };

@@ -49,24 +49,32 @@ function MLDebug(values: any[]): any[] {
     return ['div', {}, ['span', {}, 'Debug: '], ...values];
 }
 function MLString(str: string): any[] {
-    return ['span', { style: 'color: blue' }, `"${str}"`];
+    return ['span', { style: 'color: blue; font-weight: normal;' }, `"${str}"`];
 }
 
 function MLNumber(num: number): any[] {
-    return ['span', { style: 'color: purple' }, num.toString()];
+    return [
+        'span',
+        { style: 'color: purple; font-weight: normal;' },
+        num.toString(),
+    ];
 }
 
 function MLBool(bool: boolean): any[] {
-    return ['span', { style: 'color: blue' }, bool ? 'True' : 'False'];
+    return [
+        'span',
+        { style: 'color: blue; font-weight: normal;' },
+        bool ? 'True' : 'False',
+    ];
 }
 
 function MLList(typeName: string, length: number): any[] {
     if (length === 0) {
-        return ['span', { style: 'color: grey' }, '[]'];
+        return ['span', { style: 'color: grey; font-weight: normal;' }, '[]'];
     } else {
         return [
             'span',
-            { style: 'color: darkgreen' },
+            { style: 'color: darkgreen; font-weight: normal;' },
             typeName,
             ['span', {}, `(${length})`],
         ];
@@ -75,10 +83,19 @@ function MLList(typeName: string, length: number): any[] {
 
 function MLCustomType(name: string, value?: any): any[] {
     if (value === undefined) {
-        return ['span', { style: 'color: darkgreen' }, name];
+        return [
+            'span',
+            { style: 'color: darkgreen; font-weight: normal;' },
+            name,
+        ];
     }
 
-    return ['span', { style: 'color: darkgreen' }, name, value];
+    return [
+        'span',
+        { style: 'color: darkgreen; font-weight: normal;' },
+        name + ' ',
+        value,
+    ];
 }
 
 function MLTuple(values: any[]): any[] {
@@ -95,7 +112,28 @@ function MLTuple(values: any[]): any[] {
 }
 
 function MLEllipsis(): any[] {
-    return ['span', { style: 'color: gray' }, '...'];
+    return ['span', { style: 'color: gray; font-weight: normal;' }, '...'];
+}
+
+function MLRecord(values: any[]) {
+    const valuesWithCommas = values.reduce((acc, item) => {
+        acc.push(['span', {}, ', ']);
+        acc.push(item);
+        return acc;
+    }, []);
+
+    valuesWithCommas.splice(0, 1);
+
+    return ['span', {}, '{ '].concat(valuesWithCommas).concat([' }']);
+}
+
+function MLRecordValue(name: string, value: any): any[] {
+    return [
+        'span',
+        { style: 'color: purple; font-weight: bold;' },
+        name + ': ',
+        value,
+    ];
 }
 
 let formatter: IChromeConsoleFormatter;
@@ -209,14 +247,72 @@ describe('JSONML formatting', () => {
             });
             it('CustomType with two values', () => {
                 const value = customType('CustomType', [n(1), n(1)]);
-                const expected = [MLCustomType('CustomType ', MLEllipsis())];
+                const expected = [MLCustomType('CustomType', MLEllipsis())];
 
                 expect(
                     formatter.handleHeader(elmDebug(value)).toJSONML()
                 ).to.deep.equal(MLDebug(expected));
             });
         });
-        // TODO: Record, Dict, Internals, Function, Unit, Files, Bytes
+        describe('should handle Records', () => {
+            it('simple record', () => {
+                const value = record({ name: 'Name' });
+                const expected = [
+                    MLRecord([MLRecordValue('name', MLString('Name'))]),
+                ];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+            it('record with two values', () => {
+                const value = record({ name: 'Name', age: n(12) });
+                const expected = [
+                    MLRecord([
+                        MLRecordValue('name', MLString('Name')),
+                        MLRecordValue('age', MLNumber(12)),
+                    ]),
+                ];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+            it('record with long child content should be truncated to 50 chars', () => {
+                const value = record({
+                    name: 'Name',
+                    string:
+                        'Some really long string to simulate long content for the record',
+                });
+                const expected = [
+                    MLRecord([
+                        MLRecordValue('name', MLString('Name')),
+                        MLEllipsis(),
+                    ]),
+                ];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+            it('record with long child content continued with short child content shoul not show the short one', () => {
+                const value = record({
+                    a: 'a',
+                    b:
+                        'Some really long string to simulate long content for the record',
+                    c: 'c',
+                });
+                const expected = [
+                    MLRecord([MLRecordValue('a', MLString('a')), MLEllipsis()]),
+                ];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+        });
+
+        // TODO: Dict, Internals, Function, Unit, Files, Bytes
     });
 });
 /*
