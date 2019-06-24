@@ -5,9 +5,7 @@ export interface IFormatter {
 }
 
 export interface IJsonMLFormatter {
-    handleHeader(obj: ElmDebugValueType, config?: IConfig): JsonML;
-    // handleBody(obj: IElmDebugValue, config?: IConfig): any;
-    renderLine(key: string, value: JsonML, margin: number): JsonML;
+    handleHeader(obj: ElmDebugValueType): JsonML;
 }
 
 export interface IFormatterElement {

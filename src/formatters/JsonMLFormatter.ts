@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as T from '../CommonTypes';
 import JsonML from '../JsonML';
-import { toElement } from './elements/Helpers';
+import { toElement } from './elements/Elements';
 
 /* tslint:disable */
 declare global {
@@ -22,21 +22,10 @@ export default class JsonMLFormatter
     }
 
     public header(obj: T.IElmDebugValue, config: T.IConfig) {
-        if (
-            (!!obj.type && obj.type === 'ElmDebug') ||
-            (!!config && config.elmFormat)
-        ) {
-            if (config !== undefined) {
-                return this.renderLine(
-                    config.key,
-                    this.handleHeader(obj),
-                    10
-                ).toJSONML();
-            } else {
-                return new JsonML('div')
-                    .withChild(this.handleHeader(obj))
-                    .toJSONML();
-            }
+        if (!!obj.type && obj.type === 'ElmDebug') {
+            return new JsonML('div')
+                .withChild(this.handleHeader(obj))
+                .toJSONML();
         } else {
             return null;
         }
@@ -46,24 +35,9 @@ export default class JsonMLFormatter
     }
     public body(obj: any, config: T.IConfig) {
         return;
-        // return this.formatter.handleBody(obj, config).toJSONML();
     }
 
-    public renderLine(key: string, value: JsonML, margin: number): JsonML {
-        const keyStyle = 'color: purple; font-weight: bold';
-
-        if (!margin) {
-            margin = 0;
-        }
-        const keyJsonML = new JsonML('span').withStyle(keyStyle).withText(key);
-
-        return new JsonML('div')
-            .withStyle(`margin-left: ${margin}px`)
-            .withChild(keyJsonML)
-            .withChild(value);
-    }
-
-    public handleHeader(obj: T.ElmDebugValueType, config?: T.IConfig): JsonML {
+    public handleHeader(obj: T.ElmDebugValueType): JsonML {
         if (T.isElmValue(obj) && obj.type === 'ElmDebug') {
             return new JsonML('div')
                 .withChild(new JsonML('span').withText(obj.name + ': '))
@@ -74,7 +48,7 @@ export default class JsonMLFormatter
         if (element) {
             return element.header();
         } else {
-            return new JsonML('span').withText(obj);
+            return new JsonML('span').withText('UNPARSED: ').withText(obj);
         }
     }
 }

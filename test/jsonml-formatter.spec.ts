@@ -344,43 +344,76 @@ describe('JSONML formatting', () => {
                 ).to.deep.equal(MLDebug(expected));
             });
         });
-        // TODO: Dict, Internals, Function, Unit, Files, Bytes
+        describe('should return values for internals', () => {
+            it('Function', () => {
+                const value = { type: 'Function' };
+                const expected = [
+                    [
+                        'span',
+                        {
+                            style:
+                                'color: grey; font-weight: normal; font-style: italic;',
+                        },
+                        '<function>',
+                    ],
+                ];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+            it('Internals', () => {
+                const value = { type: 'Internals' };
+                const expected = [
+                    [
+                        'span',
+                        {
+                            style:
+                                'color: grey; font-weight: normal; font-style: italic;',
+                        },
+                        '<internals>',
+                    ],
+                ];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+        });
+        describe('should handle values for bytes and files', () => {
+            it('Bytes', () => {
+                const value = { type: 'Bytes', value: 1234 };
+                const expected = [
+                    [
+                        'span',
+                        {
+                            style: 'color: black; font-weight: normal;',
+                        },
+                        '1234 B',
+                    ],
+                ];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+
+            it('Files', () => {
+                const value = { type: 'File', value: 'Name-of_the.file' };
+                const expected = [
+                    [
+                        'span',
+                        {
+                            style: 'color: black; font-weight: normal;',
+                        },
+                        'Name-of_the.file',
+                    ],
+                ];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+        });
     });
 });
-/*
-    describe('should return values fo    describe('should return values for internals', () => {
-        it('Function', () => {
-            const value = elmDebug({ type: 'Function' });
-
-            expect(formatter.format(value)).to.deep.equal({
-                Debug: '<function>',
-            });
-        });
-
-        it('Internals', () => {
-            const value = elmDebug({ type: 'Internals' });
-
-            expect(formatter.format(value)).to.deep.equal({
-                Debug: '<internals>',
-            });
-        });
-    });
-
-    describe('should return values for bytes and files', () => {
-        it('Bytes', () => {
-            const value = elmDebug({ type: 'Bytes', value: 1234 });
-
-            expect(formatter.format(value)).to.deep.equal({ Debug: '1234 B' });
-        });
-
-        it('Files', () => {
-            const value = elmDebug({ type: 'File', value: 'Name-of_the.file' });
-
-            expect(formatter.format(value)).to.deep.equal({
-                Debug: 'Name-of_the.file',
-            });
-        });
-    });
-});
-
-*/
