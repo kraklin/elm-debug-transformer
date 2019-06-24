@@ -4,6 +4,10 @@ export interface IFormatter {
     format(obj: IElmDebugValue): any;
 }
 
+export interface IFormatterElement {
+    header(): JsonML;
+}
+
 export interface IConfig {
     elmFormat: boolean;
     key: any;
