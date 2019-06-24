@@ -23,4 +23,8 @@ export default class ListElement implements IFormatterElement {
                 new JsonML('span').withText(`(${this.elmObj.value.length})`)
             );
     }
+
+    public body() {
+        return new JsonML('div').withText('Not implemented yet');
+    }
 }

@@ -14,4 +14,8 @@ export default class BytesElement implements IFormatterElement {
             .withStyle(this.style)
             .withText(this.elmObj.value + ' B');
     }
+
+    public body() {
+        return new JsonML('div').withText('Not implemented yet');
+    }
 }

@@ -14,4 +14,8 @@ export default class NumberElement implements IFormatterElement {
             .withStyle(this.numberStyle)
             .withText(this.elmObj.value);
     }
+
+    public body() {
+        return new JsonML('div').withText('Not implemented yet');
+    }
 }

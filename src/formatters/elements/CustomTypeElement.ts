@@ -34,4 +34,8 @@ export default class CustomTypeElement implements IFormatterElement {
                 .withChild(new EllipsisElement().header());
         }
     }
+
+    public body() {
+        return new JsonML('div').withText('Not implemented yet');
+    }
 }

@@ -14,4 +14,8 @@ export default class FilesElement implements IFormatterElement {
             .withStyle(this.style)
             .withText(this.elmObj.value);
     }
+
+    public body() {
+        return new JsonML('div').withText('Not implemented yet');
+    }
 }

@@ -11,4 +11,8 @@ export default class EllipsisElement implements IFormatterElement {
     public header() {
         return new JsonML('span').withStyle(this.ellipsisStyle).withText('…');
     }
+
+    public body() {
+        return new JsonML('div').withText('Not implemented yet');
+    }
 }

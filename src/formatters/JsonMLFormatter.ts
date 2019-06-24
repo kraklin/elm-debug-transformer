@@ -31,15 +31,15 @@ export default class JsonMLFormatter
         }
     }
     public hasBody(obj: any) {
-        return false;
+        return true;
     }
     public body(obj: any, config: T.IConfig) {
-        return;
+        return this.handleBody(obj).toJSONML();
     }
 
     public handleHeader(obj: T.ElmDebugValueType): JsonML {
         if (T.isElmValue(obj) && obj.type === 'ElmDebug') {
-            return new JsonML('div')
+            return new JsonML('span')
                 .withChild(new JsonML('span').withText(obj.name + ': '))
                 .withChild(this.handleHeader(obj.value));
         }
@@ -49,6 +49,15 @@ export default class JsonMLFormatter
             return element.header();
         } else {
             return new JsonML('span').withText('UNPARSED: ').withText(obj);
+        }
+    }
+
+    public handleBody(obj: T.ElmDebugValueType): JsonML {
+        const element = toElement(obj, this);
+        if (element) {
+            return element.body();
+        } else {
+            return new JsonML('div').withText('UNPARSED body: ').withText(obj);
         }
     }
 }

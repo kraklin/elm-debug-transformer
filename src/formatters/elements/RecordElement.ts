@@ -59,4 +59,8 @@ export default class RecordElement implements IFormatterElement {
             .withChildren(children)
             .withText(' }');
     }
+
+    public body() {
+        return new JsonML('div').withText('Not implemented yet');
+    }
 }

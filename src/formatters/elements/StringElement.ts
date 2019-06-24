@@ -14,4 +14,8 @@ export default class StringElement implements IFormatterElement {
             .withStyle(this.style)
             .withText(`"${this.elmObj}"`);
     }
+
+    public body() {
+        return new JsonML('div').withText('Not implemented yet');
+    }
 }

@@ -46,7 +46,7 @@ function dict(dictionary: object) {
 }
 
 function MLDebug(values: any[]): any[] {
-    return ['div', {}, ['span', {}, 'Debug: '], ...values];
+    return ['span', {}, ['span', {}, 'Debug: '], ...values];
 }
 function MLString(str: string): any[] {
     return ['span', { style: 'color: blue; font-weight: normal;' }, `"${str}"`];

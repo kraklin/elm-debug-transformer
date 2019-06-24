@@ -14,4 +14,8 @@ export default class BooleanElement implements IFormatterElement {
             .withStyle(this.style)
             .withText(this.elmObj ? 'True' : 'False');
     }
+
+    public body() {
+        return new JsonML('div').withText('Not implemented yet');
+    }
 }
