@@ -7,7 +7,6 @@ const parser = generate(readFileSync('src/elm-debug.pegjs', 'utf8'));
 describe('Parsing', () => {
     describe('Basic type parsing', () => {
         it('without tag tag', () => {
-            console.log(parser.parse(': True'));
             expect(parser.parse(': True').value).to.deep.equal(true);
         });
 
