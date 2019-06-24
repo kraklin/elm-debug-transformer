@@ -1,17 +1,17 @@
 import {
-    IChromeConsoleFormatter,
     IElmDebugCustomValue,
     IFormatterElement,
+    IJsonMLFormatter,
 } from '../../CommonTypes';
 import JsonML from '../../JsonML';
 
 export default class CustomTypeElement implements IFormatterElement {
     private elmObj: IElmDebugCustomValue;
-    private formatter: IChromeConsoleFormatter;
+    private formatter: IJsonMLFormatter;
     private style = 'color: darkgreen; font-weight: normal;';
     private ellipsisStyle = 'color: gray; font-weight: normal;';
 
-    constructor(obj: IElmDebugCustomValue, formatter: IChromeConsoleFormatter) {
+    constructor(obj: IElmDebugCustomValue, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
         this.formatter = formatter;
     }
@@ -30,7 +30,7 @@ export default class CustomTypeElement implements IFormatterElement {
         } else {
             const ellipsis = new JsonML('span')
                 .withStyle(this.ellipsisStyle)
-                .withText('...');
+                .withText('…');
 
             return new JsonML('span')
                 .withStyle(this.style)

@@ -1,8 +1,4 @@
-import {
-    IChromeConsoleFormatter,
-    IElmDebugDictValue,
-    IFormatterElement,
-} from '../../CommonTypes';
+import { IElmDebugDictValue, IFormatterElement } from '../../CommonTypes';
 import JsonML from '../../JsonML';
 
 export default class DictElement implements IFormatterElement {
@@ -20,7 +16,6 @@ export default class DictElement implements IFormatterElement {
                 .withStyle(this.emptyStyle)
                 .withText('Dict.empty');
         }
-        console.log(this.elmObj);
 
         return new JsonML('span')
             .withStyle(this.dictStyle)

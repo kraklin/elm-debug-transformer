@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import * as _ from 'lodash';
 import {
-    IChromeConsoleFormatter,
     IElmDebugListValue,
     IElmDebugRecordValue,
     IElmDebugValue,
+    IJsonMLFormatter,
 } from '../src/CommonTypes';
-import ChromeFormatter from '../src/formatters/ChromeConsoleFormatter';
+import JsonMLFormatter from '../src/formatters/JsonMLFormatter';
 
 function elmDebug(values: any): IElmDebugValue {
     return { type: 'ElmDebug', name: 'Debug', value: values };
@@ -112,7 +112,7 @@ function MLTuple(values: any[]): any[] {
 }
 
 function MLEllipsis(): any[] {
-    return ['span', { style: 'color: gray; font-weight: normal;' }, '...'];
+    return ['span', { style: 'color: gray; font-weight: normal;' }, '…'];
 }
 
 function MLRecord(values: any[]) {
@@ -136,10 +136,10 @@ function MLRecordValue(name: string, value: any): any[] {
     ];
 }
 
-let formatter: IChromeConsoleFormatter;
+let formatter: IJsonMLFormatter;
 
 beforeEach(() => {
-    formatter = new ChromeFormatter();
+    formatter = new JsonMLFormatter();
 });
 
 describe('JSONML formatting', () => {

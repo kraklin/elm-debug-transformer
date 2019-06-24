@@ -4,7 +4,7 @@
     "noImplicitAny": true,
     "module": "es6",
     "moduleResolution": "node",
-    "types": ["mocha"],
+    "types": ["mocha", "node"],
     "target": "es5",
     "allowJs": true
   }

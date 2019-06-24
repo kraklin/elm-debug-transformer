@@ -1,17 +1,17 @@
 import {
-    IChromeConsoleFormatter,
     IElmDebugRecordValue,
     IFormatterElement,
+    IJsonMLFormatter,
 } from '../../CommonTypes';
 import JsonML from '../../JsonML';
 
 export default class RecordElement implements IFormatterElement {
     private elmObj: IElmDebugRecordValue;
-    private formatter: IChromeConsoleFormatter;
+    private formatter: IJsonMLFormatter;
     private keyStyle = 'color: purple; font-weight: bold;';
     private ellipsisStyle = 'color: gray; font-weight: normal;';
 
-    constructor(obj: IElmDebugRecordValue, formatter: IChromeConsoleFormatter) {
+    constructor(obj: IElmDebugRecordValue, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
         this.formatter = formatter;
     }
@@ -40,7 +40,7 @@ export default class RecordElement implements IFormatterElement {
                     } else {
                         const ellipsis = new JsonML('span')
                             .withStyle(this.ellipsisStyle)
-                            .withText('...');
+                            .withText('…');
 
                         accObj.acc.push(ellipsis);
                         accObj.hasEllipsis = true;

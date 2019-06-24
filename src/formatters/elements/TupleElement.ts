@@ -1,15 +1,15 @@
 import {
-    IChromeConsoleFormatter,
     IElmDebugListValue,
     IFormatterElement,
+    IJsonMLFormatter,
 } from '../../CommonTypes';
 import JsonML from '../../JsonML';
 
 export default class TupleElement implements IFormatterElement {
     private elmObj: IElmDebugListValue;
-    private formatter: IChromeConsoleFormatter;
+    private formatter: IJsonMLFormatter;
 
-    constructor(obj: IElmDebugListValue, formatter: IChromeConsoleFormatter) {
+    constructor(obj: IElmDebugListValue, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
         this.formatter = formatter;
     }

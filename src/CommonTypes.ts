@@ -4,6 +4,12 @@ export interface IFormatter {
     format(obj: IElmDebugValue): any;
 }
 
+export interface IJsonMLFormatter {
+    handleHeader(obj: ElmDebugValueType, config?: IConfig): JsonML;
+    // handleBody(obj: IElmDebugValue, config?: IConfig): any;
+    renderLine(key: string, value: JsonML, margin: number): JsonML;
+}
+
 export interface IFormatterElement {
     header(): JsonML;
 }
@@ -12,12 +18,6 @@ export interface IConfig {
     elmFormat: boolean;
     key: any;
     level: number;
-}
-
-export interface IChromeConsoleFormatter {
-    handleHeader(obj: ElmDebugValueType, config?: IConfig): JsonML;
-    // handleBody(obj: IElmDebugValue, config?: IConfig): any;
-    renderLine(key: string, value: JsonML, margin: number): JsonML;
 }
 
 export type ElmDebugValueType =

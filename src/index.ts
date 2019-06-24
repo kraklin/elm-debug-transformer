@@ -2,7 +2,7 @@ import ElmGrammar from '!!raw-loader!./elm-debug.pegjs';
 import * as _ from 'lodash';
 import * as PegJS from 'pegjs';
 import { IElmDebugValue } from './CommonTypes';
-import DevToolsFormatter from './formatters/DevToolsFormatter';
+import JsonMLFormatter from './formatters/JsonMLFormatter';
 import SimpleFormatter from './formatters/SimpleFormatter';
 
 /* tslint:disable */
@@ -21,7 +21,7 @@ export function register(opts = { simple_mode: false, debug: false }) {
     const formatter =
         !!opts.simple_mode || !window.chrome
             ? new SimpleFormatter()
-            : new DevToolsFormatter();
+            : new JsonMLFormatter();
 
     console.log = msg => {
         try {
@@ -39,7 +39,6 @@ export function register(opts = { simple_mode: false, debug: false }) {
             if (!!opts.debug) {
                 console.error(`Parsing error: ${err}`);
             }
-            console.error(`Parsing error: ${err}`);
             log.call(console, msg);
         }
     };
