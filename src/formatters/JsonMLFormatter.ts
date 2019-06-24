@@ -1,15 +1,7 @@
 import * as _ from 'lodash';
 import * as T from '../CommonTypes';
 import JsonML from '../JsonML';
-import BooleanElement from './elements/BooleanElement';
-import CustomTypeElement from './elements/CustomTypeElement';
-import DictElement from './elements/DictElement';
-import ListElement from './elements/ListElement';
-import NumberElement from './elements/NumberElement';
-import RecordElement from './elements/RecordElement';
-import StringElement from './elements/StringElement';
-import TupleElement from './elements/TupleElement';
-import TypeElement from './elements/TypeElement';
+import { toElement } from './elements/Helpers';
 
 /* tslint:disable */
 declare global {
@@ -19,7 +11,7 @@ declare global {
 }
 /* tslint:enable*/
 
-export default class DevToolsFormatter
+export default class JsonMLFormatter
     implements T.IFormatter, T.IJsonMLFormatter {
     constructor() {
         window.devtoolsFormatters = [this];
@@ -78,32 +70,11 @@ export default class DevToolsFormatter
                 .withChild(this.handleHeader(obj.value));
         }
 
-        if (this.toElement(obj)) {
-            return this.toElement(obj).header();
+        const element = toElement(obj, this);
+        if (element) {
+            return element.header();
         } else {
             return new JsonML('span').withText(obj);
-        }
-    }
-
-    private toElement(obj: T.ElmDebugValueType): T.IFormatterElement {
-        if (typeof obj === 'string') {
-            return new StringElement(obj);
-        } else if (typeof obj === 'boolean') {
-            return new BooleanElement(obj);
-        } else if (T.isElmNumberType(obj)) {
-            return new NumberElement(obj);
-        } else if (T.isElmTypeValue(obj)) {
-            return new TypeElement(obj);
-        } else if (T.isElmCustomValue(obj)) {
-            return new CustomTypeElement(obj, this);
-        } else if (T.isElmDictValue(obj)) {
-            return new DictElement(obj);
-        } else if (T.isElmListValue(obj)) {
-            return obj.type === 'Tuple'
-                ? new TupleElement(obj, this)
-                : new ListElement(obj);
-        } else if (T.isElmRecordValue(obj)) {
-            return new RecordElement(obj, this);
         }
     }
 }

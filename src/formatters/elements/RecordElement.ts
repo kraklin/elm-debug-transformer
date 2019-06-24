@@ -4,12 +4,12 @@ import {
     IJsonMLFormatter,
 } from '../../CommonTypes';
 import JsonML from '../../JsonML';
+import EllipsisElement from './EllipsisElement';
 
 export default class RecordElement implements IFormatterElement {
     private elmObj: IElmDebugRecordValue;
     private formatter: IJsonMLFormatter;
     private keyStyle = 'color: purple; font-weight: bold;';
-    private ellipsisStyle = 'color: gray; font-weight: normal;';
 
     constructor(obj: IElmDebugRecordValue, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
@@ -38,11 +38,7 @@ export default class RecordElement implements IFormatterElement {
                         accObj.acc.push(child);
                         accObj.size = lengthWithChild;
                     } else {
-                        const ellipsis = new JsonML('span')
-                            .withStyle(this.ellipsisStyle)
-                            .withText('…');
-
-                        accObj.acc.push(ellipsis);
+                        accObj.acc.push(new EllipsisElement().header());
                         accObj.hasEllipsis = true;
                     }
 

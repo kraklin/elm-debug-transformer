@@ -23,7 +23,7 @@ export function register(opts = { simple_mode: false, debug: false }) {
             ? new SimpleFormatter()
             : new JsonMLFormatter();
 
-    console.log = msg => {
+    console.log = (msg: any) => {
         try {
             if (!!opts.debug) {
                 log.call(console, 'Original message:', msg);

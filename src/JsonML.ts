@@ -1,12 +1,4 @@
-export type TagName =
-    | 'div'
-    | 'span'
-    | 'ol'
-    | 'li'
-    | 'table'
-    | 'tr'
-    | 'td'
-    | 'object';
+export type TagName = 'div' | 'span';
 
 export default class JSONMLElement {
     private attributes: { [key: string]: any };
