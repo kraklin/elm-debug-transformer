@@ -223,6 +223,32 @@ class TupleElement implements IFormatterElement {
     }
 }
 
+class DictElement implements IFormatterElement {
+    private elmObj: T.IElmDebugDictValue;
+    private emptyStyle = 'color: grey; font-weight: normal;';
+    private dictStyle = 'color: darkgreen; font-weight: normal;';
+
+    constructor(obj: T.IElmDebugDictValue) {
+        this.elmObj = obj;
+    }
+
+    public header() {
+        if (this.elmObj.value.length === 0) {
+            return new JsonML('span')
+                .withStyle(this.emptyStyle)
+                .withText('Dict.empty');
+        }
+        console.log(this.elmObj);
+
+        return new JsonML('span')
+            .withStyle(this.dictStyle)
+            .withText('Dict')
+            .withChild(
+                new JsonML('span').withText(`(${this.elmObj.value.length})`)
+            );
+    }
+}
+
 export default class ChromeConsoleFormatter
     implements T.IChromeConsoleFormatter {
     public renderLine(key: string, value: JsonML, margin: number): JsonML {
@@ -262,6 +288,8 @@ export default class ChromeConsoleFormatter
             return new TypeElement(obj);
         } else if (T.isElmCustomValue(obj)) {
             return new CustomTypeElement(obj, this);
+        } else if (T.isElmDictValue(obj)) {
+            return new DictElement(obj);
         } else if (T.isElmListValue(obj)) {
             return obj.type === 'Tuple'
                 ? new TupleElement(obj, this)

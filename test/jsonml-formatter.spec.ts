@@ -312,32 +312,43 @@ describe('JSONML formatting', () => {
             });
         });
 
+        describe('should return values for Dict', () => {
+            it('Empty dict', () => {
+                const value = dict({});
+                const expected = [
+                    [
+                        'span',
+                        { style: 'color: grey; font-weight: normal;' },
+                        'Dict.empty',
+                    ],
+                ];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+            it('Nonempty dict should show Dict(#count)', () => {
+                const value = dict({ a: 'b', b: 'a' });
+
+                const expected = [
+                    [
+                        'span',
+                        { style: 'color: darkgreen; font-weight: normal;' },
+                        'Dict',
+                        ['span', {}, '(2)'],
+                    ],
+                ];
+
+                expect(
+                    formatter.handleHeader(elmDebug(value)).toJSONML()
+                ).to.deep.equal(MLDebug(expected));
+            });
+        });
         // TODO: Dict, Internals, Function, Unit, Files, Bytes
     });
 });
 /*
-    describe('should return values for records', () => {
-        it('simple record', () => {
-            expect(
-                formatter.format(elmDebug(record({ name: 'Name', age: 12 })))
-            ).to.deep.equal({ Debug: { name: 'Name', age: 12 } });
-        });
-    });
-
-    describe('should return values for dictionaries', () => {
-        it('handles simple record', () => {
-            const value = elmDebug(dict({ name: 'Name', age: '12' }));
-
-            expect(formatter.format(value)).to.deep.equal({
-                Debug: {
-                    age: '12',
-                    name: 'Name',
-                },
-            });
-        });
-    });
-
-    describe('should return values for internals', () => {
+    describe('should return values fo    describe('should return values for internals', () => {
         it('Function', () => {
             const value = elmDebug({ type: 'Function' });
 
