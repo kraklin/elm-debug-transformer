@@ -45,8 +45,8 @@ Number =
 	/ "-" _ digits:[0-9\.]+ {return {type: "Number", value: parseFloat("-"+toStr(digits))};}
 
 Boolean
-  = "True" {return true;}
-  / "False" {return false;}
+  = "True" {return {type: "Boolean", value: true};}
+  / "False" {return {type: "Boolean", value: false};}
 
 Internals
   = "<function>" {return {type: "Function"};}
@@ -68,8 +68,8 @@ Tag =
 	tag:[a-zA-Z ]+ {return toStr(tag);}
 
 String
-  = '"' chars:DoubleStringCharacter* '"' { return chars.join(''); }
-  / "'" chars:SingleStringCharacter* "'" { return chars.join(''); }
+  = '"' chars:DoubleStringCharacter* '"' { return {type: "String", value: chars.join('')}; }
+  / "'" chars:SingleStringCharacter* "'" { return { type: "String", value: chars.join('')}; }
 
 
 ListValue

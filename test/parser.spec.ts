@@ -1,23 +1,26 @@
 import { expect, should } from 'chai';
 import { readFileSync } from 'fs';
 import { generate } from 'pegjs';
+import * as B from './builders';
 
 const parser = generate(readFileSync('src/elm-debug.pegjs', 'utf8'));
 
 describe('Parsing', () => {
     describe('Basic type parsing', () => {
         it('without tag tag', () => {
-            expect(parser.parse(': True').value).to.deep.equal(true);
+            expect(parser.parse(': True').value).to.deep.equal(B.bool(true));
         });
 
         it('with multiple `:` in the tag', () => {
             expect(parser.parse('tag string :: : True').value).to.deep.equal(
-                true
+                B.bool(true)
             );
         });
 
         it('Boolean', () => {
-            expect(parser.parse('tag string: True').value).to.deep.equal(true);
+            expect(parser.parse('tag string: True').value).to.deep.equal(
+                B.bool(true)
+            );
         });
 
         it('Integer', () => {
@@ -50,7 +53,7 @@ describe('Parsing', () => {
 
         it('String', () => {
             expect(parser.parse('string: "Lorem Ipsum."').value).to.deep.equal(
-                'Lorem Ipsum.'
+                B.str('Lorem Ipsum.')
             );
         });
 
@@ -58,7 +61,7 @@ describe('Parsing', () => {
             expect(
                 parser.parse('string: "Lorem Ipsum. \\"with some quotes\\""')
                     .value
-            ).to.deep.equal('Lorem Ipsum. "with some quotes"');
+            ).to.deep.equal(B.str('Lorem Ipsum. "with some quotes"'));
         });
     });
 
@@ -72,7 +75,7 @@ describe('Parsing', () => {
         it('Basic tuple', () => {
             expect(parser.parse('tuple: (123, False)').value).to.deep.equal({
                 type: 'Tuple',
-                value: [{ type: 'Number', value: 123 }, false],
+                value: [{ type: 'Number', value: 123 }, B.bool(false)],
             });
         });
 
@@ -83,8 +86,8 @@ describe('Parsing', () => {
                 type: 'Tuple',
                 value: [
                     { type: 'Number', value: 123 },
-                    'Some string.',
-                    true,
+                    B.str('Some string.'),
+                    B.bool(true),
                     { type: 'Number', value: 12.34 },
                 ],
             });
@@ -99,7 +102,7 @@ describe('Parsing', () => {
                     { type: 'Number', value: 123 },
                     {
                         type: 'Tuple',
-                        value: [true, { type: 'Number', value: 12.34 }],
+                        value: [B.bool(true), { type: 'Number', value: 12.34 }],
                     },
                 ],
             });
@@ -125,7 +128,7 @@ describe('Parsing', () => {
                 parser.parse('list: ["s1","s2","s3","s4"]').value
             ).to.deep.equal({
                 type: 'List',
-                value: ['s1', 's2', 's3', 's4'],
+                value: [B.str('s1'), B.str('s2'), B.str('s3'), B.str('s4')],
             });
         });
         it('List of tuples', () => {
@@ -134,8 +137,8 @@ describe('Parsing', () => {
             ).to.deep.equal({
                 type: 'List',
                 value: [
-                    { type: 'Tuple', value: ['s1', 's2'] },
-                    { type: 'Tuple', value: ['s3', 's4'] },
+                    { type: 'Tuple', value: [B.str('s1'), B.str('s2')] },
+                    { type: 'Tuple', value: [B.str('s3'), B.str('s4')] },
                 ],
             });
         });
@@ -154,8 +157,8 @@ describe('Parsing', () => {
             ).to.deep.equal({
                 type: 'Dict',
                 value: [
-                    { key: { type: 'Number', value: 1 }, value: 'a' },
-                    { key: { type: 'Number', value: 2 }, value: 'b' },
+                    { key: { type: 'Number', value: 1 }, value: B.str('a') },
+                    { key: { type: 'Number', value: 2 }, value: B.str('b') },
                 ],
             });
         });
@@ -173,7 +176,7 @@ describe('Parsing', () => {
                 parser.parse('Set: Set.fromList ["1","2","3"]').value
             ).to.deep.equal({
                 type: 'Set',
-                value: ['1', '2', '3'],
+                value: [B.str('1'), B.str('2'), B.str('3')],
             });
         });
     });
@@ -189,7 +192,7 @@ describe('Parsing', () => {
                 parser.parse('Array: Array.fromList ["1","2","3"]').value
             ).to.deep.equal({
                 type: 'Array',
-                value: ['1', '2', '3'],
+                value: [B.str('1'), B.str('2'), B.str('3')],
             });
         });
     });
@@ -206,7 +209,7 @@ describe('Parsing', () => {
                 parser.parse('record: { name = "Name" }').value
             ).to.deep.equal({
                 type: 'Record',
-                value: { name: 'Name' },
+                value: { name: B.str('Name') },
             });
         });
         it('Record with more values', () => {
@@ -217,7 +220,7 @@ describe('Parsing', () => {
             ).to.deep.equal({
                 type: 'Record',
                 value: {
-                    name: 'Name',
+                    name: B.str('Name'),
                     warning: { type: 'Type', name: 'Nothing' },
                     waves: { type: 'List', value: [] },
                 },
@@ -231,7 +234,7 @@ describe('Parsing', () => {
             ).to.deep.equal({
                 type: 'Record',
                 value: {
-                    name: 'Name',
+                    name: B.str('Name'),
                     warning: {
                         type: 'Record',
                         value: {
@@ -263,7 +266,7 @@ describe('Parsing', () => {
             ).to.deep.equal({
                 name: 'User',
                 type: 'Custom',
-                value: ['Adam'],
+                value: [B.str('Adam')],
             });
         });
         it('Custom type with more values', () => {
@@ -273,11 +276,11 @@ describe('Parsing', () => {
                 name: 'User',
                 type: 'Custom',
                 value: [
-                    'Adam',
+                    B.str('Adam'),
                     { type: 'Number', value: 123 },
                     {
                         type: 'Tuple',
-                        value: [{ type: 'Number', value: 1 }, false],
+                        value: [{ type: 'Number', value: 1 }, B.bool(false)],
                     },
                 ],
             });
@@ -294,11 +297,14 @@ describe('Parsing', () => {
                         name: 'Data',
                         type: 'Custom',
                         value: [
-                            'Adam',
+                            B.str('Adam'),
                             { type: 'Number', value: 123 },
                             {
                                 type: 'Tuple',
-                                value: [{ type: 'Number', value: 1 }, false],
+                                value: [
+                                    { type: 'Number', value: 1 },
+                                    B.bool(false),
+                                ],
                             },
                         ],
                     },
@@ -332,11 +338,14 @@ describe('Parsing', () => {
                         name: 'Data',
                         type: 'Custom',
                         value: [
-                            '(tuple, in, string)',
+                            B.str('(tuple, in, string)'),
                             { type: 'Number', value: 123 },
                             {
                                 type: 'Tuple',
-                                value: [{ type: 'Number', value: 1 }, false],
+                                value: [
+                                    { type: 'Number', value: 1 },
+                                    B.bool(false),
+                                ],
                             },
                         ],
                     },

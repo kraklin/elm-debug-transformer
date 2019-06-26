@@ -1,140 +1,7 @@
 import { expect } from 'chai';
-import * as _ from 'lodash';
-import {
-    IElmDebugListValue,
-    IElmDebugRecordValue,
-    IElmDebugValue,
-    IJsonMLFormatter,
-} from '../src/CommonTypes';
+import { IJsonMLFormatter } from '../src/CommonTypes';
 import JsonMLFormatter from '../src/formatters/JsonMLFormatter';
-
-function elmDebug(values: any): IElmDebugValue {
-    return { type: 'ElmDebug', name: 'Debug', value: values };
-}
-
-function list(typeName: string, values: any[]): IElmDebugListValue {
-    return { type: typeName, value: values };
-}
-
-function record(values: { [key: string]: any }): IElmDebugRecordValue {
-    return { type: 'Record', value: values };
-}
-
-function n(val: number) {
-    return { type: 'Number', value: val };
-}
-
-function tuple(values: any[]) {
-    return { type: 'Tuple', value: values };
-}
-
-function customType(name: string, values: any[]) {
-    return { type: 'Custom', name, value: values };
-}
-
-function type(name: string) {
-    return { type: 'Type', name };
-}
-
-function dict(dictionary: object) {
-    return {
-        type: 'Dict',
-        value: _.toPairs(dictionary).map(item => {
-            return { key: item[0], value: item[1] };
-        }),
-    };
-}
-
-function MLDebug(values: any[]): any[] {
-    return ['span', {}, ['span', {}, 'Debug: '], ...values];
-}
-function MLString(str: string): any[] {
-    return ['span', { style: 'color: blue; font-weight: normal;' }, `"${str}"`];
-}
-
-function MLNumber(num: number): any[] {
-    return [
-        'span',
-        { style: 'color: purple; font-weight: normal;' },
-        num.toString(),
-    ];
-}
-
-function MLBool(bool: boolean): any[] {
-    return [
-        'span',
-        { style: 'color: blue; font-weight: normal;' },
-        bool ? 'True' : 'False',
-    ];
-}
-
-function MLList(typeName: string, length: number): any[] {
-    if (length === 0) {
-        return ['span', { style: 'color: grey; font-weight: normal;' }, '[]'];
-    } else {
-        return [
-            'span',
-            { style: 'color: darkgreen; font-weight: normal;' },
-            typeName,
-            ['span', {}, `(${length})`],
-        ];
-    }
-}
-
-function MLCustomType(name: string, value?: any): any[] {
-    if (value === undefined) {
-        return [
-            'span',
-            { style: 'color: darkgreen; font-weight: normal;' },
-            name,
-        ];
-    }
-
-    return [
-        'span',
-        { style: 'color: darkgreen; font-weight: normal;' },
-        name + ' ',
-        value,
-    ];
-}
-
-function MLTuple(values: any[]): any[] {
-    // const vals = values.map(v => v);
-    const valuesWithCommas = values.reduce((acc: any[], v) => {
-        acc.push(['span', {}, ', ']);
-        acc.push(v);
-        return acc;
-    }, []);
-    valuesWithCommas.splice(0, 1);
-    valuesWithCommas.push(' )');
-
-    return ['span', {}, '( ', ...valuesWithCommas];
-}
-
-function MLEllipsis(): any[] {
-    return ['span', { style: 'color: gray; font-weight: normal;' }, '…'];
-}
-
-function MLRecord(values: any[]) {
-    const valuesWithCommas = values.reduce((acc, item) => {
-        acc.push(['span', {}, ', ']);
-        acc.push(item);
-        return acc;
-    }, []);
-
-    valuesWithCommas.splice(0, 1);
-
-    return ['span', {}, '{ '].concat(valuesWithCommas).concat([' }']);
-}
-
-function MLRecordValue(name: string, value: any): any[] {
-    return [
-        'span',
-        { style: 'color: purple; font-weight: bold;' },
-        name + ': ',
-        value,
-    ];
-}
+import * as B from './builders';
 
 let formatter: IJsonMLFormatter;
 
@@ -146,175 +13,184 @@ describe('JSONML formatting', () => {
     describe('Header values', () => {
         describe('should return values for simple values', () => {
             it('string', () => {
-                const value = 'string';
-                const expected = [MLString('string')];
+                const value = B.str('string');
+                const expected = [B.MLString('string')];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
 
             it('number', () => {
-                const value = n(1);
-                const expected = [MLNumber(1)];
+                const value = B.n(1);
+                const expected = [B.MLNumber(1)];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
 
             it('boolean True', () => {
-                const value = true;
-                const expected = [MLBool(true)];
+                const value = B.bool(true);
+                const expected = [B.MLBool(true)];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
 
             it('boolean False', () => {
-                const value = false;
-                const expected = [MLBool(false)];
+                const value = B.bool(false);
+                const expected = [B.MLBool(false)];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
         });
         describe('should return values for array like structures', () => {
             it('Empty list', () => {
-                const value = list('List', []);
-                const expected = [MLList('List', 0)];
+                const value = B.list([], 'List');
+                const expected = [B.MLList('List', 0)];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
 
             it('Array with one value', () => {
-                const value = list('Array', [n(1)]);
-                const expected = [MLList('Array', 1)];
+                const value = B.list([B.n(1)], 'Array');
+                const expected = [B.MLList('Array', 1)];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
 
             it('Set with more values', () => {
-                const value = list('Set', ['a', 'b', 'c']);
-                const expected = [MLList('Set', 3)];
+                const value = B.list(['a', 'b', 'c'], 'Set');
+                const expected = [B.MLList('Set', 3)];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
 
             it('Tuple with three values', () => {
-                const value = tuple(['a', 'b', 'c']);
+                const value = B.tuple([B.str('a'), B.str('b'), B.str('c')]);
                 const expected = [
-                    MLTuple([MLString('a'), MLString('b'), MLString('c')]),
+                    B.MLTuple([
+                        B.MLString('a'),
+                        B.MLString('b'),
+                        B.MLString('c'),
+                    ]),
                 ];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
         });
         describe('should handle Types and Custom types', () => {
             it('Type', () => {
-                const value = type('Nothing');
-                const expected = [MLCustomType('Nothing')];
+                const value = B.type('Nothing');
+                const expected = [B.MLCustomType('Nothing')];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
             it('CustomType without values', () => {
-                const value = customType('CustomType', []);
-                const expected = [MLCustomType('CustomType')];
+                const value = B.customType('CustomType', []);
+                const expected = [B.MLCustomType('CustomType')];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
             it('CustomType with one value', () => {
-                const value = customType('CustomType', [n(1)]);
-                const expected = [MLCustomType('CustomType', MLNumber(1))];
+                const value = B.customType('CustomType', [B.n(1)]);
+                const expected = [B.MLCustomType('CustomType', B.MLNumber(1))];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
             it('CustomType with two values', () => {
-                const value = customType('CustomType', [n(1), n(1)]);
-                const expected = [MLCustomType('CustomType', MLEllipsis())];
+                const value = B.customType('CustomType', [B.n(1), B.n(1)]);
+                const expected = [B.MLCustomType('CustomType', B.MLEllipsis())];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
         });
         describe('should handle Records', () => {
             it('simple record', () => {
-                const value = record({ name: 'Name' });
+                const value = B.record({ name: B.str('Name') });
                 const expected = [
-                    MLRecord([MLRecordValue('name', MLString('Name'))]),
+                    B.MLRecord([B.MLRecordValue('name', B.MLString('Name'))]),
                 ];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
             it('record with two values', () => {
-                const value = record({ name: 'Name', age: n(12) });
+                const value = B.record({ name: B.str('Name'), age: B.n(12) });
                 const expected = [
-                    MLRecord([
-                        MLRecordValue('name', MLString('Name')),
-                        MLRecordValue('age', MLNumber(12)),
+                    B.MLRecord([
+                        B.MLRecordValue('name', B.MLString('Name')),
+                        B.MLRecordValue('age', B.MLNumber(12)),
                     ]),
                 ];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
             it('record with long child content should be truncated to 50 chars', () => {
-                const value = record({
-                    name: 'Name',
-                    string:
-                        'Some really long string to simulate long content for the record',
+                const value = B.record({
+                    name: B.str('Name'),
+                    string: B.str(
+                        'Some really long string to simulate long content for the record'
+                    ),
                 });
                 const expected = [
-                    MLRecord([
-                        MLRecordValue('name', MLString('Name')),
-                        MLEllipsis(),
+                    B.MLRecord([
+                        B.MLRecordValue('name', B.MLString('Name')),
+                        B.MLEllipsis(),
                     ]),
                 ];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
             it('record with long child content continued with short child content shoul not show the short one', () => {
-                const value = record({
-                    a: 'a',
-                    b:
-                        'Some really long string to simulate long content for the record',
-                    c: 'c',
+                const value = B.record({
+                    a: B.str('a'),
+                    b: B.str(
+                        'Some really long string to simulate long content for the record'
+                    ),
+                    c: B.str('c'),
                 });
                 const expected = [
-                    MLRecord([MLRecordValue('a', MLString('a')), MLEllipsis()]),
+                    B.MLRecord([
+                        B.MLRecordValue('a', B.MLString('a')),
+                        B.MLEllipsis(),
+                    ]),
                 ];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
         });
 
         describe('should return values for Dict', () => {
             it('Empty dict', () => {
-                const value = dict({});
+                const value = B.dict({});
                 const expected = [
                     [
                         'span',
@@ -324,11 +200,11 @@ describe('JSONML formatting', () => {
                 ];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
             it('Nonempty dict should show Dict(#count)', () => {
-                const value = dict({ a: 'b', b: 'a' });
+                const value = B.dict({ a: 'b', b: 'a' });
 
                 const expected = [
                     [
@@ -340,8 +216,8 @@ describe('JSONML formatting', () => {
                 ];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
         });
         describe('should return values for internals', () => {
@@ -359,8 +235,8 @@ describe('JSONML formatting', () => {
                 ];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
             it('Internals', () => {
                 const value = { type: 'Internals' };
@@ -376,8 +252,25 @@ describe('JSONML formatting', () => {
                 ];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
+            });
+            it('Unit', () => {
+                const value = { type: 'Unit' };
+                const expected = [
+                    [
+                        'span',
+                        {
+                            style:
+                                'color: grey; font-weight: normal; font-style: italic;',
+                        },
+                        '()',
+                    ],
+                ];
+
+                expect(
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
         });
         describe('should handle values for bytes and files', () => {
@@ -394,8 +287,8 @@ describe('JSONML formatting', () => {
                 ];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
             });
 
             it('Files', () => {
@@ -411,8 +304,83 @@ describe('JSONML formatting', () => {
                 ];
 
                 expect(
-                    formatter.handleHeader(elmDebug(value)).toJSONML()
-                ).to.deep.equal(MLDebug(expected));
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
+            });
+        });
+    });
+    describe('Body values', () => {
+        describe('Values without body should return null', () => {
+            it('String', () => {
+                const value = B.str('String');
+
+                expect(formatter.handleBody(value)).to.be.null;
+            });
+
+            it('Number', () => {
+                const value = B.n(12);
+
+                expect(formatter.handleBody(value)).to.be.null;
+            });
+
+            it('Boolean', () => {
+                const value = B.bool(true);
+
+                expect(formatter.handleBody(value)).to.be.null;
+            });
+
+            it('Unit', () => {
+                const value = { type: 'Unit' };
+
+                expect(formatter.handleBody(value)).to.be.null;
+            });
+            it('Function', () => {
+                const value = { type: 'Function' };
+
+                expect(formatter.handleBody(value)).to.be.null;
+            });
+            it('Internals', () => {
+                const value = { type: 'Internals' };
+
+                expect(formatter.handleBody(value)).to.be.null;
+            });
+            it('Bytes', () => {
+                const value = { type: 'Bytes', value: 1234 };
+
+                expect(formatter.handleBody(value)).to.be.null;
+            });
+            it('Files', () => {
+                const value = { type: 'File', value: 'Some_file.name' };
+
+                expect(formatter.handleBody(value)).to.be.null;
+            });
+        });
+
+        it('Record with one value', () => {
+            const value = B.record({ age: B.n(12) });
+            const expected = [B.MLRecordBodyValue('age', B.n(12))];
+
+            expect(formatter.handleBody(value).toJSONML()).to.equal(
+                B.MLBody(expected)
+            );
+        });
+        describe.skip('should return values for array like structures', () => {
+            it('Empty list', () => {
+                const value = B.list([], 'List');
+                const expected: any = null;
+
+                expect(formatter.handleBody(value)).to.deep.equal(expected);
+            });
+            it('Array with 2 values', () => {
+                const value = B.list([B.n(2), B.n(3)], 'Array');
+                const expected: any = [
+                    B.MLListBodyValue(0, B.MLNumber(2)),
+                    B.MLListBodyValue(1, B.MLNumber(3)),
+                ];
+
+                expect(formatter.handleBody(value).toJSONML()).to.deep.equal(
+                    B.MLBody(expected)
+                );
             });
         });
     });

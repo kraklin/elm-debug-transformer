@@ -22,10 +22,6 @@ export default class SimpleFormatter implements T.IFormatter {
     }
 
     public formatValue(formatee: T.ElmDebugValueType): any {
-        if (typeof formatee === 'string' || typeof formatee === 'boolean') {
-            return formatee;
-        }
-
         if (T.isElmCustomValue(formatee)) {
             return this.formatCustom(formatee);
         }
@@ -72,14 +68,21 @@ export default class SimpleFormatter implements T.IFormatter {
             case 'Bytes':
                 return formatee.value + ' B';
 
+            case 'File':
+                return formatee.value;
+
             case 'Unit':
                 return '()';
 
-            case 'Number':
+            case 'String':
+                return formatee.value;
+
+            case 'Boolean':
                 return formatee.value;
 
             default:
-                return formatee.value !== undefined
+                return formatee.value !== undefined &&
+                    T.isElmValue(formatee.value)
                     ? this.formatValue(formatee.value)
                     : formatee;
         }

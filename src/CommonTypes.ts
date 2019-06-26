@@ -5,19 +5,24 @@ export interface IFormatter {
 }
 
 export interface IJsonMLFormatter {
-    handleHeader(obj: ElmDebugValueType): JsonML;
+    handleHeader(obj: ElmDebugValueType, config?: IConfig): JsonML;
     handleBody(obj: ElmDebugValueType): JsonML;
+}
+
+export interface IDevToolsFormatter {
+    header(obj: ElmDebugValueType, config?: IConfig): any[] | null;
+    hasBody(obj: ElmDebugValueType, config?: IConfig): boolean;
+    body(obj: ElmDebugValueType, config?: IConfig): any[] | null;
 }
 
 export interface IFormatterElement {
     header(): JsonML;
-    body(): JsonML;
+    body?(): JsonML | null;
 }
 
 export interface IConfig {
     elmFormat: boolean;
-    key: any;
-    level: number;
+    key: JsonML | null;
 }
 
 export type ElmDebugValueType =
@@ -28,8 +33,8 @@ export type ElmDebugValueType =
     | IElmDebugDictValue
     | IElmDebugTypeValueType
     | IElmDebugNumberValue
-    | string
-    | boolean;
+    | IElmDebugStringValue
+    | IElmDebugBoolValue;
 
 export interface IElmDebugValue {
     type: string;
@@ -66,6 +71,16 @@ export interface IElmDebugDictValue {
 export interface IElmDebugNumberValue {
     type: string;
     value: number;
+}
+
+export interface IElmDebugStringValue {
+    type: string;
+    value: string;
+}
+
+export interface IElmDebugBoolValue {
+    type: string;
+    value: boolean;
 }
 
 export function isElmValue(value: any): value is IElmDebugValue {

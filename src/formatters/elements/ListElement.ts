@@ -1,13 +1,20 @@
-import { IElmDebugListValue, IFormatterElement } from '../../CommonTypes';
+import {
+    IElmDebugListValue,
+    IFormatterElement,
+    IJsonMLFormatter,
+} from '../../CommonTypes';
 import JsonML from '../../JsonML';
 
 export default class ListElement implements IFormatterElement {
     private elmObj: IElmDebugListValue;
+    private formatter: IJsonMLFormatter;
     private arrayNameStyle = 'color: darkgreen; font-weight: normal;';
     private emptyArrayStyle = 'color: grey; font-weight: normal;';
+    private keyStyle = 'color: purple; font-weight: normal;';
 
-    constructor(obj: IElmDebugListValue) {
+    constructor(obj: IElmDebugListValue, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
+        this.formatter = formatter;
     }
 
     public header() {
@@ -24,7 +31,29 @@ export default class ListElement implements IFormatterElement {
             );
     }
 
-    public body() {
-        return new JsonML('div').withText('Not implemented yet');
+    public body(): JsonML | null {
+        if (this.elmObj.value.length === 0) {
+            return null;
+        }
+
+        const children = this.elmObj.value.map((child, index) => {
+            const element = new JsonML('span')
+                .withChild(
+                    new JsonML('span')
+                        .withStyle(this.keyStyle)
+                        .withText(`[${index}]`)
+                )
+                .withText(': ');
+
+            if (this.formatter.handleBody(child) === null) {
+                element.withStyle('margin-left: 13px;');
+            }
+
+            return new JsonML('div').withObject(element, child);
+        });
+
+        return new JsonML('div')
+            .withStyle('margin-left: 15px;')
+            .withChildren(children);
     }
 }

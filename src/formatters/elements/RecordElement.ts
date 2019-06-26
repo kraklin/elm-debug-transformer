@@ -9,7 +9,7 @@ import EllipsisElement from './EllipsisElement';
 export default class RecordElement implements IFormatterElement {
     private elmObj: IElmDebugRecordValue;
     private formatter: IJsonMLFormatter;
-    private keyStyle = 'color: purple; font-weight: bold;';
+    private keyStyle = 'color: purple; font-weight: normal;';
 
     constructor(obj: IElmDebugRecordValue, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
@@ -61,6 +61,24 @@ export default class RecordElement implements IFormatterElement {
     }
 
     public body() {
-        return new JsonML('div').withText('Not implemented yet');
+        const keys = Object.keys(this.elmObj.value);
+        const objects = keys.map(k => {
+            const keyElement = new JsonML('span')
+                .withStyle(this.keyStyle)
+                .withText(k)
+                .withText(': ');
+            if (this.formatter.handleBody(this.elmObj.value[k]) === null) {
+                keyElement.withStyle('margin-left: 13px;');
+            }
+
+            return new JsonML('div').withObject(
+                keyElement,
+                this.elmObj.value[k]
+            );
+        });
+
+        return new JsonML('div')
+            .withStyle('margin-left: 15px;')
+            .withChildren(objects);
     }
 }

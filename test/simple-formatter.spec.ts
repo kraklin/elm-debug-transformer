@@ -1,45 +1,7 @@
 import { expect } from 'chai';
-import * as _ from 'lodash';
-import {
-    IElmDebugListValue,
-    IElmDebugRecordValue,
-    IElmDebugValue,
-    IFormatter,
-} from '../src/CommonTypes';
+import { IFormatter } from '../src/CommonTypes';
 import SimpleFormatter from '../src/formatters/SimpleFormatter';
-
-function elmDebug(values: any): IElmDebugValue {
-    return { type: 'ElmDebug', name: 'Debug', value: values };
-}
-
-function list(values: any[]): IElmDebugListValue {
-    return { type: 'List', value: values };
-}
-
-function record(values: { [key: string]: any }): IElmDebugRecordValue {
-    return { type: 'Record', value: values };
-}
-
-function n(val: number) {
-    return { type: 'Number', value: val };
-}
-
-function customType(name: string, values: any[]) {
-    return { type: 'Custom', name, value: values };
-}
-
-function type(name: string) {
-    return { type: 'Type', name };
-}
-
-function dict(dictionary: object) {
-    return {
-        type: 'Dict',
-        value: _.toPairs(dictionary).map(item => {
-            return { key: item[0], value: item[1] };
-        }),
-    };
-}
+import * as B from './builders';
 
 let formatter: IFormatter;
 
@@ -50,24 +12,28 @@ beforeEach(() => {
 describe('Simple formatting', () => {
     describe('should return values for simple values', () => {
         it('string', () => {
-            expect(formatter.format(elmDebug('string'))).to.deep.equal({
-                Debug: 'string',
-            });
+            expect(formatter.format(B.elmDebug(B.str('string')))).to.deep.equal(
+                {
+                    Debug: 'string',
+                }
+            );
         });
 
         it('int', () => {
-            expect(formatter.format(elmDebug(123))).to.deep.equal({
+            expect(formatter.format(B.elmDebug(B.n(123)))).to.deep.equal({
                 Debug: 123,
             });
         });
 
         it('bool', () => {
-            expect(formatter.format(elmDebug(false))).to.deep.equal({
+            expect(formatter.format(B.elmDebug(B.bool(false)))).to.deep.equal({
                 Debug: false,
             });
         });
         it('unit', () => {
-            expect(formatter.format(elmDebug({ type: 'Unit' }))).to.deep.equal({
+            expect(
+                formatter.format(B.elmDebug({ type: 'Unit' }))
+            ).to.deep.equal({
                 Debug: '()',
             });
         });
@@ -77,9 +43,9 @@ describe('Simple formatting', () => {
         it('empty list', () => {
             expect(
                 formatter.format(
-                    elmDebug(
-                        record({
-                            list: list([]),
+                    B.elmDebug(
+                        B.record({
+                            list: B.list([]),
                         })
                     )
                 )
@@ -89,9 +55,9 @@ describe('Simple formatting', () => {
         it('numbers list', () => {
             expect(
                 formatter.format(
-                    elmDebug(
-                        record({
-                            list: list([n(1), n(2), n(3)]),
+                    B.elmDebug(
+                        B.record({
+                            list: B.list([B.n(1), B.n(2), B.n(3)]),
                         })
                     )
                 )
@@ -103,9 +69,9 @@ describe('Simple formatting', () => {
         it('Simple type', () => {
             expect(
                 formatter.format(
-                    elmDebug(
-                        record({
-                            list: list([]),
+                    B.elmDebug(
+                        B.record({
+                            list: B.list([]),
                         })
                     )
                 )
@@ -115,13 +81,15 @@ describe('Simple formatting', () => {
         it('list of Maybe types', () => {
             expect(
                 formatter.format(
-                    elmDebug(
-                        record({
-                            list: list([
-                                type('Nothing'),
-                                customType('Just', [list(['String'])]),
-                                type('Nothing'),
-                                type('Nothing'),
+                    B.elmDebug(
+                        B.record({
+                            list: B.list([
+                                B.type('Nothing'),
+                                B.customType('Just', [
+                                    B.list([B.str('String')]),
+                                ]),
+                                B.type('Nothing'),
+                                B.type('Nothing'),
                             ]),
                         })
                     )
@@ -140,18 +108,20 @@ describe('Simple formatting', () => {
 
         it('Custom with just one value', () => {
             expect(
-                formatter.format(elmDebug(customType('Just', ['String'])))
+                formatter.format(
+                    B.elmDebug(B.customType('Just', [B.str('String')]))
+                )
             ).to.deep.equal({ Debug: { Just: 'String' } });
         });
 
         it('Nested custom', () => {
             expect(
                 formatter.format(
-                    elmDebug(
-                        customType('Just', [
-                            customType('Node', [
-                                customType('Leaf', [1]),
-                                customType('Leaf', [2]),
+                    B.elmDebug(
+                        B.customType('Just', [
+                            B.customType('Node', [
+                                B.customType('Leaf', [B.n(1)]),
+                                B.customType('Leaf', [B.n(2)]),
                             ]),
                         ])
                     )
@@ -165,14 +135,18 @@ describe('Simple formatting', () => {
     describe('should return values for records', () => {
         it('simple record', () => {
             expect(
-                formatter.format(elmDebug(record({ name: 'Name', age: 12 })))
+                formatter.format(
+                    B.elmDebug(B.record({ name: B.str('Name'), age: B.n(12) }))
+                )
             ).to.deep.equal({ Debug: { name: 'Name', age: 12 } });
         });
     });
 
     describe('should return values for dictionaries', () => {
         it('handles simple record', () => {
-            const value = elmDebug(dict({ name: 'Name', age: '12' }));
+            const value = B.elmDebug(
+                B.dict({ name: B.str('Name'), age: B.str('12') })
+            );
 
             expect(formatter.format(value)).to.deep.equal({
                 Debug: {
@@ -185,7 +159,7 @@ describe('Simple formatting', () => {
 
     describe('should return values for internals', () => {
         it('Function', () => {
-            const value = elmDebug({ type: 'Function' });
+            const value = B.elmDebug({ type: 'Function' });
 
             expect(formatter.format(value)).to.deep.equal({
                 Debug: '<function>',
@@ -193,7 +167,7 @@ describe('Simple formatting', () => {
         });
 
         it('Internals', () => {
-            const value = elmDebug({ type: 'Internals' });
+            const value = B.elmDebug({ type: 'Internals' });
 
             expect(formatter.format(value)).to.deep.equal({
                 Debug: '<internals>',
@@ -203,13 +177,16 @@ describe('Simple formatting', () => {
 
     describe('should return values for bytes and files', () => {
         it('Bytes', () => {
-            const value = elmDebug({ type: 'Bytes', value: 1234 });
+            const value = B.elmDebug({ type: 'Bytes', value: 1234 });
 
             expect(formatter.format(value)).to.deep.equal({ Debug: '1234 B' });
         });
 
         it('Files', () => {
-            const value = elmDebug({ type: 'File', value: 'Name-of_the.file' });
+            const value = B.elmDebug({
+                type: 'File',
+                value: 'Name-of_the.file',
+            });
 
             expect(formatter.format(value)).to.deep.equal({
                 Debug: 'Name-of_the.file',

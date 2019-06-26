@@ -24,8 +24,19 @@ export default class JSONMLElement {
         return this;
     }
 
+    public withObject(key: JSONMLElement, object: any) {
+        this.jsonML.push([
+            'object',
+            { object, config: { elmFormat: true, key } },
+        ]);
+        return this;
+    }
+
     public withStyle(style: string) {
-        this.attributes.style = style;
+        this.attributes.style =
+            this.attributes.style === undefined
+                ? style
+                : this.attributes.style + style;
         return this;
     }
 
