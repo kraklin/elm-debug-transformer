@@ -5,11 +5,11 @@ import {
 } from '../../CommonTypes';
 import JsonML from '../../JsonML';
 import EllipsisElement from './EllipsisElement';
+import { KeyElementStyle } from './Styles';
 
 export default class RecordElement implements IFormatterElement {
     private elmObj: IElmDebugRecordValue;
     private formatter: IJsonMLFormatter;
-    private keyStyle = 'color: purple; font-weight: normal;';
 
     constructor(obj: IElmDebugRecordValue, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
@@ -21,7 +21,7 @@ export default class RecordElement implements IFormatterElement {
         const children = keys
             .map(k => {
                 return new JsonML('span')
-                    .withStyle(this.keyStyle)
+                    .withStyle(KeyElementStyle)
                     .withText(k + ': ')
                     .withChild(
                         this.formatter.handleHeader(this.elmObj.value[k])
@@ -64,7 +64,7 @@ export default class RecordElement implements IFormatterElement {
         const keys = Object.keys(this.elmObj.value);
         const objects = keys.map(k => {
             const keyElement = new JsonML('span')
-                .withStyle(this.keyStyle)
+                .withStyle(KeyElementStyle)
                 .withText(k)
                 .withText(': ');
             if (this.formatter.handleBody(this.elmObj.value[k]) === null) {

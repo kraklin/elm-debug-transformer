@@ -1,9 +1,9 @@
 import { IElmDebugStringValue, IFormatterElement } from '../../CommonTypes';
 import JsonML from '../../JsonML';
+import { StringStyle } from './Styles';
 
 export default class StringElement implements IFormatterElement {
     private elmObj: IElmDebugStringValue;
-    private style = 'color: blue; font-weight: normal;';
 
     constructor(obj: IElmDebugStringValue) {
         this.elmObj = obj;
@@ -11,7 +11,7 @@ export default class StringElement implements IFormatterElement {
 
     public header() {
         return new JsonML('span')
-            .withStyle(this.style)
+            .withStyle(StringStyle)
             .withText(`"${this.elmObj.value}"`);
     }
 }

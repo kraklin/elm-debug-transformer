@@ -1,9 +1,9 @@
 import { IElmDebugTypeValueType, IFormatterElement } from '../../CommonTypes';
 import JsonML from '../../JsonML';
+import { TypeNameStyle } from './Styles';
 
 export default class TypeElement implements IFormatterElement {
     private elmObj: IElmDebugTypeValueType;
-    private style = 'color: darkgreen; font-weight: normal;';
 
     constructor(obj: IElmDebugTypeValueType) {
         this.elmObj = obj;
@@ -11,7 +11,7 @@ export default class TypeElement implements IFormatterElement {
 
     public header() {
         return new JsonML('span')
-            .withStyle(this.style)
+            .withStyle(TypeNameStyle)
             .withText(this.elmObj.name);
     }
 

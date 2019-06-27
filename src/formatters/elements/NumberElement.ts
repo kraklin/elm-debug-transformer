@@ -1,9 +1,9 @@
 import { IElmDebugNumberValue, IFormatterElement } from '../../CommonTypes';
 import JsonML from '../../JsonML';
+import { NumberStyle } from './Styles';
 
 export default class NumberElement implements IFormatterElement {
     private elmObj: IElmDebugNumberValue;
-    private numberStyle = 'color: purple; font-weight: normal;';
 
     constructor(obj: IElmDebugNumberValue) {
         this.elmObj = obj;
@@ -11,7 +11,7 @@ export default class NumberElement implements IFormatterElement {
 
     public header() {
         return new JsonML('span')
-            .withStyle(this.numberStyle)
+            .withStyle(NumberStyle)
             .withText(this.elmObj.value);
     }
 }

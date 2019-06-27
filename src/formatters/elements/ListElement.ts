@@ -4,13 +4,15 @@ import {
     IJsonMLFormatter,
 } from '../../CommonTypes';
 import JsonML from '../../JsonML';
+import {
+    DataStructureNameStyle,
+    GreyedOutStyle,
+    KeyElementStyle,
+} from './Styles';
 
 export default class ListElement implements IFormatterElement {
     private elmObj: IElmDebugListValue;
     private formatter: IJsonMLFormatter;
-    private arrayNameStyle = 'color: darkgreen; font-weight: normal;';
-    private emptyArrayStyle = 'color: grey; font-weight: normal;';
-    private keyStyle = 'color: purple; font-weight: normal;';
 
     constructor(obj: IElmDebugListValue, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
@@ -19,12 +21,10 @@ export default class ListElement implements IFormatterElement {
 
     public header() {
         if (this.elmObj.value.length === 0) {
-            return new JsonML('span')
-                .withStyle(this.emptyArrayStyle)
-                .withText('[]');
+            return new JsonML('span').withStyle(GreyedOutStyle).withText('[]');
         }
         return new JsonML('span')
-            .withStyle(this.arrayNameStyle)
+            .withStyle(DataStructureNameStyle)
             .withText(this.elmObj.type)
             .withChild(
                 new JsonML('span').withText(`(${this.elmObj.value.length})`)
@@ -40,7 +40,7 @@ export default class ListElement implements IFormatterElement {
             const element = new JsonML('span')
                 .withChild(
                     new JsonML('span')
-                        .withStyle(this.keyStyle)
+                        .withStyle(KeyElementStyle)
                         .withText(`[${index}]`)
                 )
                 .withText(': ');

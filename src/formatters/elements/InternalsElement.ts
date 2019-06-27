@@ -1,5 +1,6 @@
 import { IFormatterElement } from '../../CommonTypes';
 import JsonML from '../../JsonML';
+import { GreyedOutItalics } from './Styles';
 
 export default class StringElement implements IFormatterElement {
     private elmObj: string;
@@ -24,6 +25,6 @@ export default class StringElement implements IFormatterElement {
                 break;
         }
 
-        return new JsonML('span').withStyle(this.style).withText(value);
+        return new JsonML('span').withStyle(GreyedOutItalics).withText(value);
     }
 }
