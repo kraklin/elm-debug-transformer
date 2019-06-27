@@ -124,7 +124,7 @@ export function MLTuple(values: any[]): any[] {
 }
 
 export function MLEllipsis(): any[] {
-    return ['span', { style: 'color: gray; font-weight: normal;' }, '…'];
+    return ['span', { style: 'color: grey; font-weight: normal;' }, '…'];
 }
 
 export function MLRecord(values: any[]) {
@@ -147,11 +147,11 @@ export function MLRecordValue(name: string, value: any): any[] {
         value,
     ];
 }
-export function MLRecordBodyValue(name: string, value: any): any[] {
+export function MLKeyValueBody(keyName: string, object: any): any[] {
     const jsonML = [
         'span',
         { style: 'color: purple; font-weight: normal;margin-left: 13px;' },
-        name,
+        keyName,
         ': ',
     ];
 
@@ -165,17 +165,7 @@ export function MLRecordBodyValue(name: string, value: any): any[] {
     return [
         'div',
         {},
-        ['object', { config: { elmFormat: true, key }, object: value }],
-    ];
-}
-
-export function MLListBodyValue(index: number, value: any): any[] {
-    return [
-        'div',
-        {},
-        ['span', { style: 'color: purple; font-weight: normal;' }, index + ''],
-        ' = ',
-        value,
+        ['object', { config: { elmFormat: true, key }, object }],
     ];
 }
 

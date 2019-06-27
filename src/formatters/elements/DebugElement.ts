@@ -9,7 +9,6 @@ import EllipsisElement from './EllipsisElement';
 export default class DebugElment implements IFormatterElement {
     private elmObj: IElmDebugValue;
     private formatter: IJsonMLFormatter;
-    private keyStyle = 'color: purple; font-weight: bold;';
 
     constructor(obj: IElmDebugValue, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
