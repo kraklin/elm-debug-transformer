@@ -23,6 +23,17 @@ export default class ListElement implements IFormatterElement {
         if (this.elmObj.value.length === 0) {
             return new JsonML('span').withStyle(GreyedOutStyle).withText('[]');
         }
+        if (this.elmObj.value.length === 1) {
+            return new JsonML('span')
+                .withStyle(GreyedOutStyle)
+                .withText('[')
+                .withChild(
+                    new JsonML('span').withChild(
+                        this.formatter.handleHeader(this.elmObj.value[0])
+                    )
+                )
+                .withText(']');
+        }
         return new JsonML('span')
             .withStyle(DataStructureNameStyle)
             .withText(this.elmObj.type)
@@ -32,7 +43,7 @@ export default class ListElement implements IFormatterElement {
     }
 
     public body(): JsonML | null {
-        if (this.elmObj.value.length === 0) {
+        if (this.elmObj.value.length <= 1) {
             return null;
         }
 
