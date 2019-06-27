@@ -4,6 +4,7 @@ import {
     IJsonMLFormatter,
 } from '../../CommonTypes';
 import JsonML from '../../JsonML';
+import { KeyElementStyle } from './Styles';
 
 export default class TupleElement implements IFormatterElement {
     private elmObj: IElmDebugListValue;
@@ -31,7 +32,29 @@ export default class TupleElement implements IFormatterElement {
             .withText(' )');
     }
 
-    public body() {
-        return new JsonML('div').withText('Not implemented yet');
+    public body(): JsonML | null {
+        if (this.elmObj.value.length <= 1) {
+            return null;
+        }
+
+        const children = this.elmObj.value.map((child, index) => {
+            const element = new JsonML('span')
+                .withChild(
+                    new JsonML('span')
+                        .withStyle(KeyElementStyle)
+                        .withText(`[${index}]`)
+                )
+                .withText(': ');
+
+            if (this.formatter.handleBody(child) === null) {
+                element.withStyle('margin-left: 13px;');
+            }
+
+            return new JsonML('div').withObject(element, child);
+        });
+
+        return new JsonML('div')
+            .withStyle('margin-left: 15px;')
+            .withChildren(children);
     }
 }
