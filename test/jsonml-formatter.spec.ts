@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { IJsonMLFormatter } from '../src/CommonTypes';
+import * as Styles from '../src/formatters/elements/Styles';
 import JsonMLFormatter from '../src/formatters/JsonMLFormatter';
 import * as B from './builders';
 
@@ -60,7 +61,15 @@ describe('JSONML formatting', () => {
 
             it('Array with one value', () => {
                 const value = B.list([B.n(1)], 'Array');
-                const expected = [B.MLList('Array', 1)];
+                const expected = [
+                    [
+                        'span',
+                        { style: Styles.GreyedOutStyle },
+                        '[',
+                        ['span', {}, B.MLNumber(1)],
+                        ']',
+                    ],
+                ];
 
                 expect(
                     formatter.handleHeader(B.elmDebug(value)).toJSONML()
@@ -209,7 +218,7 @@ describe('JSONML formatting', () => {
                 const expected = [
                     [
                         'span',
-                        { style: 'color: darkgreen; font-weight: normal;' },
+                        { style: Styles.DataStructureNameStyle },
                         'Dict',
                         ['span', {}, '(2)'],
                     ],
@@ -280,7 +289,7 @@ describe('JSONML formatting', () => {
                     [
                         'span',
                         {
-                            style: 'color: black; font-weight: normal;',
+                            style: Styles.BytesStyle,
                         },
                         '1234 B',
                     ],
@@ -297,7 +306,7 @@ describe('JSONML formatting', () => {
                     [
                         'span',
                         {
-                            style: 'color: black; font-weight: normal;',
+                            style: Styles.BytesStyle,
                         },
                         'Name-of_the.file',
                     ],

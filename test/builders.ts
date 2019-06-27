@@ -5,6 +5,7 @@ import {
     IElmDebugValue,
     IFormatter,
 } from '../src/CommonTypes';
+import * as Styles from '../src/formatters/elements/Styles';
 
 export function elmDebug(values: any): IElmDebugValue {
     return { type: 'ElmDebug', name: 'Debug', value: values };
@@ -54,30 +55,23 @@ export function str(value: string) {
 }
 
 export function MLDebug(values: any[]): any[] {
-    return ['span', {}, ['span', {}, 'Debug: '], ...values];
-}
-export function MLString(value: string): any[] {
     return [
         'span',
-        { style: 'color: blue; font-weight: normal;' },
-        `"${value}"`,
+        {},
+        ['span', {}, ['span', { style: Styles.DebugTagStyle }, 'Debug'], ': '],
+        ...values,
     ];
+}
+export function MLString(value: string): any[] {
+    return ['span', { style: Styles.StringStyle }, `"${value}"`];
 }
 
 export function MLNumber(num: number): any[] {
-    return [
-        'span',
-        { style: 'color: purple; font-weight: normal;' },
-        num.toString(),
-    ];
+    return ['span', { style: Styles.NumberStyle }, num.toString()];
 }
 
 export function MLBool(value: boolean): any[] {
-    return [
-        'span',
-        { style: 'color: blue; font-weight: normal;' },
-        value ? 'True' : 'False',
-    ];
+    return ['span', { style: Styles.BooleanStyle }, value ? 'True' : 'False'];
 }
 
 export function MLList(typeName: string, length: number): any[] {
@@ -86,7 +80,7 @@ export function MLList(typeName: string, length: number): any[] {
     } else {
         return [
             'span',
-            { style: 'color: darkgreen; font-weight: normal;' },
+            { style: Styles.DataStructureNameStyle },
             typeName,
             ['span', {}, `(${length})`],
         ];
@@ -95,19 +89,10 @@ export function MLList(typeName: string, length: number): any[] {
 
 export function MLCustomType(name: string, value?: any): any[] {
     if (value === undefined) {
-        return [
-            'span',
-            { style: 'color: darkgreen; font-weight: normal;' },
-            name,
-        ];
+        return ['span', { style: Styles.CustomTypeNameStyle }, name];
     }
 
-    return [
-        'span',
-        { style: 'color: darkgreen; font-weight: normal;' },
-        name + ' ',
-        value,
-    ];
+    return ['span', { style: Styles.CustomTypeNameStyle }, name + ' ', value];
 }
 
 export function MLTuple(values: any[]): any[] {
@@ -124,7 +109,7 @@ export function MLTuple(values: any[]): any[] {
 }
 
 export function MLEllipsis(): any[] {
-    return ['span', { style: 'color: grey; font-weight: normal;' }, '…'];
+    return ['span', { style: Styles.GreyedOutStyle }, '…'];
 }
 
 export function MLRecord(values: any[]) {
@@ -140,12 +125,7 @@ export function MLRecord(values: any[]) {
 }
 
 export function MLRecordValue(name: string, value: any): any[] {
-    return [
-        'span',
-        { style: 'color: purple; font-weight: normal;' },
-        name + ': ',
-        value,
-    ];
+    return ['span', { style: Styles.KeyElementStyle }, name + ': ', value];
 }
 export function MLKeyValueBody(keyName: string, object: any): any[] {
     const jsonML = [

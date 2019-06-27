@@ -5,6 +5,7 @@ import {
 } from '../../CommonTypes';
 import JsonML from '../../JsonML';
 import EllipsisElement from './EllipsisElement';
+import { DebugTagStyle } from './Styles';
 
 export default class DebugElment implements IFormatterElement {
     private elmObj: IElmDebugValue;
@@ -17,7 +18,15 @@ export default class DebugElment implements IFormatterElement {
 
     public header() {
         return new JsonML('span')
-            .withChild(new JsonML('span').withText(this.elmObj.name + ': '))
+            .withChild(
+                new JsonML('span')
+                    .withChild(
+                        new JsonML('span')
+                            .withStyle(DebugTagStyle)
+                            .withText(this.elmObj.name)
+                    )
+                    .withText(': ')
+            )
             .withChild(this.formatter.handleHeader(this.elmObj.value));
     }
 
