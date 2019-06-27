@@ -38,11 +38,12 @@ export default class TupleElement implements IFormatterElement {
         }
 
         const children = this.elmObj.value.map((child, index) => {
+            const names = ['1st', '2nd', '3rd'];
             const element = new JsonML('span')
                 .withChild(
                     new JsonML('span')
                         .withStyle(KeyElementStyle)
-                        .withText(`[${index}]`)
+                        .withText(`${names[index]}`)
                 )
                 .withText(': ');
 

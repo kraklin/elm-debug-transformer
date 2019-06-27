@@ -14,8 +14,4 @@ export default class TypeElement implements IFormatterElement {
             .withStyle(TypeNameStyle)
             .withText(this.elmObj.name);
     }
-
-    public body() {
-        return new JsonML('div').withText('Not implemented yet');
-    }
 }
