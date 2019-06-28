@@ -57,14 +57,16 @@ export default class ListElement implements IFormatterElement {
                 .withText(': ');
 
             if (this.formatter.handleBody(child) === null) {
-                element.withStyle('margin-left: 13px;');
+                element.withStyle('margin-left: 12px');
             }
 
             return new JsonML('div').withObject(element, child);
         });
 
         return new JsonML('div')
-            .withStyle('margin-left: 15px;')
+            .withStyle(
+                'margin-left: 4px; padding-left: 11px; border-left: 1px solid grey;'
+            )
             .withChildren(children);
     }
 }

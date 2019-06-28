@@ -68,16 +68,13 @@ Note: You might need to refresh the page first time you open Console panel with 
 
 ### Simple object output
 
+The register function should recognize whether it can use Custom formatters or not. In the latter case it would use Simple fromat mode automatically. But you can force the `simple_mode` by enabling it explicitly:
+
 ```
 import * as ElmDebugger from 'elm-debug-transformer';
 
 ElmDebugger.register({simple_mode: true});
 ```
-
-If you are not a fan of Chromium based browser you can pass option to the `register` function. 
-```
-register({simple_mode: true});
-``` 
 
 That way the `Debug.log` would output simpler JS object without `type` information. `Tuple`, `Set`, `Array` and `List` would become arrays and `Dict` would become JS object with keys and values.
 

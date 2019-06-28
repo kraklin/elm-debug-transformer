@@ -1,12 +1,22 @@
-import { IElmDebugDictValue, IFormatterElement } from '../../CommonTypes';
+import {
+    IElmDebugDictValue,
+    IFormatterElement,
+    IJsonMLFormatter,
+} from '../../CommonTypes';
 import JsonML from '../../JsonML';
-import { DataStructureNameStyle, GreyedOutStyle } from './Styles';
+import {
+    DataStructureNameStyle,
+    GreyedOutStyle,
+    KeyElementStyle,
+} from './Styles';
 
 export default class DictElement implements IFormatterElement {
     private elmObj: IElmDebugDictValue;
+    private formatter: IJsonMLFormatter;
 
-    constructor(obj: IElmDebugDictValue) {
+    constructor(obj: IElmDebugDictValue, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
+        this.formatter = formatter;
     }
 
     public header() {
@@ -25,6 +35,25 @@ export default class DictElement implements IFormatterElement {
     }
 
     public body() {
-        return new JsonML('div').withText('Not implemented yet');
+        const children = this.elmObj.value.map(child => {
+            const key = this.formatter.handleHeader(child.key);
+            const element = new JsonML('span')
+                .withChild(
+                    new JsonML('span').withStyle(KeyElementStyle).withChild(key)
+                )
+                .withText(': ');
+
+            if (this.formatter.handleBody(child.value) === null) {
+                element.withStyle(
+                    'padding-left: 13px; border-left: 1px solid black'
+                );
+            }
+
+            return new JsonML('div').withObject(element, child.value);
+        });
+
+        return new JsonML('div')
+            .withStyle('margin-left: 15px;')
+            .withChildren(children);
     }
 }

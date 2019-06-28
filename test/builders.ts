@@ -58,7 +58,8 @@ export function MLDebug(values: any[]): any[] {
     return [
         'span',
         {},
-        ['span', {}, ['span', { style: Styles.DebugTagStyle }, 'Debug'], ': '],
+        ['span', { style: Styles.ElmLogoElementStyle }],
+        [['span', { style: Styles.DebugTagStyle }, 'Debug'], ': '],
         ...values,
     ];
 }

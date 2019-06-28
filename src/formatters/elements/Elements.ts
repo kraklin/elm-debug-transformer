@@ -31,7 +31,7 @@ export function toElement(
     } else if (T.isElmCustomValue(obj)) {
         return new CustomTypeElement(obj, formatter);
     } else if (T.isElmDictValue(obj)) {
-        return new DictElement(obj);
+        return new DictElement(obj, formatter);
     } else if (T.isElmListValue(obj)) {
         return obj.type === 'Tuple'
             ? new TupleElement(obj, formatter)

@@ -65,7 +65,7 @@ export interface IElmDebugRecordValue {
 
 export interface IElmDebugDictValue {
     type: string;
-    value: Array<{ key: string; value: ElmDebugValueType }>;
+    value: Array<{ key: ElmDebugValueType; value: ElmDebugValueType }>;
 }
 
 export interface IElmDebugNumberValue {
