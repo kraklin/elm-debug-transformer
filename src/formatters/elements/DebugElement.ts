@@ -5,12 +5,13 @@ import {
 } from '../../CommonTypes';
 import JsonML from '../../JsonML';
 import EllipsisElement from './EllipsisElement';
-import { DebugTagStyle } from './Styles';
+import { DebugTagStyle, ElmLogoElementStyle } from './Styles';
 
 export default class DebugElment implements IFormatterElement {
     private elmObj: IElmDebugValue;
     private formatter: IJsonMLFormatter;
 
+    private elmLogoElement = new JsonML('span').withStyle(ElmLogoElementStyle);
     constructor(obj: IElmDebugValue, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
         this.formatter = formatter;
@@ -18,6 +19,7 @@ export default class DebugElment implements IFormatterElement {
 
     public header() {
         return new JsonML('span')
+            .withChild(this.elmLogoElement)
             .withChild(
                 new JsonML('span')
                     .withChild(
