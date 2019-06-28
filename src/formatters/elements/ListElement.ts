@@ -52,7 +52,7 @@ export default class ListElement implements IFormatterElement {
                 .withChild(
                     new JsonML('span')
                         .withStyle(KeyElementStyle)
-                        .withText(`[${index}]`)
+                        .withText(`${index}`)
                 )
                 .withText(': ');
 
