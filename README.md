@@ -33,13 +33,32 @@ This limitation is due to the problem recognizing arbitrary tag text from the re
 
 ## Installation
 
-Just install this module with:
+Just install this module with Yarn:
 
 ```
 yarn add -D elm-debug-transformer
 ```
 
+or NPM:
+
+```
+npm install elm-debug-transformer
+```
+
+### Get it directly from CDN
+
+[Roman Potashow](https://github.com/justgook) pointed out on Elm Slack that you can use the NPM package directly without the need of installing it.
+
+```
+<script src="https://unpkg.com/elm-debug-transformer@<VERSION>/dist/elm-console-debug.js"></script>
+
+<script>ElmConsoleDebug.register()</script>
+```
+
+
 ## Usage
+
+There is a nice summary of the usage in Alex Korban's article [Get improved Debug.log output in the browser console](https://korban.net/posts/elm/2019-07-02-improved-debug-log-output-browser-console/)
 
 Register the console debugger in your main JS file before you initialize Elm application:
 
