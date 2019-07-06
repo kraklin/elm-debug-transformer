@@ -8,7 +8,11 @@ import {
 
 import JsonML from '../../JsonML';
 import EllipsisElement from './EllipsisElement';
-import { CustomTypeNameStyle, KeyElementStyle } from './Styles';
+import {
+    CustomTypeNameStyle,
+    ExpandableBorderStyle,
+    KeyElementStyle,
+} from './Styles';
 
 export default class CustomTypeElement implements IFormatterElement {
     private elmObj: IElmDebugCustomValue;
@@ -107,7 +111,9 @@ export default class CustomTypeElement implements IFormatterElement {
                 element.withStyle('margin-left: 13px;');
             }
 
-            return new JsonML('div').withObject(element, child);
+            return new JsonML('div')
+                .withStyle(ExpandableBorderStyle)
+                .withObject(element, child);
         });
 
         return new JsonML('div')

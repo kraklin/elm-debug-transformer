@@ -410,12 +410,26 @@ describe('JSONML formatting', () => {
             });
         });
 
+        describe('List values', () => {
+            it('Empty list should not be expandable', () => {
+                const value = B.list([]);
+
+                assert.isNull(formatter.handleBody(value));
+            });
+
+            it('List with value should be expandable', () => {
+                const value = B.list([B.n(1)]);
+
+                assert.isNotNull(formatter.handleBody(value));
+            });
+        });
+
         describe.skip('should handle body of the record values', () => {
             it('Record with one value', () => {
                 const value = B.record({ age: B.n(12) });
                 const expected = [B.MLKeyValueBody('age', B.n(12))];
 
-                expect(formatter.handleBody(value).toJSONML()).to.equal(
+                expect(formatter.handleBody(value).toJSONML()).to.deep.equal(
                     B.MLBody(expected)
                 );
             });

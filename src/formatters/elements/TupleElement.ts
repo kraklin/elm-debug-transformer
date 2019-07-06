@@ -5,7 +5,7 @@ import {
     IJsonMLFormatter,
 } from '../../CommonTypes';
 import JsonML from '../../JsonML';
-import { KeyElementStyle } from './Styles';
+import { ExpandableBorderStyle, KeyElementStyle } from './Styles';
 
 export default class TupleElement implements IFormatterElement {
     private elmObj: IElmDebugListValue;
@@ -56,6 +56,7 @@ export default class TupleElement implements IFormatterElement {
 
         return new JsonML('div')
             .withStyle('margin-left: 15px;')
+            .withStyle(ExpandableBorderStyle)
             .withChildren(children);
     }
 }

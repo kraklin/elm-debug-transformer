@@ -7,6 +7,7 @@ import {
 import JsonML from '../../JsonML';
 import {
     DataStructureNameStyle,
+    ExpandableBorderStyle,
     GreyedOutStyle,
     KeyElementStyle,
 } from './Styles';
@@ -47,7 +48,7 @@ export default class ListElement implements IFormatterElement {
     }
 
     public body(config?: IConfig): JsonML | null {
-        if (this.elmObj.value.length <= 1) {
+        if (this.elmObj.value.length === 0) {
             return null;
         }
 
@@ -68,9 +69,7 @@ export default class ListElement implements IFormatterElement {
         });
 
         return new JsonML('div')
-            .withStyle(
-                'margin-left: 4px; padding-left: 11px; border-left: 1px solid grey;'
-            )
+            .withStyle(ExpandableBorderStyle)
             .withChildren(children);
     }
 }

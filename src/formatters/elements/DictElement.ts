@@ -7,6 +7,7 @@ import {
 import JsonML from '../../JsonML';
 import {
     DataStructureNameStyle,
+    ExpandableBorderStyle,
     GreyedOutStyle,
     KeyElementStyle,
 } from './Styles';
@@ -45,9 +46,7 @@ export default class DictElement implements IFormatterElement {
                 .withText(': ');
 
             if (this.formatter.handleBody(child.value, config) === null) {
-                element.withStyle(
-                    'padding-left: 13px; border-left: 1px solid black'
-                );
+                element.withStyle(ExpandableBorderStyle);
             }
 
             return new JsonML('div').withObject(element, child.value, config);

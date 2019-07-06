@@ -136,14 +136,14 @@ export function MLRecordValue(name: string, value: any): any[] {
 export function MLKeyValueBody(keyName: string, object: any): any[] {
     const jsonML = [
         'span',
-        { style: 'color: purple; font-weight: normal;margin-left: 13px;' },
+        { style: Styles.KeyElementStyle + 'margin-left: 13px;' },
         keyName,
         ': ',
     ];
 
     const key = {
         attributes: {
-            style: 'color: purple; font-weight: normal;margin-left: 13px;',
+            style: Styles.KeyElementStyle + 'margin-left: 13px;',
         },
         jsonML,
     };
