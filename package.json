@@ -15,6 +15,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
+    "pegjs": "pegjs --plugin ./node_modules/ts-pegjs/src/tspegjs -o src/elm-debug-parser.ts --cache src/elm-debug.pegjs",
     "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --opts mocha.opts",
     "test:watch": "yarn test --watch",
     "build": "webpack",
@@ -42,6 +43,7 @@
     "ts-loader": "^6.0.2",
     "ts-mocha": "^6.0.0",
     "ts-node": "^8.3.0",
+    "ts-pegjs": "^0.2.5",
     "tslint": "^5.17.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
