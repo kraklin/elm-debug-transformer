@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { IJsonMLFormatter } from '../src/CommonTypes';
 import * as Styles from '../src/formatters/elements/Styles';
 import JsonMLFormatter from '../src/formatters/JsonMLFormatter';
@@ -368,45 +368,45 @@ describe('JSONML formatting', () => {
             it('String', () => {
                 const value = B.str('String');
 
-                expect(formatter.handleBody(value)).to.be.null;
+                assert.isNull(formatter.handleBody(value));
             });
 
             it('Number', () => {
                 const value = B.n(12);
 
-                expect(formatter.handleBody(value)).to.be.null;
+                assert.isNull(formatter.handleBody(value));
             });
 
             it('Boolean', () => {
                 const value = B.bool(true);
 
-                expect(formatter.handleBody(value)).to.be.null;
+                assert.isNull(formatter.handleBody(value));
             });
 
             it('Unit', () => {
                 const value = { type: 'Unit' };
 
-                expect(formatter.handleBody(value)).to.be.null;
+                assert.isNull(formatter.handleBody(value));
             });
             it('Function', () => {
                 const value = { type: 'Function' };
 
-                expect(formatter.handleBody(value)).to.be.null;
+                assert.isNull(formatter.handleBody(value));
             });
             it('Internals', () => {
                 const value = { type: 'Internals' };
 
-                expect(formatter.handleBody(value)).to.be.null;
+                assert.isNull(formatter.handleBody(value));
             });
             it('Bytes', () => {
                 const value = { type: 'Bytes', value: 1234 };
 
-                expect(formatter.handleBody(value)).to.be.null;
+                assert.isNull(formatter.handleBody(value));
             });
             it('Files', () => {
                 const value = { type: 'File', value: 'Some_file.name' };
 
-                expect(formatter.handleBody(value)).to.be.null;
+                assert.isNull(formatter.handleBody(value));
             });
         });
 
