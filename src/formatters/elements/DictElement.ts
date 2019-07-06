@@ -1,4 +1,5 @@
 import {
+    IConfig,
     IElmDebugDictValue,
     IFormatterElement,
     IJsonMLFormatter,
@@ -34,22 +35,22 @@ export default class DictElement implements IFormatterElement {
             );
     }
 
-    public body() {
+    public body(config?: IConfig) {
         const children = this.elmObj.value.map(child => {
-            const key = this.formatter.handleHeader(child.key);
+            const key = this.formatter.handleHeader(child.key, config);
             const element = new JsonML('span')
                 .withChild(
                     new JsonML('span').withStyle(KeyElementStyle).withChild(key)
                 )
                 .withText(': ');
 
-            if (this.formatter.handleBody(child.value) === null) {
+            if (this.formatter.handleBody(child.value, config) === null) {
                 element.withStyle(
                     'padding-left: 13px; border-left: 1px solid black'
                 );
             }
 
-            return new JsonML('div').withObject(element, child.value);
+            return new JsonML('div').withObject(element, child.value, config);
         });
 
         return new JsonML('div')

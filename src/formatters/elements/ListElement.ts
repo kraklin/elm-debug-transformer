@@ -1,4 +1,5 @@
 import {
+    IConfig,
     IElmDebugListValue,
     IFormatterElement,
     IJsonMLFormatter,
@@ -19,7 +20,7 @@ export default class ListElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header() {
+    public header(config?: IConfig) {
         if (this.elmObj.value.length === 0) {
             return new JsonML('span').withStyle(GreyedOutStyle).withText('[]');
         }
@@ -29,7 +30,10 @@ export default class ListElement implements IFormatterElement {
                 .withText('[')
                 .withChild(
                     new JsonML('span').withChild(
-                        this.formatter.handleHeader(this.elmObj.value[0])
+                        this.formatter.handleHeader(
+                            this.elmObj.value[0],
+                            config
+                        )
                     )
                 )
                 .withText(']');
@@ -42,7 +46,7 @@ export default class ListElement implements IFormatterElement {
             );
     }
 
-    public body(): JsonML | null {
+    public body(config?: IConfig): JsonML | null {
         if (this.elmObj.value.length <= 1) {
             return null;
         }
@@ -56,7 +60,7 @@ export default class ListElement implements IFormatterElement {
                 )
                 .withText(': ');
 
-            if (this.formatter.handleBody(child) === null) {
+            if (this.formatter.handleBody(child, config) === null) {
                 element.withStyle('margin-left: 12px');
             }
 

@@ -10,8 +10,7 @@ beforeEach(() => {
     formatter = new JsonMLFormatter();
 });
 
-// TODO: Make types great again
-describe.skip('JSONML formatting', () => {
+describe('JSONML formatting', () => {
     describe('Header values', () => {
         describe('should return values for simple values', () => {
             it('string', () => {
@@ -120,15 +119,60 @@ describe.skip('JSONML formatting', () => {
             });
             it('CustomType with one value', () => {
                 const value = B.customType('CustomType', [B.n(1)]);
-                const expected = [B.MLCustomType('CustomType', B.MLNumber(1))];
+                const expected = [
+                    B.MLCustomType('CustomType', [B.MLNumber(1)]),
+                ];
 
                 expect(
                     formatter.handleHeader(B.elmDebug(value)).toJSONML()
                 ).to.deep.equal(B.MLDebug(expected));
             });
-            it('CustomType with two values', () => {
+            it('CustomType with two terminal values', () => {
                 const value = B.customType('CustomType', [B.n(1), B.n(1)]);
-                const expected = [B.MLCustomType('CustomType', B.MLEllipsis())];
+                const expected = [
+                    B.MLCustomType('CustomType', [
+                        ['span', {}, B.MLNumber(1)],
+                        ['span', {}, ' '],
+                        ['span', {}, B.MLNumber(1)],
+                    ]),
+                ];
+
+                expect(
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
+            });
+            it('CustomType with variants as custom types with values', () => {
+                const value = B.customType('Tree', [
+                    B.customType('Left', [B.n(1), B.n(2)]),
+                    B.customType('Right', [B.n(3), B.n(4)]),
+                ]);
+                const expected = [
+                    B.MLCustomType('Tree', [
+                        [
+                            'span',
+                            {},
+                            [
+                                'span',
+                                {},
+                                '( ',
+                                B.MLCustomType('Left', [B.MLEllipsis()]),
+                                ' )',
+                            ],
+                        ],
+                        ['span', {}, ' '],
+                        [
+                            'span',
+                            {},
+                            [
+                                'span',
+                                {},
+                                '( ',
+                                B.MLCustomType('Right', [B.MLEllipsis()]),
+                                ' )',
+                            ],
+                        ],
+                    ]),
+                ];
 
                 expect(
                     formatter.handleHeader(B.elmDebug(value)).toJSONML()

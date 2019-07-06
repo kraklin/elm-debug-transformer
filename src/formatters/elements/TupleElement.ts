@@ -1,4 +1,5 @@
 import {
+    IConfig,
     IElmDebugListValue,
     IFormatterElement,
     IJsonMLFormatter,
@@ -15,9 +16,9 @@ export default class TupleElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header() {
+    public header(config?: IConfig) {
         const children = this.elmObj.value
-            .map(child => this.formatter.handleHeader(child))
+            .map(child => this.formatter.handleHeader(child, config))
             .reduce((acc, child) => {
                 acc.push(new JsonML('span').withText(', '));
                 acc.push(child);
@@ -32,7 +33,7 @@ export default class TupleElement implements IFormatterElement {
             .withText(' )');
     }
 
-    public body(): JsonML | null {
+    public body(config?: IConfig): JsonML | null {
         if (this.elmObj.value.length <= 1) {
             return null;
         }
@@ -46,7 +47,7 @@ export default class TupleElement implements IFormatterElement {
                 )
                 .withText(': ');
 
-            if (this.formatter.handleBody(child) === null) {
+            if (this.formatter.handleBody(child, config) === null) {
                 element.withStyle('margin-left: 13px;');
             }
 

@@ -1,3 +1,4 @@
+import { IConfig } from './CommonTypes';
 export type TagName = 'div' | 'span';
 
 export default class JSONMLElement {
@@ -24,11 +25,13 @@ export default class JSONMLElement {
         return this;
     }
 
-    public withObject(key: JSONMLElement, object: any) {
-        this.jsonML.push([
-            'object',
-            { object, config: { elmFormat: true, key } },
-        ]);
+    public withObject(
+        key: JSONMLElement,
+        object: any,
+        config: IConfig = { elmFormat: true }
+    ) {
+        config.key = key;
+        this.jsonML.push(['object', { object, config }]);
         return this;
     }
 

@@ -54,19 +54,26 @@ export default class JsonMLFormatter
         return this.handleBody(obj).toJSONML();
     }
 
-    public handleHeader(obj: T.ElmDebugValueType, config?: T.IConfig): JsonML {
+    public handleHeader(
+        obj: T.ElmDebugValueType,
+        config: T.IConfig = { elmFormat: true }
+    ): JsonML {
         const element = toElement(obj, this);
+
         if (element) {
-            return element.header();
+            return element.header(config);
         } else {
             return new JsonML('span').withText('UNPARSED: ').withText(obj);
         }
     }
 
-    public handleBody(obj: T.ElmDebugValueType): JsonML | null {
+    public handleBody(
+        obj: T.ElmDebugValueType,
+        config?: T.IConfig
+    ): JsonML | null {
         const element = toElement(obj, this);
         if (element !== undefined) {
-            return element.body !== undefined ? element.body() : null;
+            return element.body !== undefined ? element.body(config) : null;
         } else {
             return new JsonML('div').withText('UNPARSED body: ').withText(obj);
         }

@@ -59,7 +59,7 @@ export function MLDebug(values: any[]): any[] {
         'span',
         {},
         ['span', { style: Styles.ElmLogoElementStyle }],
-        [['span', { style: Styles.DebugTagStyle }, 'Debug'], ': '],
+        ['span', {}, ['span', { style: Styles.DebugTagStyle }, 'Debug'], ': '],
         ...values,
     ];
 }
@@ -88,12 +88,17 @@ export function MLList(typeName: string, length: number): any[] {
     }
 }
 
-export function MLCustomType(name: string, value?: any): any[] {
+export function MLCustomType(name: string, value?: any[]): any[] {
     if (value === undefined) {
         return ['span', { style: Styles.CustomTypeNameStyle }, name];
     }
 
-    return ['span', { style: Styles.CustomTypeNameStyle }, name + ' ', value];
+    return [
+        'span',
+        { style: Styles.CustomTypeNameStyle },
+        name + ' ',
+        ...value,
+    ];
 }
 
 export function MLTuple(values: any[]): any[] {

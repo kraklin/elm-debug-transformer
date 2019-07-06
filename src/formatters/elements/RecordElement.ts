@@ -1,4 +1,5 @@
 import {
+    IConfig,
     IElmDebugRecordValue,
     IFormatterElement,
     IJsonMLFormatter,
@@ -16,7 +17,7 @@ export default class RecordElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header() {
+    public header(config: IConfig) {
         const keys = Object.keys(this.elmObj.value);
         const children = keys
             .map(k => {
@@ -24,7 +25,10 @@ export default class RecordElement implements IFormatterElement {
                     .withStyle(KeyElementStyle)
                     .withText(k + ': ')
                     .withChild(
-                        this.formatter.handleHeader(this.elmObj.value[k])
+                        this.formatter.handleHeader(
+                            this.elmObj.value[k],
+                            config
+                        )
                     );
             })
             .reduce(
@@ -60,14 +64,16 @@ export default class RecordElement implements IFormatterElement {
             .withText(' }');
     }
 
-    public body() {
+    public body(config: IConfig) {
         const keys = Object.keys(this.elmObj.value);
         const objects = keys.map(k => {
             const keyElement = new JsonML('span')
                 .withStyle(KeyElementStyle)
                 .withText(k)
                 .withText(': ');
-            if (this.formatter.handleBody(this.elmObj.value[k]) === null) {
+            if (
+                this.formatter.handleBody(this.elmObj.value[k], config) === null
+            ) {
                 keyElement.withStyle('margin-left: 13px;');
             }
 
