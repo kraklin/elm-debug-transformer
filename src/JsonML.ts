@@ -28,7 +28,7 @@ export default class JSONMLElement {
     public withObject(
         key: JSONMLElement,
         object: any,
-        config: IConfig = { elmFormat: true }
+        config: IConfig = { elmFormat: true, level: 0 }
     ) {
         config.key = key;
         this.jsonML.push(['object', { object, config }]);

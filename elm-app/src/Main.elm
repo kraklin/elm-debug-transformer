@@ -20,6 +20,14 @@ type CustomType
     | Complex (List ( Int, CustomType ))
 
 
+type alias User =
+    { name : String, age : Int }
+
+
+type CustomRecord
+    = WithRecord (List User)
+
+
 type Tree a
     = Leaf a
     | Node (Tree a) (Tree a)
@@ -33,6 +41,7 @@ type alias Model =
     , bools : ( Bool, Bool )
     , binaryTree : Tree CustomType
     , custom : CustomType
+    , customRecord : CustomRecord
     , tuple : ( Int, Int )
     , triplet : ( Int, String, Int )
     , nonEmptyList : ( Int, List Int )
@@ -67,6 +76,7 @@ init =
       , function = String.fromInt
       , binaryTree = Node (Node (Leaf None) (Leaf None)) (Node (Leaf None) (Leaf None))
       , unit = ()
+      , customRecord = WithRecord [ { name = "Joe", age = 21 } ]
       }
     , Cmd.none
     )

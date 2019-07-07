@@ -5,6 +5,7 @@ import {
     IJsonMLFormatter,
 } from '../../CommonTypes';
 import JsonML from '../../JsonML';
+import EllipsisElement from './EllipsisElement';
 import { ExpandableBorderStyle, KeyElementStyle } from './Styles';
 
 export default class TupleElement implements IFormatterElement {
@@ -17,6 +18,16 @@ export default class TupleElement implements IFormatterElement {
     }
 
     public header(config?: IConfig) {
+        if (!!config && config.level > 1) {
+            return new JsonML('span')
+                .withText('( ')
+                .withChild(
+                    this.formatter.handleHeader(this.elmObj.value[0], config)
+                )
+                .withChild(new JsonML('span').withText(', '))
+                .withChild(new EllipsisElement().header())
+                .withText(' )');
+        }
         const children = this.elmObj.value
             .map(child => this.formatter.handleHeader(child, config))
             .reduce((acc, child) => {

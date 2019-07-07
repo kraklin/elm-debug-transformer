@@ -99,6 +99,25 @@ describe('JSONML formatting', () => {
                     formatter.handleHeader(B.elmDebug(value)).toJSONML()
                 ).to.deep.equal(B.MLDebug(expected));
             });
+            it('Nested tuple should be truncated', () => {
+                const value = B.tuple([
+                    B.tuple([B.tuple([B.str('a'), B.str('b')]), B.str('c')]),
+                    B.str('d'),
+                ]);
+                const expected = [
+                    B.MLTuple([
+                        B.MLTuple([
+                            B.MLTuple([B.MLString('a'), B.MLEllipsis()]),
+                            B.MLEllipsis(),
+                        ]),
+                        B.MLString('d'),
+                    ]),
+                ];
+
+                expect(
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
+            });
         });
         describe('should handle Types and Custom types', () => {
             it('Type', () => {
@@ -233,6 +252,32 @@ describe('JSONML formatting', () => {
                     B.MLRecord([
                         B.MLRecordValue('a', B.MLString('a')),
                         B.MLEllipsis(),
+                    ]),
+                ];
+
+                expect(
+                    formatter.handleHeader(B.elmDebug(value)).toJSONML()
+                ).to.deep.equal(B.MLDebug(expected));
+            });
+
+            it('record nested in the custom value should be shown with ellipsis', () => {
+                const value = B.customType('Tree', [
+                    B.list([B.record({ name: B.str('Name'), age: B.n(12) })]),
+                ]);
+
+                const expected = [
+                    B.MLCustomType('Tree', [
+                        [
+                            'span',
+                            { style: Styles.GreyedOutStyle },
+                            '[',
+                            [
+                                'span',
+                                {},
+                                ['span', {}, '{ ', B.MLEllipsis(), ' }'],
+                            ],
+                            ']',
+                        ],
                     ]),
                 ];
 

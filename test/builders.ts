@@ -102,7 +102,6 @@ export function MLCustomType(name: string, value?: any[]): any[] {
 }
 
 export function MLTuple(values: any[]): any[] {
-    // const vals = values.map(v => v);
     const valuesWithCommas = values.reduce((acc: any[], v) => {
         acc.push(['span', {}, ', ']);
         acc.push(v);

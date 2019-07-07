@@ -22,6 +22,7 @@ export interface IFormatterElement {
 
 export interface IConfig {
     elmFormat: boolean;
+    level: number;
     misc?: any;
     key?: JsonML;
 }

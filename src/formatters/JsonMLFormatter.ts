@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import * as T from '../CommonTypes';
 import JsonML from '../JsonML';
 import { toElement } from './elements/Elements';
+import EllipsisElement from './elements/EllipsisElement';
 
 /* tslint:disable */
 declare global {
@@ -56,12 +57,15 @@ export default class JsonMLFormatter
 
     public handleHeader(
         obj: T.ElmDebugValueType,
-        config: T.IConfig = { elmFormat: true }
+        config: T.IConfig = { elmFormat: true, level: 0 }
     ): JsonML {
+        const newConfig = _.clone(config);
         const element = toElement(obj, this);
 
+        newConfig.level = config.level + 1;
+
         if (element) {
-            return element.header(config);
+            return element.header(newConfig);
         } else {
             return new JsonML('span').withText('UNPARSED: ').withText(obj);
         }

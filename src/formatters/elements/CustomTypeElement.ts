@@ -23,17 +23,13 @@ export default class CustomTypeElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header(config: IConfig = { elmFormat: true }) {
-        const newConfig = _.clone(config);
-
+    public header(config: IConfig = { elmFormat: true, level: 0 }) {
         if (this.elmObj.value.length === 0) {
             return new JsonML('span')
                 .withStyle(CustomTypeNameStyle)
                 .withText(this.elmObj.name);
         }
         if (this.elmObj.value.length === 1) {
-            _.set(newConfig, 'misc.isCustomChild', true);
-
             return this.wrappedHeader(
                 new JsonML('span')
                     .withStyle(CustomTypeNameStyle)
@@ -41,17 +37,13 @@ export default class CustomTypeElement implements IFormatterElement {
                     .withChild(
                         this.formatter.handleHeader(
                             this.elmObj.value[0],
-                            newConfig
+                            config
                         )
                     ),
                 config
             );
         } else {
-            if (
-                config !== null &&
-                config.misc !== undefined &&
-                config.misc.isCustomChild
-            ) {
+            if (config !== null && config.level > 1) {
                 return this.wrappedHeader(
                     new JsonML('span')
                         .withText(this.elmObj.name + ' ')
@@ -62,11 +54,10 @@ export default class CustomTypeElement implements IFormatterElement {
             } else {
                 const children = this.elmObj.value
                     .map(child => {
-                        _.set(newConfig, 'misc.isCustomChild', true);
                         return {
                             child,
                             jsonml: new JsonML('span').withChild(
-                                this.formatter.handleHeader(child, newConfig)
+                                this.formatter.handleHeader(child, config)
                             ),
                         };
                     })
@@ -122,11 +113,7 @@ export default class CustomTypeElement implements IFormatterElement {
     }
 
     private wrappedHeader(obj: JsonML, config?: IConfig): JsonML {
-        if (
-            config !== null &&
-            config.misc !== undefined &&
-            config.misc.isCustomChild
-        ) {
+        if (config !== null && config.level > 1) {
             return new JsonML('span')
                 .withText('( ')
                 .withChild(obj)

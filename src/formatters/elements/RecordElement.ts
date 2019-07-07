@@ -18,6 +18,12 @@ export default class RecordElement implements IFormatterElement {
     }
 
     public header(config: IConfig) {
+        if (!!config && config.level > 2) {
+            return new JsonML('span')
+                .withText('{ ')
+                .withChild(new EllipsisElement().header())
+                .withText(' }');
+        }
         const keys = Object.keys(this.elmObj.value);
         const children = keys
             .map(k => {
