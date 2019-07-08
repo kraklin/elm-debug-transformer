@@ -28,6 +28,7 @@
     "@types/lodash": "^4.14.134",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.0.10",
+    "@types/pegjs": "^0.10.1",
     "babel-loader": "^8.0.6",
     "babel-minify-webpack-plugin": "^0.3.1",
     "chai": "^4.2.0",
@@ -54,9 +55,6 @@
   "files": [
     "dist"
   ],
-  "dependencies": {
-    "@types/pegjs": "^0.10.1"
-  },
   "prettier": {
     "trailingComma": "es5",
     "tabWidth": 4,
