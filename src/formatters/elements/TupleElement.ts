@@ -66,7 +66,6 @@ export default class TupleElement implements IFormatterElement {
         });
 
         return new JsonML('div')
-            .withStyle('margin-left: 15px;')
             .withStyle(ExpandableBorderStyle)
             .withChildren(children);
     }

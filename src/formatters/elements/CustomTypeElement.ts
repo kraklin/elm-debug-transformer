@@ -102,13 +102,12 @@ export default class CustomTypeElement implements IFormatterElement {
                 element.withStyle('margin-left: 13px;');
             }
 
-            return new JsonML('div')
-                .withStyle(ExpandableBorderStyle)
-                .withObject(element, child);
+            return new JsonML('div').withObject(element, child);
         });
 
         return new JsonML('div')
             .withStyle('margin-left: 15px;')
+            .withStyle(ExpandableBorderStyle)
             .withChildren(children);
     }
 

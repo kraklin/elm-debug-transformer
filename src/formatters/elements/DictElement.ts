@@ -46,14 +46,14 @@ export default class DictElement implements IFormatterElement {
                 .withText(': ');
 
             if (this.formatter.handleBody(child.value, config) === null) {
-                element.withStyle(ExpandableBorderStyle);
+                element.withStyle('margin-left: 13px;');
             }
 
             return new JsonML('div').withObject(element, child.value, config);
         });
 
         return new JsonML('div')
-            .withStyle('margin-left: 15px;')
+            .withStyle(ExpandableBorderStyle)
             .withChildren(children);
     }
 }

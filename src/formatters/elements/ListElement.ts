@@ -62,7 +62,7 @@ export default class ListElement implements IFormatterElement {
                 .withText(': ');
 
             if (this.formatter.handleBody(child, config) === null) {
-                element.withStyle('margin-left: 12px');
+                element.withStyle('margin-left: 13px');
             }
 
             return new JsonML('div').withObject(element, child);
