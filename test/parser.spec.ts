@@ -37,6 +37,27 @@ describe('Parsing', () => {
             });
         });
 
+        describe('Non number values', () => {
+            it('Infinity', () => {
+                expect(parser.parse('integer: Infinity').value).to.deep.equal({
+                    type: 'Number',
+                    value: 'Infinity',
+                });
+            });
+            it('-Infinity', () => {
+                expect(parser.parse('integer: -Infinity').value).to.deep.equal({
+                    type: 'Number',
+                    value: '-Infinity',
+                });
+            });
+            it('NaN', () => {
+                expect(parser.parse('integer: NaN').value).to.deep.equal({
+                    type: 'Number',
+                    value: 'NaN',
+                });
+            });
+        });
+
         it('Float', () => {
             expect(parser.parse('float: 123.45').value).to.deep.equal({
                 type: 'Number',

@@ -43,6 +43,9 @@ List
 Number =
   digits:[0-9\.]+ {return {type: "Number", value: parseFloat(toStr(digits))};}
 	/ "-" _ digits:[0-9\.]+ {return {type: "Number", value: parseFloat("-"+toStr(digits))};}
+	/ "NaN" {return {type: "Number", value: "NaN"};}
+	/ "Infinity" {return {type: "Number", value: "Infinity"};}
+	/ "-Infinity" {return {type: "Number", value: "-Infinity"};}
 
 Boolean
   = "True" {return {type: "Boolean", value: true};}
