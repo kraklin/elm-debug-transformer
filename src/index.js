@@ -199,10 +199,32 @@ function handleBody(value, config) {
     return ['div', {}, 'body'];
 }
 
-export function register(opts = { simple_mode: false, debug: false }) {
-    const _log = console.log;
+function hasFormatterSupport() {
+    const originalFormatters = window.devtoolsFormatters;
+    let supported = false;
 
-    if (!opts.simple_mode) {
+    window.devtoolsFormatters = [
+        {
+            header: function(obj, config) {
+                supported = true;
+                return null;
+            },
+            hasBody: function(obj) {},
+            body: function(obj, config) {},
+        },
+    ];
+    console.log('elm-debug-transformer: checking for formatter support.', {});
+
+    window.devtoolsFormatters = originalFormatters;
+
+    return supported;
+}
+
+export function register(opts = { debug: false }) {
+    const _log = console.log;
+    const simple_mode = !hasFormatterSupport();
+
+    if (!simple_mode) {
         window.devtoolsFormatters = [
             {
                 header: function(obj, config) {
@@ -241,7 +263,7 @@ export function register(opts = { simple_mode: false, debug: false }) {
         let msg = arguments[0];
 
         try {
-            const parsed = !!opts.simple_mode
+            const parsed = simple_mode
                 ? ElmDebugSimple.parse(msg)
                 : ElmDebug.parse(msg);
 

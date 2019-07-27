@@ -87,18 +87,9 @@ Note: You might need to refresh the page first time you open Console panel with 
 
 ### Simple object output
 
-```
-import * as ElmDebugger from 'elm-debug-transformer';
+If you are not a fan of Chromium based browsers, the library will detect missing features and use a simpler logging mode. 
 
-ElmDebugger.register({simple_mode: true});
-```
-
-If you are not a fan of Chromium based browser you can pass option to the `register` function. 
-```
-register({simple_mode: true});
-``` 
-
-That way the `Debug.log` would output simpler JS object without `type` information. `Tuple`, `Set`, `Array` and `List` would become arrays and `Dict` would become JS object with keys and values.
+`Debug.log` would output simpler JS object without `type` information. `Tuple`, `Set`, `Array` and `List` would become arrays and `Dict` would become JS object with keys and values.
 
 ## Credits
 
