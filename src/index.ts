@@ -12,8 +12,22 @@ declare global {
 }
 /* tslint:enable*/
 
-export function register(opts = { simple_mode: false, debug: false }) {
+interface IOptions {
+  debug?: boolean;
+  simple_mode?: boolean;
+  limit?: number
+}
+
+const defaultOptions:  IOptions = {
+    debug: false,
+    limit: 100000,
+    simple_mode: false,
+}
+
+export function register(opts: IOptions | undefined) {
     const log = console.log;
+
+    opts = _.merge(defaultOptions, opts)
 
     const formatter =
         !!opts.simple_mode || !window.chrome
@@ -26,6 +40,11 @@ export function register(opts = { simple_mode: false, debug: false }) {
             return;
         }
         const msg = arguments[0];
+
+        if (msg.length > opts.limit) {
+            log.call(console, msg);
+            return;
+        }
 
         try {
             if (!!opts.debug) {

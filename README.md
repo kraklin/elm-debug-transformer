@@ -85,17 +85,23 @@ If your browser have Chrome dev toools, you can enable custom formatters so you 
 
 Note: You might need to refresh the page first time you open Console panel with existing logs - custom formatters are applied only to newly printed console messages.
 
-### Simple object output
+That way the `Debug.log` would output simpler JS object without `type` information. `Tuple`, `Set`, `Array` and `List` would become arrays and `Dict` would become JS object with keys and values.
 
-The register function should recognize whether it can use Custom formatters or not. In the latter case it would use Simple fromat mode automatically. But you can force the `simple_mode` by enabling it explicitly:
-
+### Options
+Options object can be provided to `register` function:
 ```
 import * as ElmDebugger from 'elm-debug-transformer';
 
-ElmDebugger.register({simple_mode: true});
-```
+ElmDebugger.register({simple_mode: true, debug: false, limit: 10000});
+`
 
-That way the `Debug.log` would output simpler JS object without `type` information. `Tuple`, `Set`, `Array` and `List` would become arrays and `Dict` would become JS object with keys and values.
+| parameter   | type    | description                                                | default value |
+|-------------|---------|------------------------------------------------------------|---------------:|
+| `limit`       | number  | number of message characters after which the parser won't parse the message. (Helpful for bypass the parsing of large datastructures)                                  | `100 000`       |
+| `debug`       | limit   | include original message and parser error with the message | `false`         |
+| `simple_mode` | boolean | force output to be in simple object format                 | `false`         |
+
+
 
 ## Credits
 
