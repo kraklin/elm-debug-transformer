@@ -72,7 +72,7 @@ export interface IElmDebugDictValue {
 
 export interface IElmDebugNumberValue {
     type: string;
-    value: number;
+    value: number | string;
 }
 
 export interface IElmDebugStringValue {
