@@ -96,11 +96,11 @@ import * as ElmDebugger from 'elm-debug-transformer';
 ElmDebugger.register({simple_mode: true, debug: false, limit: 10000});
 ```
 
-| parameter   | type    | description                                                | default value |
-|-------------|---------|------------------------------------------------------------|---------------:|
-| `limit`       | number  | number of message characters after which the parser won't parse the message. (Helpful for bypass the parsing of large datastructures)                                  | `1 000 000`       |
-| `debug`       | limit   | include original message and parser error with the message | `false`         |
-| `simple_mode` | boolean | force output to be in simple object format                 | `false`         |
+| parameter     | type    | description                                                                                                                               | default value   |
+|---------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------|----------------:|
+| `limit`       | number  | number of message characters after which the parser won't parse the message. (Helpful for bypass the parsing of large datastructures)     | `1 000 000`     |
+| `debug`       | boolean | include original message and parser error with the message                                                                                | `false`         |
+| `simple_mode` | boolean | force output to be in simple object format                                                                                                | `false`         |
 
 
 
