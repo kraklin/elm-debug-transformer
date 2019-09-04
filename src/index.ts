@@ -20,7 +20,7 @@ interface IOptions {
 
 const defaultOptions:  IOptions = {
     debug: false,
-    limit: 100000,
+    limit: 1000000,
     simple_mode: false,
 }
 
