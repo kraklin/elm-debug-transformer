@@ -17,6 +17,25 @@ describe('Parsing', () => {
             );
         });
 
+        it('with numbers in the tag', () => {
+          expect(parser.parse('1234567890: True').value).to.deep.equal(
+                B.bool(true)
+            );
+        });
+
+        it('with non alphabetic characters', () => {
+          expect(parser.parse('!@#$%^&*()_+-=[]{}|\\,./<>?~`: True').value).to.deep.equal(
+                B.bool(true)
+            );
+        });
+
+        it('with emojis in tag', () => {
+          expect(parser.parse('with 1 Emoji 👍 : False').value).to.deep.equal(
+                B.bool(false)
+            );
+        });
+
+
         it('Boolean', () => {
             expect(parser.parse('tag string: True').value).to.deep.equal(
                 B.bool(true)
