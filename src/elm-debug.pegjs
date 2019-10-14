@@ -68,7 +68,7 @@ Type =
 	type:[a-zA-Z]+ {return {type: "Type", name: toStr(type)};}
 
 Tag =
-	tag:[a-zA-Z ]+ {return toStr(tag);}
+  tag:TagChar+ { return toStr(tag); }
 
 String
   = '"' chars:DoubleStringCharacter* '"' { return {type: "String", value: chars.join('')}; }
@@ -88,6 +88,9 @@ DoubleStringCharacter
 SingleStringCharacter
   = !("'" / "\\") char:. { return char; }
   / "\\" sequence:EscapeSequence { return sequence; }
+
+TagChar
+  = !(":") char:. { return char; }
 
 EscapeSequence
   = "'"
