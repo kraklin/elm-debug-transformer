@@ -1,6 +1,6 @@
 {
   "name": "elm-debug-transformer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Transform Elm Debug.log output into nice log object with custom formatter",
   "main": "dist/elm-console-debug.js",
   "author": "Tomas Latal <tom@tomaslatal.cz>",
@@ -17,7 +17,6 @@
   "scripts": {
     "pegjs": "pegjs --plugin ./node_modules/ts-pegjs/src/tspegjs -o src/elm-debug-parser.ts src/elm-debug.pegjs",
     "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --opts mocha.opts",
-    "test:watch": "yarn test --watch",
     "build": "yarn run pegjs && webpack",
     "prepublishOnly": "yarn run test && yarn run build"
   },
