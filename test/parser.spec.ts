@@ -147,6 +147,15 @@ describe('Parsing', () => {
                 ],
             });
         });
+        it('Tuple with one item is not a tuple', (done) => {
+          try {
+                parser.parse('not tuple: (123)');
+          }
+          catch (err){
+            expect(err.name).to.eql('SyntaxError')
+          }
+          done();
+        });
     });
 
     describe('List', () => {
@@ -363,6 +372,36 @@ describe('Parsing', () => {
                         value: { age: { type: 'Number', value: 23 } },
                     },
                 ],
+            });
+        });
+        it('Custom type with two Nothings next to each other', () => {
+            expect(
+                parser.parse(
+                    'custom type: CacheKey (Id "cache_id") Nothing Nothing'
+                ).value
+            ).to.deep.equal({
+                name: 'CacheKey',
+                type: 'Custom',
+                value: [
+                    {
+                      name: 'Id',
+                      type: 'Custom',
+                      value: [
+                        {type: 'String',
+                        value: "cache_id"
+                        }
+                      ]
+                    }
+                    ,{
+                      name: 'Nothing',
+                      type: 'Type',
+                    }
+                    ,{
+                      name: 'Nothing',
+                      type: 'Type',
+                    }
+                ],
+
             });
         });
         it('Custom type with more values in parenthesis', () => {

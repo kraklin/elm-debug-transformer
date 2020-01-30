@@ -8,6 +8,9 @@ DebugString
   / ":" _ value:Value {return {type: "ElmDebug", name: "", value: value};}
 
 Value
+  = Record / Array / Set / Dict / List / CustomTypeWithParens / CustomType / Tuple / Number / Boolean / Type / Internals / Bytes / File / String
+
+CustomTypeValue
   = Record / Array / Set / Dict / List / CustomTypeWithParens / Tuple / Number / Boolean / Type / Internals / Bytes / File / String
 
 Record
@@ -26,14 +29,13 @@ Array
 
 Tuple
   = "()" {return {type:"Unit"}}
-  / "(" head:Value others:(_ "," _ item:Value {return item;})* ")" {return {type: "Tuple", value: [head,...others]};}
+  / "(" head:Value others:(_ "," _ item:Value {return item;})+ ")" {return {type: "Tuple", value: [head,...others]};}
 
 CustomTypeWithParens
   = "(" _ customType:CustomType _ ")" {return customType;}
-  / CustomType
 
 CustomType 
-  = mainType:Type values:(_ value:Value {return value;})+ {return {type: "Custom", name: mainType.name, value: values};}
+  = mainType:Type values:(_ value:CustomTypeValue {return value;})+ {return {type: "Custom", name: mainType.name, value: values};}
   / mainType:Type _ customType:CustomTypeWithParens {return {type: "Custom", name: mainType.name, value: customType};}
 
 List 
