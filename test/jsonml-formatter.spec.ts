@@ -7,7 +7,7 @@ import * as B from './builders';
 let formatter: IJsonMLFormatter;
 
 beforeEach(() => {
-    formatter = new JsonMLFormatter();
+    formatter = new JsonMLFormatter(Styles.lightTheme);
 });
 
 describe('JSONML formatting', () => {

@@ -11,7 +11,6 @@ import EllipsisElement from './EllipsisElement';
 import {
     CustomTypeNameStyle,
     ExpandableBorderStyle,
-    KeyElementStyle,
 } from './Styles';
 
 export default class CustomTypeElement implements IFormatterElement {
@@ -93,7 +92,7 @@ export default class CustomTypeElement implements IFormatterElement {
             const element = new JsonML('span')
                 .withChild(
                     new JsonML('span')
-                        .withStyle(KeyElementStyle)
+                        .withStyle(this.formatter.theme.keyElementStyle)
                         .withText(`${index}`)
                 )
                 .withText(': ');

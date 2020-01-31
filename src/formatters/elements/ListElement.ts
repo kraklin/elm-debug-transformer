@@ -9,7 +9,6 @@ import {
     DataStructureNameStyle,
     ExpandableBorderStyle,
     GreyedOutStyle,
-    KeyElementStyle,
 } from './Styles';
 
 export default class ListElement implements IFormatterElement {
@@ -56,7 +55,7 @@ export default class ListElement implements IFormatterElement {
             const element = new JsonML('span')
                 .withChild(
                     new JsonML('span')
-                        .withStyle(KeyElementStyle)
+                        .withStyle(this.formatter.theme.keyElementStyle)
                         .withText(`${index}`)
                 )
                 .withText(': ');

@@ -9,7 +9,6 @@ import {
     DataStructureNameStyle,
     ExpandableBorderStyle,
     GreyedOutStyle,
-    KeyElementStyle,
 } from './Styles';
 
 export default class DictElement implements IFormatterElement {
@@ -41,7 +40,7 @@ export default class DictElement implements IFormatterElement {
             const key = this.formatter.handleHeader(child.key, config);
             const element = new JsonML('span')
                 .withChild(
-                    new JsonML('span').withStyle(KeyElementStyle).withChild(key)
+                    new JsonML('span').withStyle(this.formatter.theme.keyElementStyle).withChild(key)
                 )
                 .withText(': ');
 

@@ -5,6 +5,7 @@ export interface IFormatter {
 }
 
 export interface IJsonMLFormatter {
+    theme: ITheme;
     handleHeader(obj: ElmDebugValueType, config?: IConfig): JsonML;
     handleBody(obj: ElmDebugValueType, config?: IConfig): JsonML;
 }
@@ -18,6 +19,22 @@ export interface IDevToolsFormatter {
 export interface IFormatterElement {
     header(config?: IConfig): JsonML;
     body?(config?: IConfig): JsonML | null;
+}
+
+export interface ITheme {
+  booleanStyle: string;
+  stringStyle: string;
+  numberStyle: string;
+  debugTagStye: string;
+  grayedStyle: string;
+  grayedItalicsStyle: string;
+  customTypeNameStyle: string;
+  typeNameStyle: string;
+  dataStructureNameStyle: string;
+  keyElementStyle: string;
+  bytesStyle: string;
+  expandableBorderStyle: string;
+  elmLogoElementStyle: string;
 }
 
 export interface IConfig {

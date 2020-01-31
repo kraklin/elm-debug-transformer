@@ -130,19 +130,19 @@ export function MLRecord(values: any[]) {
 }
 
 export function MLRecordValue(name: string, value: any): any[] {
-    return ['span', { style: Styles.KeyElementStyle }, name + ': ', value];
+    return ['span', { style: Styles.lightTheme.keyElementStyle }, name + ': ', value];
 }
 export function MLKeyValueBody(keyName: string, object: any): any[] {
     const jsonML = [
         'span',
-        { style: Styles.KeyElementStyle + 'margin-left: 13px;' },
+        { style: Styles.lightTheme.keyElementStyle + 'margin-left: 13px;' },
         keyName,
         ': ',
     ];
 
     const key = {
         attributes: {
-            style: Styles.KeyElementStyle + 'margin-left: 13px;',
+            style: Styles.lightTheme.keyElementStyle + 'margin-left: 13px;',
         },
         jsonML,
     };

@@ -14,8 +14,12 @@ declare global {
 
 export default class JsonMLFormatter
     implements T.IFormatter, T.IJsonMLFormatter, T.IDevToolsFormatter {
-    constructor() {
+
+    public theme:T.ITheme;
+
+    constructor(theme: T.ITheme) {
         window.devtoolsFormatters = [this];
+        this.theme = theme;
     }
 
     public format(obj: T.IElmDebugValue): any {

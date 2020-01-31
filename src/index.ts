@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { IElmDebugValue } from './CommonTypes';
 import { parse } from './elm-debug-parser';
+import { lightTheme, darkTheme } from './formatters/elements/Styles';
 import JsonMLFormatter from './formatters/JsonMLFormatter';
 import SimpleFormatter from './formatters/SimpleFormatter';
 
@@ -34,6 +35,7 @@ export function register(opts: IOptions | undefined): IOptions {
     }
     
     const log = console.log;
+    const theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? darkTheme : lightTheme;
 
     let currentOpts = _.merge(defaultOptions, opts);
 
@@ -62,7 +64,7 @@ export function register(opts: IOptions | undefined): IOptions {
         const formatter =
             !!currentOpts.simple_mode || !window.chrome
                 ? new SimpleFormatter()
-                : new JsonMLFormatter();
+                : new JsonMLFormatter(theme);
         try {
             if (!!currentOpts.debug) {
                 log.call(console, 'Original message:', msg);
