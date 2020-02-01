@@ -21,13 +21,15 @@ export interface IFormatterElement {
     body?(config?: IConfig): JsonML | null;
 }
 
+export type IThemeOption = "dark" | "light"
+
 export interface ITheme {
   booleanStyle: string;
   stringStyle: string;
   numberStyle: string;
-  debugTagStye: string;
-  grayedStyle: string;
-  grayedItalicsStyle: string;
+  debugTagStyle: string;
+  greyedStyle: string;
+  greyedItalicsStyle: string;
   customTypeNameStyle: string;
   typeNameStyle: string;
   dataStructureNameStyle: string;

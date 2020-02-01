@@ -8,10 +8,6 @@ import {
 
 import JsonML from '../../JsonML';
 import EllipsisElement from './EllipsisElement';
-import {
-    CustomTypeNameStyle,
-    ExpandableBorderStyle,
-} from './Styles';
 
 export default class CustomTypeElement implements IFormatterElement {
     private elmObj: IElmDebugCustomValue;
@@ -25,13 +21,13 @@ export default class CustomTypeElement implements IFormatterElement {
     public header(config: IConfig = { elmFormat: true, level: 0 }) {
         if (this.elmObj.value.length === 0) {
             return new JsonML('span')
-                .withStyle(CustomTypeNameStyle)
+                .withStyle(this.formatter.theme.customTypeNameStyle)
                 .withText(this.elmObj.name);
         }
         if (this.elmObj.value.length === 1) {
             return this.wrappedHeader(
                 new JsonML('span')
-                    .withStyle(CustomTypeNameStyle)
+                    .withStyle(this.formatter.theme.customTypeNameStyle)
                     .withText(this.elmObj.name + ' ')
                     .withChild(
                         this.formatter.handleHeader(
@@ -46,7 +42,7 @@ export default class CustomTypeElement implements IFormatterElement {
                 return this.wrappedHeader(
                     new JsonML('span')
                         .withText(this.elmObj.name + ' ')
-                        .withStyle(CustomTypeNameStyle)
+                        .withStyle(this.formatter.theme.customTypeNameStyle)
                         .withChild(new EllipsisElement().header()),
                     config
                 );
@@ -72,7 +68,7 @@ export default class CustomTypeElement implements IFormatterElement {
                 return this.wrappedHeader(
                     new JsonML('span')
                         .withText(this.elmObj.name + ' ')
-                        .withStyle(CustomTypeNameStyle)
+                        .withStyle(this.formatter.theme.customTypeNameStyle)
                         .withChildren(children),
                     config
                 );
@@ -106,7 +102,7 @@ export default class CustomTypeElement implements IFormatterElement {
 
         return new JsonML('div')
             .withStyle('margin-left: 15px;')
-            .withStyle(ExpandableBorderStyle)
+            .withStyle(this.formatter.theme.expandableBorderStyle)
             .withChildren(children);
     }
 

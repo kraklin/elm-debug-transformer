@@ -1,13 +1,17 @@
-import { IFormatterElement } from '../../CommonTypes';
+import { 
+  IFormatterElement,
+  IJsonMLFormatter
+} from '../../CommonTypes';
+
 import JsonML from '../../JsonML';
-import { GreyedOutItalics } from './Styles';
 
-export default class StringElement implements IFormatterElement {
+export default class InternalsElement implements IFormatterElement {
     private elmObj: string;
-    private style = 'color: grey; font-weight: normal; font-style: italic;';
+    private formatter: IJsonMLFormatter;
 
-    constructor(obj: string) {
+    constructor(obj: string, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
+        this.formatter = formatter;
     }
 
     public header() {
@@ -25,6 +29,8 @@ export default class StringElement implements IFormatterElement {
                 break;
         }
 
-        return new JsonML('span').withStyle(GreyedOutItalics).withText(value);
+        return new JsonML('span')
+          .withStyle(this.formatter.theme.greyedItalicsStyle)
+          .withText(value);
     }
 }

@@ -28,7 +28,7 @@ export default class RecordElement implements IFormatterElement {
             .map(k => {
                 return new JsonML('span')
                     .withStyle(this.formatter.theme.keyElementStyle)
-                    .withText(k + this.formatter.theme +': ')
+                    .withText(k +': ')
                     .withChild(
                         this.formatter.handleHeader(
                             this.elmObj.value[k],

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
-import { IElmDebugValue } from './CommonTypes';
+import {  IElmDebugValue, IThemeOption } from './CommonTypes';
 import { parse } from './elm-debug-parser';
-import { lightTheme, darkTheme } from './formatters/elements/Styles';
+import { darkTheme, lightTheme  } from './formatters/elements/Styles';
 import JsonMLFormatter from './formatters/JsonMLFormatter';
 import SimpleFormatter from './formatters/SimpleFormatter';
 
@@ -19,6 +19,7 @@ interface IOptions {
     debug?: boolean;
     simple_mode?: boolean;
     limit?: number;
+    theme?: IThemeOption;
 }
 
 const defaultOptions:  IOptions = {
@@ -26,6 +27,7 @@ const defaultOptions:  IOptions = {
     debug: false,
     limit: 1000000,
     simple_mode: false,
+    theme: "light"
 }
 
 export function register(opts: IOptions | undefined): IOptions {
@@ -35,9 +37,12 @@ export function register(opts: IOptions | undefined): IOptions {
     }
     
     const log = console.log;
-    const theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? darkTheme : lightTheme;
 
     let currentOpts = _.merge(defaultOptions, opts);
+
+    currentOpts.theme = window.matchMedia("(prefers-color-scheme: dark)").matches 
+      ? "dark" 
+      : "light";
 
     console.log = function() {
 
@@ -60,11 +65,15 @@ export function register(opts: IOptions | undefined): IOptions {
             log.call(console, msg);
             return;
         }
+        
+        const themeStyle = (currentOpts.theme === "dark") 
+          ? darkTheme 
+          : lightTheme;
 
         const formatter =
             !!currentOpts.simple_mode || !window.chrome
                 ? new SimpleFormatter()
-                : new JsonMLFormatter(theme);
+                : new JsonMLFormatter(themeStyle);
         try {
             if (!!currentOpts.debug) {
                 log.call(console, 'Original message:', msg);

@@ -58,21 +58,21 @@ export function MLDebug(values: any[]): any[] {
     return [
         'span',
         {},
-        ['span', { style: Styles.ElmLogoElementStyle }],
-        ['span', {}, ['span', { style: Styles.DebugTagStyle }, 'Debug'], ': '],
+        ['span', { style: Styles.lightTheme.elmLogoElementStyle }],
+        ['span', {}, ['span', { style: Styles.lightTheme.debugTagStyle }, 'Debug'], ': '],
         ...values,
     ];
 }
 export function MLString(value: string): any[] {
-    return ['span', { style: Styles.StringStyle }, `"${value}"`];
+    return ['span', { style: Styles.lightTheme.stringStyle }, `"${value}"`];
 }
 
 export function MLNumber(num: number): any[] {
-    return ['span', { style: Styles.NumberStyle }, num.toString()];
+    return ['span', { style: Styles.lightTheme.numberStyle }, num.toString()];
 }
 
 export function MLBool(value: boolean): any[] {
-    return ['span', { style: Styles.BooleanStyle }, value ? 'True' : 'False'];
+    return ['span', { style: Styles.lightTheme.booleanStyle }, value ? 'True' : 'False'];
 }
 
 export function MLList(typeName: string, length: number): any[] {
@@ -81,7 +81,7 @@ export function MLList(typeName: string, length: number): any[] {
     } else {
         return [
             'span',
-            { style: Styles.DataStructureNameStyle },
+            { style: Styles.lightTheme.dataStructureNameStyle },
             typeName,
             ['span', {}, `(${length})`],
         ];
@@ -90,12 +90,12 @@ export function MLList(typeName: string, length: number): any[] {
 
 export function MLCustomType(name: string, value?: any[]): any[] {
     if (value === undefined) {
-        return ['span', { style: Styles.CustomTypeNameStyle }, name];
+        return ['span', { style: Styles.lightTheme.customTypeNameStyle }, name];
     }
 
     return [
         'span',
-        { style: Styles.CustomTypeNameStyle },
+        { style: Styles.lightTheme.customTypeNameStyle },
         name + ' ',
         ...value,
     ];
@@ -114,7 +114,7 @@ export function MLTuple(values: any[]): any[] {
 }
 
 export function MLEllipsis(): any[] {
-    return ['span', { style: Styles.GreyedOutStyle }, '…'];
+    return ['span', { style: Styles.lightTheme.greyedStyle }, '…'];
 }
 
 export function MLRecord(values: any[]) {

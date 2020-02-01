@@ -5,11 +5,6 @@ import {
     IJsonMLFormatter,
 } from '../../CommonTypes';
 import JsonML from '../../JsonML';
-import {
-    DataStructureNameStyle,
-    ExpandableBorderStyle,
-    GreyedOutStyle,
-} from './Styles';
 
 export default class DictElement implements IFormatterElement {
     private elmObj: IElmDebugDictValue;
@@ -23,12 +18,12 @@ export default class DictElement implements IFormatterElement {
     public header() {
         if (this.elmObj.value.length === 0) {
             return new JsonML('span')
-                .withStyle(GreyedOutStyle)
+                .withStyle(this.formatter.theme.greyedStyle)
                 .withText('Dict.empty');
         }
 
         return new JsonML('span')
-            .withStyle(DataStructureNameStyle)
+            .withStyle(this.formatter.theme.dataStructureNameStyle)
             .withText('Dict')
             .withChild(
                 new JsonML('span').withText(`(${this.elmObj.value.length})`)
@@ -52,7 +47,7 @@ export default class DictElement implements IFormatterElement {
         });
 
         return new JsonML('div')
-            .withStyle(ExpandableBorderStyle)
+            .withStyle(this.formatter.theme.expandableBorderStyle)
             .withChildren(children);
     }
 }

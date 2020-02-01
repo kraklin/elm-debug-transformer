@@ -64,7 +64,7 @@ describe('JSONML formatting', () => {
                 const expected = [
                     [
                         'span',
-                        { style: Styles.GreyedOutStyle },
+                        { style: Styles.lightTheme.greyedStyle },
                         '[',
                         ['span', {}, B.MLNumber(1)],
                         ']',
@@ -269,7 +269,7 @@ describe('JSONML formatting', () => {
                     B.MLCustomType('Tree', [
                         [
                             'span',
-                            { style: Styles.GreyedOutStyle },
+                            { style: Styles.lightTheme.greyedStyle },
                             '[',
                             [
                                 'span',
@@ -308,7 +308,7 @@ describe('JSONML formatting', () => {
                 const expected = [
                     [
                         'span',
-                        { style: Styles.DataStructureNameStyle },
+                        { style: Styles.lightTheme.dataStructureNameStyle },
                         'Dict',
                         ['span', {}, '(2)'],
                     ],
@@ -379,7 +379,7 @@ describe('JSONML formatting', () => {
                     [
                         'span',
                         {
-                            style: Styles.BytesStyle,
+                            style: Styles.lightTheme.bytesStyle,
                         },
                         '1234 B',
                     ],
@@ -396,7 +396,7 @@ describe('JSONML formatting', () => {
                     [
                         'span',
                         {
-                            style: Styles.BytesStyle,
+                            style: Styles.lightTheme.bytesStyle,
                         },
                         'Name-of_the.file',
                     ],
