@@ -70,6 +70,27 @@ ElmDebugger.register();
 // rest of application
 ```
 
+Here's a sample HTML for your reference:
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Elm App</title>
+</head>
+<body>
+  <main></main>
+  <script src="https://unpkg.com/elm-debug-transformer@latest/dist/elm-console-debug.js"></script>
+  <script>ElmConsoleDebug.register({simple_mode: false, debug: false, limit: 10000});</script>
+  <script src="elm.js"></script>
+  <script>
+    var app = Elm.Main.init({ node: document.querySelector('main') });
+  </script>
+</body>
+</html>
+```
+
 ### Enable custom formatters in Chrome dev tools
 Available in Chrome 47 and higher.
 
