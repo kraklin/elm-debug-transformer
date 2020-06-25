@@ -35,13 +35,13 @@ export function register(opts: IOptions | undefined) {
             : new JsonMLFormatter();
 
     console.log = function() {
-        if (arguments.length > 1) {
+        if (!arguments || arguments.length > 1) {
             log.apply(console, arguments);
             return;
         }
         const msg = arguments[0];
 
-        if (msg.length > opts.limit) {
+        if (!msg || msg.length > opts.limit) {
             log.call(console, msg);
             return;
         }
