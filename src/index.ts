@@ -38,11 +38,13 @@ export function register(opts: IOptions | undefined): IOptions {
     
     const log = console.log;
 
-    let currentOpts = _.merge(defaultOptions, opts);
+    if (opts && opts.theme === undefined) {
+      opts.theme = window.matchMedia("(prefers-color-scheme: dark)").matches 
+        ? "dark" 
+        : "light";
+    }
 
-    currentOpts.theme = window.matchMedia("(prefers-color-scheme: dark)").matches 
-      ? "dark" 
-      : "light";
+    let currentOpts = _.merge(defaultOptions, opts);
 
     console.log = function() {
 
