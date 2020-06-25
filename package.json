@@ -16,7 +16,7 @@
   "private": false,
   "scripts": {
     "pegjs": "pegjs --plugin ./node_modules/ts-pegjs/src/tspegjs -o src/elm-debug-parser.ts src/elm-debug.pegjs",
-    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --opts mocha.opts",
+    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --require ts-node/register --require jsdom-global/register",
     "build": "yarn run pegjs && webpack",
     "prepublishOnly": "yarn run test && yarn run build"
   },
