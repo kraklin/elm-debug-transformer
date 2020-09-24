@@ -22,7 +22,7 @@ interface IOptions {
     theme?: IThemeOption;
 }
 
-const defaultOptions:  IOptions = {
+const defaultOptions: IOptions = {
     active: true,
     debug: false,
     limit: 1000000,
@@ -62,6 +62,11 @@ export function register(opts: IOptions | undefined): IOptions {
             return;
         }
         const msg = arguments[0];
+
+        if (msg === undefined || msg === null) {
+            log.call(console, msg);
+            return;
+        }
 
         if (msg.length > currentOpts.limit) {
             log.call(console, msg);
