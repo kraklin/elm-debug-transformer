@@ -47,23 +47,13 @@ export function register(opts: IOptions | undefined): IOptions {
     let currentOpts = _.merge(defaultOptions, opts);
 
     console.log = function() {
-
-        if (!currentOpts) {
-          currentOpts = defaultOptions;
-        }
-
-        if (!currentOpts.active) {
-            log.apply(console, arguments);
-            return;
-        }
-
-        if (arguments.length > 1) {
+        if (!arguments || arguments.length > 1) {
             log.apply(console, arguments);
             return;
         }
         const msg = arguments[0];
 
-        if (msg === undefined || msg === null) {
+        if (!msg || msg.length > opts.limit) {
             log.call(console, msg);
             return;
         }
