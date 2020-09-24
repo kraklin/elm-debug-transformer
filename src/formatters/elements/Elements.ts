@@ -19,15 +19,15 @@ export function toElement(
     formatter: T.IJsonMLFormatter
 ): T.IFormatterElement | null {
     if (obj.type === 'String') {
-        return new StringElement(obj as T.IElmDebugStringValue);
+        return new StringElement(obj as T.IElmDebugStringValue, formatter);
     } else if (obj.type === 'Boolean') {
-        return new BooleanElement(obj as T.IElmDebugBoolValue);
+        return new BooleanElement(obj as T.IElmDebugBoolValue, formatter);
     } else if (T.isElmValue(obj) && obj.type === 'ElmDebug') {
         return new DebugElement(obj, formatter);
     } else if (T.isElmNumberType(obj)) {
-        return new NumberElement(obj);
+        return new NumberElement(obj, formatter);
     } else if (T.isElmTypeValue(obj)) {
-        return new TypeElement(obj);
+        return new TypeElement(obj, formatter);
     } else if (T.isElmCustomValue(obj)) {
         return new CustomTypeElement(obj, formatter);
     } else if (T.isElmDictValue(obj)) {
@@ -43,11 +43,11 @@ export function toElement(
         obj.type === 'Internals' ||
         obj.type === 'Unit'
     ) {
-        return new InternalsElement(obj.type as string);
+        return new InternalsElement(obj.type as string, formatter);
     } else if (obj.type === 'Bytes') {
-        return new BytesElement(obj as T.IElmDebugValue);
+        return new BytesElement(obj as T.IElmDebugValue, formatter);
     } else if (obj.type === 'File') {
-        return new FilesElement(obj as T.IElmDebugValue);
+        return new FilesElement(obj as T.IElmDebugValue, formatter);
     }
 
     return null;

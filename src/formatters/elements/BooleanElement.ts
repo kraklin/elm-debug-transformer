@@ -1,17 +1,23 @@
-import { IElmDebugBoolValue, IFormatterElement } from '../../CommonTypes';
+import { 
+  IElmDebugBoolValue, 
+  IFormatterElement,
+  IJsonMLFormatter
+
+} from '../../CommonTypes';
 import JsonML from '../../JsonML';
-import { BooleanStyle } from './Styles';
 
 export default class BooleanElement implements IFormatterElement {
     private elmObj: IElmDebugBoolValue;
+    private formatter: IJsonMLFormatter;
 
-    constructor(obj: IElmDebugBoolValue) {
+    constructor(obj: IElmDebugBoolValue, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
+        this.formatter = formatter;
     }
 
     public header() {
         return new JsonML('span')
-            .withStyle(BooleanStyle)
+            .withStyle(this.formatter.theme.booleanStyle)
             .withText(this.elmObj.value ? 'True' : 'False');
     }
 }

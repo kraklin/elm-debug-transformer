@@ -4,7 +4,7 @@ import Array exposing (Array)
 import Browser
 import Dict exposing (Dict)
 import Html exposing (Html, div, h1, img, text)
-import Html.Attributes exposing (src)
+import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
 import Set exposing (Set)
 
@@ -105,8 +105,8 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ img [ src "/logo.svg" ] []
+    div [ style "text-align" "center" ]
+        [ img [ src "/logo.svg", style "max-width" "200px" ] []
         , h1 [] [ text "Your Elm App is working!" ]
         , Html.button [ onClick DebugOutputClicked ] [ Html.text "Debug Model to console" ]
         ]

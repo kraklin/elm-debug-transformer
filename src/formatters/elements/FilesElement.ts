@@ -1,17 +1,23 @@
-import { IElmDebugValue, IFormatterElement } from '../../CommonTypes';
+import { 
+  IElmDebugValue, 
+  IFormatterElement,
+  IJsonMLFormatter
+} from '../../CommonTypes';
+
 import JsonML from '../../JsonML';
-import { BytesStyle } from './Styles';
 
 export default class FilesElement implements IFormatterElement {
     private elmObj: IElmDebugValue;
+    private formatter: IJsonMLFormatter;
 
-    constructor(obj: IElmDebugValue) {
+    constructor(obj: IElmDebugValue, formatter: IJsonMLFormatter) {
         this.elmObj = obj;
+        this.formatter = formatter;
     }
 
     public header() {
         return new JsonML('span')
-            .withStyle(BytesStyle)
+            .withStyle(this.formatter.theme.bytesStyle)
             .withText(this.elmObj.value);
     }
 }

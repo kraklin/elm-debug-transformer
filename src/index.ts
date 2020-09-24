@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
-import { IElmDebugValue } from './CommonTypes';
+import {  IElmDebugValue, IThemeOption } from './CommonTypes';
 import { parse } from './elm-debug-parser';
+import { darkTheme, lightTheme  } from './formatters/elements/Styles';
 import JsonMLFormatter from './formatters/JsonMLFormatter';
 import SimpleFormatter from './formatters/SimpleFormatter';
 
@@ -8,31 +9,42 @@ import SimpleFormatter from './formatters/SimpleFormatter';
 declare global {
     interface Window {
         chrome: any;
+        __ELM_DEBUG_TRANSFORM_OPTIONS__?: IOptions;
     }
 }
 /* tslint:enable*/
 
 interface IOptions {
-  debug?: boolean;
-  simple_mode?: boolean;
-  limit?: number
+    active?: boolean;
+    debug?: boolean;
+    simple_mode?: boolean;
+    limit?: number;
+    theme?: IThemeOption;
 }
 
-const defaultOptions:  IOptions = {
+const defaultOptions: IOptions = {
+    active: true,
     debug: false,
     limit: 1000000,
     simple_mode: false,
+    theme: "light"
 }
 
-export function register(opts: IOptions | undefined) {
+export function register(opts: IOptions | undefined): IOptions {
+
+    if(window.__ELM_DEBUG_TRANSFORM_OPTIONS__){
+      return window.__ELM_DEBUG_TRANSFORM_OPTIONS__;
+    }
+    
     const log = console.log;
 
-    opts = _.merge(defaultOptions, opts)
+    if (opts && opts.theme === undefined) {
+      opts.theme = window.matchMedia("(prefers-color-scheme: dark)").matches 
+        ? "dark" 
+        : "light";
+    }
 
-    const formatter =
-        !!opts.simple_mode || !window.chrome
-            ? new SimpleFormatter()
-            : new JsonMLFormatter();
+    let currentOpts = _.merge(defaultOptions, opts);
 
     console.log = function() {
         if (!arguments || arguments.length > 1) {
@@ -46,8 +58,21 @@ export function register(opts: IOptions | undefined) {
             return;
         }
 
+        if (msg.length > currentOpts.limit) {
+            log.call(console, msg);
+            return;
+        }
+        
+        const themeStyle = (currentOpts.theme === "dark") 
+          ? darkTheme 
+          : lightTheme;
+
+        const formatter =
+            !!currentOpts.simple_mode || !window.chrome
+                ? new SimpleFormatter()
+                : new JsonMLFormatter(themeStyle);
         try {
-            if (!!opts.debug) {
+            if (!!currentOpts.debug) {
                 log.call(console, 'Original message:', msg);
             }
 
@@ -58,10 +83,13 @@ export function register(opts: IOptions | undefined) {
                 JSON.parse(JSON.stringify(formatter.format(parsed)))
             );
         } catch (err) {
-            if (!!opts.debug) {
+            if (!!currentOpts.debug) {
                 console.error(`Parsing error: ${err}`);
             }
             log.call(console, msg);
         }
     };
+
+    window.__ELM_DEBUG_TRANSFORM_OPTIONS__ = currentOpts;
+    return currentOpts;
 }

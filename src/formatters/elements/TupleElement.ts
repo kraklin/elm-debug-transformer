@@ -6,7 +6,6 @@ import {
 } from '../../CommonTypes';
 import JsonML from '../../JsonML';
 import EllipsisElement from './EllipsisElement';
-import { ExpandableBorderStyle, KeyElementStyle } from './Styles';
 
 export default class TupleElement implements IFormatterElement {
     private elmObj: IElmDebugListValue;
@@ -53,7 +52,7 @@ export default class TupleElement implements IFormatterElement {
             const element = new JsonML('span')
                 .withChild(
                     new JsonML('span')
-                        .withStyle(KeyElementStyle)
+                        .withStyle(this.formatter.theme.keyElementStyle)
                         .withText(`${index}`)
                 )
                 .withText(': ');
@@ -66,7 +65,7 @@ export default class TupleElement implements IFormatterElement {
         });
 
         return new JsonML('div')
-            .withStyle(ExpandableBorderStyle)
+            .withStyle(this.formatter.theme.expandableBorderStyle)
             .withChildren(children);
     }
 }
