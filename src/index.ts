@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import {  IElmDebugValue, IThemeOption } from './CommonTypes';
-import { parse } from './elm-debug-parser';
+import { IElmDebugValue, IThemeOption } from './CommonTypes';
+import { parse as elmDebugParse } from './elm-debug-parser';
 import { darkTheme, lightTheme  } from './formatters/elements/Styles';
 import JsonMLFormatter from './formatters/JsonMLFormatter';
 import SimpleFormatter from './formatters/SimpleFormatter';
@@ -28,6 +28,10 @@ const defaultOptions: IOptions = {
     limit: 1000000,
     simple_mode: false,
     theme: "light"
+}
+
+export function parse(message: string) : IElmDebugValue {
+  return elmDebugParse(message) as IElmDebugValue;
 }
 
 export function register(opts: IOptions | undefined): IOptions {
@@ -76,7 +80,7 @@ export function register(opts: IOptions | undefined): IOptions {
                 log.call(console, 'Original message:', msg);
             }
 
-            const parsed = parse(msg) as IElmDebugValue;
+            const parsed = parse(msg);
 
             log.call(
                 console,
