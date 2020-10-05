@@ -2405,7 +2405,7 @@ function peg$parse(input: string, options?: IParseOptions) {
 
 
     function flat(arr) { return arr.reduce((acc, val) => acc.concat(val), []);}
-    function toStr(chars) {console.log("chars", chars); return chars.join("")};
+    function toStr(chars) {return chars.join("")};
 
 
   peg$result = peg$startRuleFunction();
