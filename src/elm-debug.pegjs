@@ -1,6 +1,7 @@
 // Set.toList, Array.toList
 {
-  function toStr(chars) {return chars.join("")};
+  function flat(arr) { return arr.reduce((acc, val) => acc.concat(val), []);}
+  function toStr(chars) {console.log("chars", chars); return chars.join("")};
 }
 
 DebugString 
@@ -67,7 +68,8 @@ VariableName =
 	chars:[a-zA-Z0-9_]+ {return toStr(chars);}
     
 Type = 
-	type:[a-zA-Z]+ {return {type: "Type", name: toStr(type)};}
+  // type returns array in array -> "Yes" -> ["Y",["e", "s"]] -- need to flat that array
+	type: ([A-Z][a-zA-Z0-9_]+) {return {type: "Type", name: toStr(flat(type))};}
 
 Tag =
   tag:TagChar+ { return toStr(tag); }
