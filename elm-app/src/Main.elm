@@ -18,6 +18,7 @@ type CustomType
     | Some String Int
     | Recursive CustomType
     | Complex (List ( Int, CustomType ))
+    | With_Underscore1
 
 
 type alias User =
@@ -63,7 +64,7 @@ init =
       , bools = ( True, False )
       , dict = Dict.fromList [ ( 1, "a" ), ( 2, "b" ), ( 234, "String longer than one char" ) ]
       , dictWithTuples = Dict.fromList [ ( ( 0, "b", 1 ), "a" ), ( ( 0, "c", 1 ), "b" ), ( ( 4, "d", 1 ), "String longer than one char" ) ]
-      , custom = Complex [ ( 1, Some "text" 1 ), ( 2, Recursive (Complex []) ), ( 3, None ) ]
+      , custom = Complex [ ( 1, Some "text" 1 ), ( 2, Recursive (Complex []) ), ( 3, None ), ( 4, With_Underscore1 ) ]
       , tuple = ( 1, 2 )
       , triplet = ( 1, "b", 1 )
       , complexTuple = ( 1, ( "longer string", ( "much longer string", 1 ) ) )
