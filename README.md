@@ -60,6 +60,7 @@ npm install elm-debug-transformer
 
 There is a nice summary of the usage in Alex Korban's article [Get improved Debug.log output in the browser console](https://korban.net/posts/elm/2019-07-02-improved-debug-log-output-browser-console/)
 
+### `register()`
 Register the console debugger in your main JS file before you initialize Elm application:
 
 ```
@@ -90,6 +91,16 @@ Here's a sample HTML for your reference:
 </body>
 </html>
 ```
+
+### `parse()`
+Since version 1.1.0 the parser function is exposed as well, so you can use it to parse Debug.log output into JSON structure and work with it later as you wish.
+
+```
+import {parse} ElmDebugger from 'elm-debug-transformer';
+
+const parsedValue = parse("debug tag: [1,2,3]");
+```
+
 
 ### Enable custom formatters in Chrome dev tools
 Available in Chrome 47 and higher.
