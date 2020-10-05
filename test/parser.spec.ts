@@ -309,6 +309,24 @@ describe('Parsing', () => {
     });
 
     describe('Custom types', () => {
+        it('Custom type name with number', () => {
+            expect(
+                parser.parse('custom type: User1 "Adam"').value
+            ).to.deep.equal({
+                name: 'User1',
+                type: 'Custom',
+                value: [B.str('Adam')],
+            });
+        });
+        it('Custom type name with underscore', () => {
+            expect(
+                parser.parse('custom type: User_name "Adam"').value
+            ).to.deep.equal({
+                name: 'User_name',
+                type: 'Custom',
+                value: [B.str('Adam')],
+            });
+        });
         it('Custom type with one value', () => {
             expect(
                 parser.parse('custom type: User "Adam"').value
