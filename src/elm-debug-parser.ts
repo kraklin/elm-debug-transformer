@@ -263,9 +263,9 @@ function peg$parse(input: string, options?: IParseOptions) {
   const peg$c86 = /^[a-zA-Z0-9_]/;
   const peg$c87 = peg$classExpectation([["a", "z"], ["A", "Z"], ["0", "9"], "_"], false, false);
   const peg$c88 = function(chars: any): any {return toStr(chars);};
-  const peg$c89 = /^[a-zA-Z]/;
-  const peg$c90 = peg$classExpectation([["a", "z"], ["A", "Z"]], false, false);
-  const peg$c91 = function(type: any): any {return {type: "Type", name: toStr(type)};};
+  const peg$c89 = /^[A-Z]/;
+  const peg$c90 = peg$classExpectation([["A", "Z"]], false, false);
+  const peg$c91 = function(type: any): any {return {type: "Type", name: toStr(flat(type))};};
   const peg$c92 = function(tag: any): any { return toStr(tag); };
   const peg$c93 = function(chars: any): any { return {type: "String", value: chars.join('')}; };
   const peg$c94 = "'";
@@ -1721,10 +1721,10 @@ function peg$parse(input: string, options?: IParseOptions) {
   }
 
   function peg$parseType(): any {
-    let s0, s1, s2;
+    let s0, s1, s2, s3, s4;
 
     s0 = peg$currPos;
-    s1 = [];
+    s1 = peg$currPos;
     if (peg$c89.test(input.charAt(peg$currPos))) {
       s2 = input.charAt(peg$currPos);
       peg$currPos++;
@@ -1733,17 +1733,37 @@ function peg$parse(input: string, options?: IParseOptions) {
       if (peg$silentFails === 0) { peg$fail(peg$c90); }
     }
     if (s2 !== peg$FAILED) {
-      while (s2 !== peg$FAILED) {
-        s1.push(s2);
-        if (peg$c89.test(input.charAt(peg$currPos))) {
-          s2 = input.charAt(peg$currPos);
-          peg$currPos++;
-        } else {
-          s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c90); }
+      s3 = [];
+      if (peg$c86.test(input.charAt(peg$currPos))) {
+        s4 = input.charAt(peg$currPos);
+        peg$currPos++;
+      } else {
+        s4 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c87); }
+      }
+      if (s4 !== peg$FAILED) {
+        while (s4 !== peg$FAILED) {
+          s3.push(s4);
+          if (peg$c86.test(input.charAt(peg$currPos))) {
+            s4 = input.charAt(peg$currPos);
+            peg$currPos++;
+          } else {
+            s4 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c87); }
+          }
         }
+      } else {
+        s3 = peg$FAILED;
+      }
+      if (s3 !== peg$FAILED) {
+        s2 = [s2, s3];
+        s1 = s2;
+      } else {
+        peg$currPos = s1;
+        s1 = peg$FAILED;
       }
     } else {
+      peg$currPos = s1;
       s1 = peg$FAILED;
     }
     if (s1 !== peg$FAILED) {
@@ -2384,7 +2404,8 @@ function peg$parse(input: string, options?: IParseOptions) {
   }
 
 
-    function toStr(chars) {return chars.join("")};
+    function flat(arr) { return arr.reduce((acc, val) => acc.concat(val), []);}
+    function toStr(chars) {console.log("chars", chars); return chars.join("")};
 
 
   peg$result = peg$startRuleFunction();
