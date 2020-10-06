@@ -57,7 +57,7 @@ export function register(opts: IOptions | undefined): IOptions {
         }
         const msg = arguments[0];
 
-        if (!msg || msg.length > opts.limit) {
+        if (!msg || msg.length > currentOpts.limit) {
             log.call(console, msg);
             return;
         }
