@@ -15,7 +15,7 @@ export default class ListElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header(config?: IConfig) {
+    public header = (config?: IConfig) => {
         if (this.elmObj.value.length === 0) {
             return new JsonML('span').withStyle(this.formatter.theme.greyedStyle).withText('[]');
         }
@@ -41,7 +41,7 @@ export default class ListElement implements IFormatterElement {
             );
     }
 
-    public body(config?: IConfig): JsonML | null {
+    public body = (config?: IConfig): JsonML | null => {
         if (this.elmObj.value.length === 0) {
             return null;
         }

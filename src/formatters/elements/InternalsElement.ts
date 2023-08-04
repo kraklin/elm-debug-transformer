@@ -14,7 +14,7 @@ export default class InternalsElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header() {
+    public header = () => {
         let value = '';
 
         switch (this.elmObj) {

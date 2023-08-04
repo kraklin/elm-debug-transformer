@@ -16,7 +16,7 @@ export default class RecordElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header(config: IConfig) {
+    public header = (config: IConfig) => {
         if (!!config && config.level > 2) {
             return new JsonML('span')
                 .withText('{ ')
@@ -53,13 +53,13 @@ export default class RecordElement implements IFormatterElement {
 
                     return accObj;
                 },
-                { acc: [], size: 0, hasEllipsis: false }
+                { acc: [] as any[], size: 0, hasEllipsis: false }
             )
             .acc.reduce((acc, child) => {
                 acc.push(new JsonML('span').withText(', '));
                 acc.push(child);
                 return acc;
-            }, []);
+            }, [] as any[]);
 
         children.splice(0, 1);
 
@@ -69,7 +69,7 @@ export default class RecordElement implements IFormatterElement {
             .withText(' }');
     }
 
-    public body(config: IConfig) {
+    public body = (config: IConfig) => {
         const keys = Object.keys(this.elmObj.value);
         const objects = keys.map(k => {
             const keyElement = new JsonML('span')

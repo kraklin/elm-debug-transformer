@@ -151,7 +151,7 @@ describe('Parsing', () => {
           try {
                 parser.parse('not tuple: (123)');
           }
-          catch (err){
+          catch (err: any){
             expect(err.name).to.eql('SyntaxError')
           }
           done();

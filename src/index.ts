@@ -52,17 +52,17 @@ export function register(opts: IOptions | undefined): IOptions {
 
     console.log = function() {
         if (!arguments || arguments.length > 1) {
-            log.apply(console, arguments);
+            log.apply(console, arguments as any);
             return;
         }
         const msg = arguments[0];
 
-        if (!msg || msg.length > currentOpts.limit) {
+        if (!msg || !currentOpts.limit || msg.length > currentOpts.limit) {
             log.call(console, msg);
             return;
         }
 
-        if (msg.length > currentOpts.limit) {
+        if (!currentOpts.limit || msg.length > currentOpts.limit) {
             log.call(console, msg);
             return;
         }
@@ -72,7 +72,7 @@ export function register(opts: IOptions | undefined): IOptions {
           : lightTheme;
 
         const formatter =
-            !!currentOpts.simple_mode || !window.chrome
+            !!currentOpts.simple_mode 
                 ? new SimpleFormatter()
                 : new JsonMLFormatter(themeStyle);
         try {

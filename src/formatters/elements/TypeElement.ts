@@ -15,7 +15,7 @@ export default class TypeElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header() {
+    public header = () => {
         return new JsonML('span')
             .withStyle(this.formatter.theme.typeNameStyle)
             .withText(this.elmObj.name);

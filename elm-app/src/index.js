@@ -1,9 +1,9 @@
 import { Elm } from './Main.elm';
-import { register } from '../../dist/elm-console-debug.js';
+import * as ElmDebugger from '../../dist/index.mjs';
+//import * as ElmDebugger from 'elm-debug-transformer';
 
-let opts = {simple_mode: false, debug: true, sizeLimit: 1000}
-
-window.elmopts = register();
+console.log(ElmDebugger);
+ElmDebugger.register({simple_mode: false, debug: true, limit: 10000});
 
 Elm.Main.init({
     node: document.getElementById('root'),

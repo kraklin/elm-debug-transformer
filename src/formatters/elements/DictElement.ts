@@ -15,7 +15,7 @@ export default class DictElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header() {
+    public header = () => {
         if (this.elmObj.value.length === 0) {
             return new JsonML('span')
                 .withStyle(this.formatter.theme.greyedStyle)
@@ -30,7 +30,7 @@ export default class DictElement implements IFormatterElement {
             );
     }
 
-    public body(config?: IConfig) {
+    public body = (config?: IConfig) => {
         const children = this.elmObj.value.map(child => {
             const key = this.formatter.handleHeader(child.key, config);
             const element = new JsonML('span')

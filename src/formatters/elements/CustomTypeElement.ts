@@ -18,7 +18,7 @@ export default class CustomTypeElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header(config: IConfig = { elmFormat: true, level: 0 }) {
+    public header = (config: IConfig = { elmFormat: true, level: 0 }) => {
         if (this.elmObj.value.length === 0) {
             return new JsonML('span')
                 .withStyle(this.formatter.theme.customTypeNameStyle)
@@ -61,7 +61,7 @@ export default class CustomTypeElement implements IFormatterElement {
                         acc.push(child.jsonml);
                         acc.push(new JsonML('span').withText(' '));
                         return acc;
-                    }, []);
+                    }, [] as any[]);
 
                 children.splice(-1, 1);
 
@@ -76,7 +76,7 @@ export default class CustomTypeElement implements IFormatterElement {
         }
     }
 
-    public body(): JsonML | null {
+    public body = (): JsonML | null => {
         if (
             this.elmObj.value.length === 1 &&
             this.formatter.handleBody(this.elmObj.value[0]) === null
@@ -106,8 +106,8 @@ export default class CustomTypeElement implements IFormatterElement {
             .withChildren(children);
     }
 
-    private wrappedHeader(obj: JsonML, config?: IConfig): JsonML {
-        if (config !== null && config.level > 1) {
+    private wrappedHeader = (obj: JsonML, config?: IConfig): JsonML => {
+        if (config && config.level > 1) {
             return new JsonML('span')
                 .withText('( ')
                 .withChild(obj)

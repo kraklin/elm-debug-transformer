@@ -15,7 +15,7 @@ export default class StringElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header() {
+    public header = () => {
         return new JsonML('span')
             .withStyle(this.formatter.theme.stringStyle)
             .withText(`"${this.elmObj.value}"`);

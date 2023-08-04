@@ -16,7 +16,7 @@ export default class TupleElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header(config?: IConfig) {
+    public header = (config?: IConfig) => {
         if (!!config && config.level > 1) {
             return new JsonML('span')
                 .withText('( ')
@@ -33,7 +33,7 @@ export default class TupleElement implements IFormatterElement {
                 acc.push(new JsonML('span').withText(', '));
                 acc.push(child);
                 return acc;
-            }, []);
+            }, [] as any[]);
 
         children.splice(0, 1);
 
@@ -43,7 +43,7 @@ export default class TupleElement implements IFormatterElement {
             .withText(' )');
     }
 
-    public body(config?: IConfig): JsonML | null {
+    public body = (config?: IConfig): JsonML | null => {
         if (this.elmObj.value.length <= 1) {
             return null;
         }

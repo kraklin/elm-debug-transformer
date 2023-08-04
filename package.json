@@ -1,8 +1,8 @@
 {
   "name": "elm-debug-transformer",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Transform Elm Debug.log output into nice log object with custom formatter",
-  "main": "dist/elm-console-debug.js",
+  "main": "./dist/main.js",
   "author": "Tomas Latal <tom@tomaslatal.cz>",
   "repository": "https://github.com/kraklin/elm-debug-transformer",
   "keywords": [
@@ -12,52 +12,56 @@
     "parser",
     "formatter"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/main.mjs",
+      "require": "./dist/main.js"
+    }
+  },
+  "module": "./dist/main.mjs",
+  "typings": "./dist/main.d.ts",
+  "files": [
+    "dist"
+  ],
   "license": "MIT",
   "private": false,
   "scripts": {
     "pegjs": "pegjs --plugin ./node_modules/ts-pegjs/src/tspegjs -o src/elm-debug-parser.ts src/elm-debug.pegjs",
     "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --require ts-node/register --require jsdom-global/register",
-    "build": "yarn run pegjs && webpack",
-    "prepublishOnly": "yarn run test && yarn run build"
+    "build": "npm run pegjs && tsc && vite build",
+    "build:watch": "npm run pegjs && tsc && vite build --watch",
+    "prepublishOnly": "npm run test && npm run build"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
-    "@types/chai": "^4.1.7",
+    "@rollup/plugin-typescript": "^11.1.2",
+    "@types/chai": "^4.3.5",
     "@types/lodash": "^4.14.134",
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^12.0.10",
-    "@types/pegjs": "^0.10.1",
-    "babel-loader": "^8.0.6",
-    "babel-minify-webpack-plugin": "^0.3.1",
-    "chai": "^4.2.0",
-    "jsdom": "^15.1.1",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.4.7",
+    "chai": "^4.3.7",
+    "jsdom": "^22.1.0",
     "jsdom-global": "^3.0.2",
     "lodash": "^4.17.15",
-    "mocha": "^8.0.1",
+    "mocha": "^10.2.0",
     "pegjs": "^0.10.0",
-    "pegjs-loader": "^0.5.4",
-    "prettier": "^1.18.2",
-    "raw-loader": "^3.0.0",
-    "terser-webpack-plugin": "^3.0.6",
+    "prettier": "^3.0.1",
+    "rollup-plugin-typescript-paths": "^1.4.0",
     "ts-loader": "^6.0.2",
-    "ts-mocha": "^6.0.0",
+    "ts-mocha": "^10.0.0",
     "ts-node": "^8.3.0",
     "ts-pegjs": "^0.2.5",
-    "tslint": "^5.17.0",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.5.2",
-    "webpack": "^4.33.0",
-    "webpack-cli": "^3.3.3"
+    "tslib": "^2.6.1",
+    "typescript": "^5.1.6",
+    "vite": "^4.4.8",
+    "vite-plugin-peggy-loader": "^1.0.1"
   },
-  "files": [
-    "dist"
-  ],
   "prettier": {
     "trailingComma": "es5",
     "tabWidth": 4,
     "semi": true,
     "singleQuote": true
+  },
+  "dependencies": {
+    "prettier": "^3.0.1"
   }
 }

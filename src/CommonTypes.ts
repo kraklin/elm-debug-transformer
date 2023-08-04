@@ -7,7 +7,7 @@ export interface IFormatter {
 export interface IJsonMLFormatter {
     theme: ITheme;
     handleHeader(obj: ElmDebugValueType, config?: IConfig): JsonML;
-    handleBody(obj: ElmDebugValueType, config?: IConfig): JsonML;
+    handleBody(obj: ElmDebugValueType, config?: IConfig): JsonML | null;
 }
 
 export interface IDevToolsFormatter {

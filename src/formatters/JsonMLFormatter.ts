@@ -22,12 +22,12 @@ export default class JsonMLFormatter
         this.theme = theme;
     }
 
-    public format(obj: T.IElmDebugValue): any {
+    public format = (obj: T.IElmDebugValue): any => {
         return obj;
     }
 
-    public header(obj: T.IElmDebugValue, config: T.IConfig): any[] | null {
-        if (!!config && config.elmFormat) {
+    public header = (obj: T.IElmDebugValue, config: T.IConfig): any[] | null => {
+        if (!!config && !!config.key && config.elmFormat) {
             return new JsonML('div')
                 .withChild(config.key)
                 .withChild(this.handleHeader(obj, config))
@@ -42,8 +42,8 @@ export default class JsonMLFormatter
         }
     }
 
-    public hasBody(obj: T.IElmDebugValue, config: T.IConfig): boolean {
-        const element = toElement(obj, this);
+    public hasBody = (obj: T.IElmDebugValue, config: T.IConfig): boolean =>{
+        const element = toElement(obj, this as T.IJsonMLFormatter);
         return (
             element !== null &&
             element.body !== undefined &&
@@ -51,20 +51,24 @@ export default class JsonMLFormatter
         );
     }
 
-    public body(obj: T.IElmDebugValue, config: T.IConfig): any[] | null {
+    public body = (obj: T.IElmDebugValue, config: T.IConfig): any[] | null => {
         if (this.handleBody(obj) === null) {
             return null;
         }
 
-        return this.handleBody(obj).toJSONML();
+        return this.handleBody(obj)?.toJSONML();
     }
 
-    public handleHeader(
-        obj: T.ElmDebugValueType,
+    public handleHeader = (
+        obj: T.ElmDebugValueType | undefined,
         config: T.IConfig = { elmFormat: true, level: 0 }
-    ): JsonML {
+    ): JsonML => {
+        if(obj === undefined) {
+            return new JsonML('span').withText('undefined value');
+        }
+
         const newConfig = _.clone(config);
-        const element = toElement(obj, this);
+        const element = toElement(obj, this as T.IJsonMLFormatter);
 
         newConfig.level = config.level + 1;
 
@@ -75,12 +79,12 @@ export default class JsonMLFormatter
         }
     }
 
-    public handleBody(
+    public handleBody = (
         obj: T.ElmDebugValueType,
         config?: T.IConfig
-    ): JsonML | null {
-        const element = toElement(obj, this);
-        if (element !== undefined) {
+    ): JsonML | null => {
+        const element = toElement(obj, this as T.IJsonMLFormatter);
+        if (element) {
             return element.body !== undefined ? element.body(config) : null;
         } else {
             return new JsonML('div').withText('UNPARSED body: ').withText(obj);

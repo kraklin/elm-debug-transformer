@@ -474,7 +474,7 @@ describe('JSONML formatting', () => {
                 const value = B.record({ age: B.n(12) });
                 const expected = [B.MLKeyValueBody('age', B.n(12))];
 
-                expect(formatter.handleBody(value).toJSONML()).to.deep.equal(
+                expect(formatter.handleBody(value)?.toJSONML()).to.deep.equal(
                     B.MLBody(expected)
                 );
             });
@@ -493,7 +493,7 @@ describe('JSONML formatting', () => {
                     B.MLKeyValueBody('[1]', B.MLNumber(3)),
                 ];
 
-                expect(formatter.handleBody(value).toJSONML()).to.deep.equal(
+                expect(formatter.handleBody(value)?.toJSONML()).to.deep.equal(
                     B.MLBody(expected)
                 );
             });

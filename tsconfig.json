@@ -1,11 +1,42 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
+    "target": "ESNext",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "types": [
+      "vite/client",
+      "node",
+      "mocha"
+    ],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "noImplicitAny": false,
-    "module": "es6",
-    "moduleResolution": "node",
-    "types": ["mocha", "node"],
-    "target": "es5",
-    "allowJs": true
-  }
+    "noEmit": true,
+    "jsx": "preserve",
+    "baseUrl": "./",
+    "paths": {
+      "~/*": [
+        "src/*"
+      ]
+    }
+  },
+  "include": [
+    "./src"
+  ],
+  "exclude": [
+    "src/elm-debug-parser.ts",
+    "node_modules",
+    "elm-app"
+  ]
 }

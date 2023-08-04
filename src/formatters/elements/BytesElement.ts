@@ -15,7 +15,7 @@ export default class BytesElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header() {
+    public header = () => {
         return new JsonML('span')
             .withStyle(this.formatter.theme.bytesStyle)
             .withText(this.elmObj.value + ' B');

@@ -3,7 +3,12 @@ import * as T from '../CommonTypes';
 
 export default class SimpleFormatter implements T.IFormatter {
     public format(obj: T.IElmDebugValue): object {
+      if(obj.name !== undefined && obj.value !== undefined){
         return { [obj.name]: this.formatValue(obj.value) };
+      }
+      else { 
+        return {}
+      }
     }
 
     public formatArray(array: T.ElmDebugValueType[]): object[] {

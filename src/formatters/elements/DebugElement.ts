@@ -16,7 +16,8 @@ export default class DebugElment implements IFormatterElement {
         this.elmLogoElement = new JsonML('span').withStyle(this.formatter.theme.elmLogoElementStyle);
     }
 
-    public header() {
+    public header = () => {
+      if (this.elmObj?.value) {
         return new JsonML('span')
             .withChild(this.elmLogoElement)
             .withChild(
@@ -29,9 +30,16 @@ export default class DebugElment implements IFormatterElement {
                     .withText(': ')
             )
             .withChild(this.formatter.handleHeader(this.elmObj.value));
+      }
+
+      return new JsonML('span').withText("WTF");
     }
 
-    public body() {
+    public body = () => {
+      if (this.elmObj?.value) {
         return this.formatter.handleBody(this.elmObj.value);
+      }
+
+      return null;
     }
 }

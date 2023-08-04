@@ -15,7 +15,7 @@ export default class BooleanElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header() {
+    public header = () => {
         return new JsonML('span')
             .withStyle(this.formatter.theme.booleanStyle)
             .withText(this.elmObj.value ? 'True' : 'False');

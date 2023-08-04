@@ -14,7 +14,7 @@ export default class NumberElement implements IFormatterElement {
         this.formatter = formatter;
     }
 
-    public header() {
+    public header = () => {
         return new JsonML('span')
             .withStyle(this.formatter.theme.numberStyle)
             .withText(this.elmObj.value);

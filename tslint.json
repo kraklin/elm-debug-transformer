@@ -1,15 +1,22 @@
 {
-    "extends": [
-        "tslint:latest",
-        "tslint-config-prettier"
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier"
+  ],
+  "linterOptions": {
+    "exclude": [
+      "src/**/elm-debug-parser.ts",
+      "elm-app"
+    ]
+  },
+  "jsRules": {},
+  "rules": {
+    "no-console": [
+      false
     ],
-    "linterOptions":{
-      "exclude":["src/**/elm-debug-parser.ts"]
-    },
-    "jsRules": {},
-    "rules": { 
-      "no-console": [false],
-      "max-classes-per-file": [false]
-    },
-    "rulesDirectory": [ ]
+    "max-classes-per-file": [
+      false
+    ]
+  },
+  "rulesDirectory": []
 }
