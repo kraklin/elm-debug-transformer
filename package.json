@@ -2,7 +2,6 @@
   "name": "elm-debug-transformer",
   "version": "1.2.0",
   "description": "Transform Elm Debug.log output into nice log object with custom formatter",
-  "main": "./dist/main.js",
   "author": "Tomas Latal <tom@tomaslatal.cz>",
   "repository": "https://github.com/kraklin/elm-debug-transformer",
   "keywords": [
@@ -12,14 +11,15 @@
     "parser",
     "formatter"
   ],
+  "main": "./dist/index.js",
   "exports": {
     ".": {
-      "import": "./dist/main.mjs",
-      "require": "./dist/main.js"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     }
   },
-  "module": "./dist/main.mjs",
-  "typings": "./dist/main.d.ts",
+  "module": "./dist/index.mjs",
+  "typings": "./dist/index.d.ts",
   "files": [
     "dist"
   ],

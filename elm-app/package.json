@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "cd ../ && npm run build && cd elm-app && vite"
+    "start": "vite"
   },
   "devDependencies": {
     "elm-tooling": "^1.14.0",
