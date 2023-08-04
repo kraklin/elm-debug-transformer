@@ -3,7 +3,7 @@
     <a href="https://badge.fury.io/js/elm-debug-transformer">
       <img src="https://badge.fury.io/js/elm-debug-transformer.svg" alt="version">
     </a>
-    <p>Transform Elm Debug.log output into nice log object with custom formatter</p>
+    <p>Transform Elm Debug.log output into nice log object with custom formatters</p>
 </div>
 
 The standard Elm `Debug.log` console output:
@@ -102,15 +102,23 @@ const parsedValue = parse("debug tag: [1,2,3]");
 ```
 
 
-### Enable custom formatters in Chrome dev tools
-Available in Chrome 47 and higher.
+### Enable custom formatters in Chrome and Firefox dev tools
+Available in Chrome 47 and higher and in Firefox 116 and higher.
 
 The output object is kind of chatty right now (it carries information about parsed type etc. - less verbose version is worked on right now). 
 
-If your browser have Chrome dev toools, you can enable custom formatters so you get less noice and nice output.
+If your browser is Firefox 116 and above or if it have have Chrome dev tools, you can enable custom formatters so you get less noise and more nice output.
 
+#### How to enable custom formatters in Chrome:
   - Open DevTools
-  - Go to Settings ("three dots" icon in the upper right corner of DevTools > Menu > Settings F1 > Preferences > Console)
+  - Go to Preferences ("cog wheel" icon in the upper right corner of DevTools > Preferences > Console)
+  - Check-in "Enable custom formatters"
+  - Close DevTools
+  - Open DevTools
+
+#### How to enable custom formatters in Firefox:
+  - Open DevTools
+  - Go to Settings ("three dots" icon in the upper right corner of DevTools > Settings F1 > Advanced settings)
   - Check-in "Enable custom formatters"
   - Close DevTools
   - Open DevTools
