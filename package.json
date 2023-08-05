@@ -1,6 +1,6 @@
 {
   "name": "elm-debug-transformer",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Transform Elm Debug.log output into nice log object with custom formatter",
   "author": "Tomas Latal <tom@tomaslatal.cz>",
   "repository": "https://github.com/kraklin/elm-debug-transformer",
@@ -60,8 +60,5 @@
     "tabWidth": 4,
     "semi": true,
     "singleQuote": true
-  },
-  "dependencies": {
-    "prettier": "^3.0.1"
   }
 }
