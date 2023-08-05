@@ -16,20 +16,6 @@ and the same output with this package
 
 The main module exposes `register()` function that replaces your `console.log()` and try to parse each incoming message with Elm parser. If it fails, it would pass the original message.
 
-## Limitations
-
-Right now you can insert only alphabet characters and spaces as a Debug.log tag. 
-```
--- this would parse successfuly
-Debug.log "Some tag string" thingToPrintToConsole
-
-
--- this would NOT BE PARSED
-Debug.log "Some String (with non [a-zA-Z] chars or numbers in it) " thingToPrintToConsole
-```
-
-This limitation is due to the problem recognizing arbitrary tag text from the rest of the types. I'm aware of that limitation and it is something that would be addressed in the upcoming versions. Thanks for understanding.
-
 
 ## Installation
 
@@ -55,6 +41,16 @@ npm install elm-debug-transformer
 <script>ElmConsoleDebug.register()</script>
 ```
 
+#### Bookmarklet
+[Ale Grilli](https://github.com/agj) created a bookmarklet for enabling transformer on any page. Just add this to your bookmark
+URL and run it on the pages you want the transformer to work on.
+
+
+Bookmarklet below is for version 1.2.1
+
+```
+javascript:(function()%7Bconsole.info(%22Loading%20Elm%20Debug%20Transformer%E2%80%A6%22)%3Bimport(%22%2F%2Funpkg.com%2Felm-debug-transformer%401.2.1%2Fdist%2Findex.mjs%22).then((ElmDebugger)%20%3D%3E%20%7BElmDebugger.register()%3Bconsole.info(%22Elm%20Debug%20Transformer%20loaded!%22)%3B%7D)%7D)()
+```
 
 ## Usage
 
