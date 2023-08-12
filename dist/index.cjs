@@ -1,9 +1,11 @@
+"use strict";
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
+Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 var lodash = { exports: {} };
 /**
@@ -15,7 +17,7 @@ var lodash = { exports: {} };
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 lodash.exports;
-(function(module, exports) {
+(function(module2, exports2) {
   (function() {
     var undefined$1;
     var VERSION = "4.17.21";
@@ -343,8 +345,8 @@ lodash.exports;
     var freeGlobal = typeof commonjsGlobal == "object" && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
     var freeSelf = typeof self == "object" && self && self.Object === Object && self;
     var root = freeGlobal || freeSelf || Function("return this")();
-    var freeExports = exports && !exports.nodeType && exports;
-    var freeModule = freeExports && true && module && !module.nodeType && module;
+    var freeExports = exports2 && !exports2.nodeType && exports2;
+    var freeModule = freeExports && true && module2 && !module2.nodeType && module2;
     var moduleExports = freeModule && freeModule.exports === freeExports;
     var freeProcess = moduleExports && freeGlobal.process;
     var nodeUtil = function() {
@@ -10657,7 +10659,5 @@ function register(opts) {
   window.__ELM_DEBUG_TRANSFORM_OPTIONS__ = currentOpts;
   return currentOpts;
 }
-export {
-  parse,
-  register
-};
+exports.parse = parse;
+exports.register = register;

@@ -1,6 +1,6 @@
 {
   "src/index.ts": {
-    "file": "index.js",
+    "file": "index.cjs",
     "isEntry": true,
     "src": "src/index.ts"
   }
