@@ -2,7 +2,7 @@ port module Parser exposing (main)
 
 import Debug exposing (toString)
 import DebugParser
-import DebugParser.ElmValue exposing (ElmValue(..), PlainValue(..))
+import DebugParser.ElmValue exposing (ElmValue(..), ExpandableValue(..), PlainValue(..), SequenceType(..))
 import Json.Encode exposing (Value)
 
 
@@ -53,11 +53,22 @@ encodeDebugValue value =
                 ElmString string ->
                     encodeType "String" <| Json.Encode.string string
 
-                _ ->
-                    Json.Encode.object [ ( "type", Json.Encode.string "Missing" ), ( "value", Json.Encode.string "missing..." ) ]
+                ElmFile name ->
+                    encodeType "File" <| Json.Encode.string name
 
-        _ ->
-            Json.Encode.object [ ( "type", Json.Encode.string "Missing" ), ( "value", Json.Encode.string "missing..." ) ]
+                ElmUnit ->
+                    Json.Encode.object [ ( "type", Json.Encode.string "Unit" ) ]
+
+                _ ->
+                    Json.Encode.object [ ( "type", Json.Encode.string "plain" ), ( "value", Json.Encode.string "missing..." ) ]
+
+        Expandable _ expandable ->
+            case expandable of
+                ElmSequence SeqTuple values ->
+                    encodeType "Tuple" <| Json.Encode.list encodeDebugValue values
+
+                _ ->
+                    Json.Encode.object [ ( "type", Json.Encode.string "expandable" ), ( "value", Json.Encode.string "missing..." ) ]
 
 
 init : String -> ( Model, Cmd Msg )
