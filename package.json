@@ -27,33 +27,26 @@
   "private": false,
   "scripts": {
     "pegjs": "pegjs --plugin ./node_modules/ts-pegjs/src/tspegjs -o src/elm-debug-parser.ts src/elm-debug.pegjs",
-    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --require ts-node/register --require jsdom-global/register",
+    "test": "vitest run",
     "build": "npm run pegjs && tsc && vite build",
     "build:watch": "npm run pegjs && tsc && vite build --watch",
     "prepublishOnly": "npm run test && npm run build"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.2",
-    "@types/chai": "^4.3.5",
     "@types/lodash": "^4.14.134",
-    "@types/mocha": "^10.0.1",
     "@types/node": "^20.4.7",
-    "chai": "^4.3.7",
     "jsdom": "^22.1.0",
-    "jsdom-global": "^3.0.2",
     "lodash": "^4.17.15",
-    "mocha": "^10.2.0",
     "pegjs": "^0.10.0",
     "prettier": "^3.0.1",
     "rollup-plugin-typescript-paths": "^1.4.0",
-    "ts-loader": "^6.0.2",
-    "ts-mocha": "^10.0.0",
-    "ts-node": "^8.3.0",
     "ts-pegjs": "^0.2.5",
     "tslib": "^2.6.1",
     "typescript": "^5.1.6",
     "vite": "^4.4.8",
-    "vite-plugin-peggy-loader": "^1.0.1"
+    "vite-plugin-peggy-loader": "^1.0.1",
+    "vitest": "^0.34.1"
   },
   "prettier": {
     "trailingComma": "es5",

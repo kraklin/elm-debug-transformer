@@ -4,3 +4,5 @@ dist
 yarn.lock
 yarn-error.lock
 yarn-error.log
+ 
+.DS_Store
