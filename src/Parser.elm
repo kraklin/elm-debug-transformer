@@ -68,8 +68,8 @@ encodeDebugValue value =
                 ElmUnit ->
                     Json.Encode.object [ ( "type", Json.Encode.string "Unit" ) ]
 
-                _ ->
-                    Json.Encode.object [ ( "type", Json.Encode.string "plain" ), ( "value", Json.Encode.string "missing..." ) ]
+                ElmChar char ->
+                    Json.Encode.object [ ( "type", Json.Encode.string "String" ), ( "value", Json.Encode.string <| String.fromChar char ) ]
 
         Expandable _ expandable ->
             case expandable of
