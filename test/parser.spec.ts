@@ -223,17 +223,17 @@ describe('Parsing', () => {
         });
     });
 
-    describe.skip('Set', () => {
-        it('Empty Set', () => {
-            expect(parse('Set: Set.fromList []').value).to.deep.equal({
+    describe('Set', () => {
+        it('Empty Set', async () => {
+            const {value} = await parse('Set: Set.fromList []');
+            expect(value).to.deep.equal({
                 type: 'Set',
                 value: [],
             });
         });
-        it('Filled set', () => {
-            expect(
-                parse('Set: Set.fromList ["1","2","3"]').value
-            ).to.deep.equal({
+        it('Filled set', async () => {
+            const {value} = await parse('Set: Set.fromList ["1","2","3"]');
+            expect(value).to.deep.equal({
                 type: 'Set',
                 value: [B.str('1'), B.str('2'), B.str('3')],
             });
