@@ -474,9 +474,10 @@ describe('Parsing', () => {
         });
     });
 
-    describe.skip('Bytes', () => {
-        it('Bytes', () => {
-            expect(parse('bytes: <24294 bytes>').value).to.deep.equal({
+    describe('Bytes', () => {
+        it('Bytes', async () => {
+            const {value} = await parse('bytes: <24294 bytes>');
+            expect(value).to.deep.equal({
                 type: 'Bytes',
                 value: 24294,
             });
