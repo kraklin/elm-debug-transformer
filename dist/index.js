@@ -10605,7 +10605,6 @@ async function parse(message) {
   const promise = new Promise((res, rej) => {
     const app = Elm.Parser.init({ flags: message });
     app.ports.sendParsed.subscribe((value) => {
-      console.log(value);
       res(value);
     });
   });

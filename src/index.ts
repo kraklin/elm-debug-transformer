@@ -35,7 +35,6 @@ export async function parse(message: string) : Promise<IElmDebugValue> {
   const promise = new Promise<IElmDebugValue>((res, rej) => {
     const app = Elm.Parser.init({flags:message});
     app.ports.sendParsed.subscribe(value => {
-      console.log(value);
       res(value as IElmDebugValue );
     })
   });
@@ -77,7 +76,7 @@ export function register(opts: IOptions | undefined): IOptions {
         }
 
         if (!currentOpts.limit || msg.length > currentOpts.limit) {
-            log.cavaluell(console, msg);
+            log.call(console, msg);
             return;
         }
         
