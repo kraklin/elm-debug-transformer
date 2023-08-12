@@ -1,4 +1,4 @@
-import { assert, expect } from 'chai';
+import { describe, expect, it, assert, beforeEach } from 'vitest';
 import { IJsonMLFormatter } from '../src/CommonTypes';
 import * as Styles from '../src/formatters/elements/Styles';
 import JsonMLFormatter from '../src/formatters/JsonMLFormatter';

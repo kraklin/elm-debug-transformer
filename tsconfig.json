@@ -9,7 +9,6 @@
     "types": [
       "vite/client",
       "node",
-      "mocha"
     ],
     "allowJs": false,
     "skipLibCheck": true,

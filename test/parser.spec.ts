@@ -1,4 +1,4 @@
-import { expect, should } from 'chai';
+import { describe, expect, should, it} from 'vitest';
 import { readFileSync } from 'fs';
 import { generate } from 'pegjs';
 import * as B from './builders';
@@ -147,7 +147,7 @@ describe('Parsing', () => {
                 ],
             });
         });
-        it('Tuple with one item is not a tuple', (done) => {
+        it('Tuple with one item is not a tuple', () => new Promise(done => { 
           try {
                 parser.parse('not tuple: (123)');
           }
@@ -155,7 +155,7 @@ describe('Parsing', () => {
             expect(err.name).to.eql('SyntaxError')
           }
           done();
-        });
+        }));
     });
 
     describe('List', () => {

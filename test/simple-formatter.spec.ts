@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { beforeEach, describe, expect, should, it} from 'vitest';
 import { IFormatter } from '../src/CommonTypes';
 import SimpleFormatter from '../src/formatters/SimpleFormatter';
 import * as B from './builders';
