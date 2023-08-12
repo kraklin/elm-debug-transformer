@@ -2,13 +2,14 @@ port module Parser exposing (main)
 
 import Debug exposing (toString)
 import DebugParser
+import DebugParser.ElmValue exposing (ElmValue(..), PlainValue(..))
 import Json.Encode exposing (Value)
 
 
 port parse : (String -> msg) -> Sub msg
 
 
-port sendParsed : String -> Cmd msg
+port sendParsed : Value -> Cmd msg
 
 
 main : Program String () Msg
@@ -24,14 +25,26 @@ type alias Model =
     ()
 
 
+encodeDebugValue : ElmValue -> Value
+encodeDebugValue value =
+    case value of
+        Plain plainValue ->
+            case plainValue of
+                _ ->
+                    Json.Encode.object [ ( "type", Json.Encode.string "Boolean" ), ( "value", Json.Encode.bool True ) ]
+
+        _ ->
+            Json.Encode.object [ ( "type", Json.Encode.string "Boolean" ), ( "value", Json.Encode.bool False ) ]
+
+
 init : String -> ( Model, Cmd Msg )
 init message =
     case DebugParser.parse message of
-        Ok parsed ->
-            ( (), sendParsed ("parsed: " ++ toString parsed) )
+        Ok { tag, value } ->
+            ( (), sendParsed (Json.Encode.object [ ( "type", Json.Encode.string "ElmDebug" ), ( "name", Json.Encode.string tag ), ( "value", encodeDebugValue value ) ]) )
 
         Err error ->
-            ( (), sendParsed <| ("parsed error: " ++ error ++ "\n" ++ "original message: " ++ message) )
+            ( (), sendParsed (Json.Encode.object [ ( "error", Json.Encode.string error ) ]) )
 
 
 subscriptions : Model -> Sub Msg

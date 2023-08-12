@@ -36,6 +36,7 @@
   "exclude": [
     "src/elm-debug-parser.ts",
     "node_modules",
-    "elm-app"
+    "elm-app",
+    "*.elm"
   ]
 }

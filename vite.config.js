@@ -20,7 +20,7 @@ export default defineConfig({
   },
   build: {
     manifest: true,
-    minify: true,
+    minify: false,
     reportCompressedSize: true,
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),

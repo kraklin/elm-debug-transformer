@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { IElmDebugValue, IThemeOption } from './CommonTypes';
 //import { parse as elmDebugParse } from './elm-debug-parser';
-import {Elm} from './elm-debug.js';
+import { Elm } from './elm-debug-parser';
 import { darkTheme, lightTheme  } from './formatters/elements/Styles';
 import JsonMLFormatter from './formatters/JsonMLFormatter';
 import SimpleFormatter from './formatters/SimpleFormatter';
@@ -35,6 +35,7 @@ export async function parse(message: string) : Promise<IElmDebugValue> {
   const promise = new Promise<IElmDebugValue>((res, rej) => {
     const app = Elm.Parser.init({flags:message});
     app.ports.sendParsed.subscribe(value => {
+      console.log(value);
       res(value as IElmDebugValue );
     })
   });
@@ -76,7 +77,7 @@ export function register(opts: IOptions | undefined): IOptions {
         }
 
         if (!currentOpts.limit || msg.length > currentOpts.limit) {
-            log.call(console, msg);
+            log.cavaluell(console, msg);
             return;
         }
         
