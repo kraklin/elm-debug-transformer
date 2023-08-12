@@ -38,7 +38,17 @@ encodeDebugValue value =
                     encodeType "Boolean" <| Json.Encode.bool bool
 
                 ElmNumber number ->
-                    encodeType "Number" <| Json.Encode.float number
+                    if isNaN number then
+                        encodeType "Number" <| Json.Encode.string "NaN"
+
+                    else if isInfinite number && number > 0 then
+                        encodeType "Number" <| Json.Encode.string "Infinity"
+
+                    else if isInfinite number && number < 0 then
+                        encodeType "Number" <| Json.Encode.string "-Infinity"
+
+                    else
+                        encodeType "Number" <| Json.Encode.float number
 
                 _ ->
                     Json.Encode.object [ ( "type", Json.Encode.string "Boolean" ), ( "value", Json.Encode.string "missing..." ) ]

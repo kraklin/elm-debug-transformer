@@ -55,43 +55,49 @@ describe('Parsing', () => {
             });
         });
 
-        it.skip('Negative Integer', () => {
-            expect(parse('integer: - 123').value).to.deep.equal({
+        it('Negative Integer', async () => {
+            const result = await parse('integer: -123')
+            expect(result.value).to.deep.equal({
                 type: 'Number',
                 value: -123,
             });
         });
 
-        describe.skip('Non number values', () => {
-            it('Infinity', () => {
-                expect(parse('integer: Infinity').value).to.deep.equal({
+        describe('Non number values', () => {
+            it('Infinity', async () => {
+                const result = await parse('integer: Infinity')
+                expect(result.value).to.deep.equal({
                     type: 'Number',
                     value: 'Infinity',
                 });
             });
-            it('-Infinity', () => {
-                expect(parse('integer: -Infinity').value).to.deep.equal({
+            it('-Infinity', async () => {
+                const result = await parse('integer: -Infinity')
+                expect(result.value).to.deep.equal({
                     type: 'Number',
                     value: '-Infinity',
                 });
             });
-            it('NaN', () => {
-                expect(parse('integer: NaN').value).to.deep.equal({
+            it('NaN', async () => {
+                const result = await parse('integer: NaN')
+                expect(result.value).to.deep.equal({
                     type: 'Number',
                     value: 'NaN',
                 });
             });
         });
 
-        it.skip('Float', () => {
-            expect(parse('float: 123.45').value).to.deep.equal({
+        it('Float', async () => {
+            const result = await parse('float: 123.45');
+            expect(result.value).to.deep.equal({
                 type: 'Number',
                 value: 123.45,
             });
         });
 
-        it.skip('Negative Float', () => {
-            expect(parse('float: - 123.45').value).to.deep.equal({
+        it('Negative Float', async () => {
+            const result = await parse('float: -123.45');
+            expect(result.value).to.deep.equal({
                 type: 'Number',
                 value: -123.45,
             });
