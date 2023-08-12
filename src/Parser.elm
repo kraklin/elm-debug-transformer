@@ -50,11 +50,14 @@ encodeDebugValue value =
                     else
                         encodeType "Number" <| Json.Encode.float number
 
+                ElmString string ->
+                    encodeType "String" <| Json.Encode.string string
+
                 _ ->
-                    Json.Encode.object [ ( "type", Json.Encode.string "Boolean" ), ( "value", Json.Encode.string "missing..." ) ]
+                    Json.Encode.object [ ( "type", Json.Encode.string "Missing" ), ( "value", Json.Encode.string "missing..." ) ]
 
         _ ->
-            Json.Encode.object [ ( "type", Json.Encode.string "Boolean" ), ( "value", Json.Encode.bool False ) ]
+            Json.Encode.object [ ( "type", Json.Encode.string "Missing" ), ( "value", Json.Encode.string "missing..." ) ]
 
 
 init : String -> ( Model, Cmd Msg )

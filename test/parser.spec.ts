@@ -103,17 +103,16 @@ describe('Parsing', () => {
             });
         });
 
-        it.skip('String', () => {
-            expect(parse('string: "Lorem Ipsum."').value).to.deep.equal(
+        it('String', async () => {
+          const {value} = await parse('string: "Lorem Ipsum."');
+            expect(value).to.deep.equal(
                 B.str('Lorem Ipsum.')
             );
         });
 
-        it.skip('String with escaped quotes', () => {
-            expect(
-                parse('string: "Lorem Ipsum. \\"with some quotes\\""')
-                    .value
-            ).to.deep.equal(B.str('Lorem Ipsum. "with some quotes"'));
+        it('String with escaped quotes', async () => {
+            const {value} = await parse('string: "Lorem Ipsum. \\"with some quotes\\""')
+            expect(value).to.deep.equal(B.str('Lorem Ipsum. "with some quotes"'));
         });
     });
 
