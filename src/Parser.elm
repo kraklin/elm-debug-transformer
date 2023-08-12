@@ -59,6 +59,9 @@ encodeDebugValue value =
                 ElmBytes size ->
                     encodeType "Bytes" <| Json.Encode.int size
 
+                ElmFunction ->
+                    Json.Encode.object [ ( "type", Json.Encode.string "Function" ) ]
+
                 ElmUnit ->
                     Json.Encode.object [ ( "type", Json.Encode.string "Unit" ) ]
 
