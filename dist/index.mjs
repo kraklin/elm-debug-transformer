@@ -7329,7 +7329,8 @@ var Sw = j(
   var u = t.a;
   return Xr(
     Er,
-    Nl("parsed error: " + u)
+    Nl("parsed error: " + (u + (`
+` + ("original message: " + e))))
   );
 }, Bs = Em, n1 = function(e) {
   return { $: "TryParse", a: e };
@@ -7702,7 +7703,7 @@ const T1 = {
 };
 async function C1(e) {
   return new Promise((u, f) => {
-    l1.Parser.init({ flags: "debug: True" }).ports.sendParsed.subscribe(($) => {
+    l1.Parser.init({ flags: e }).ports.sendParsed.subscribe(($) => {
       u($);
     });
   });
