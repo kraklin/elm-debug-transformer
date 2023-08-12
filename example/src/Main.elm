@@ -95,7 +95,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
         _ =
-            Debug.log "Debug with 2 numbers 7 chars like !_+))($ and emojis 💪 : " model
+            Debug.log "Debug with 2 numbers 7 chars like !_+))($ and emojis 💪 " model
     in
     ( model, Cmd.none )
 

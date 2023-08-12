@@ -1,0 +1,10 @@
+{
+  "targets": {
+    "Parser": {
+      "inputs": [
+        "src/Parser.elm"
+      ],
+      "output": "src/elm-parser.js"
+    }
+  }
+}

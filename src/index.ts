@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { IElmDebugValue, IThemeOption } from './CommonTypes';
-import { parse as elmDebugParse } from './elm-debug-parser';
+//import { parse as elmDebugParse } from './elm-debug-parser';
+import {Elm} from './elm-debug.js';
 import { darkTheme, lightTheme  } from './formatters/elements/Styles';
 import JsonMLFormatter from './formatters/JsonMLFormatter';
 import SimpleFormatter from './formatters/SimpleFormatter';
@@ -30,8 +31,15 @@ const defaultOptions: IOptions = {
     theme: "light"
 }
 
-export function parse(message: string) : IElmDebugValue {
-  return elmDebugParse(message) as IElmDebugValue;
+export async function parse(message: string) : Promise<IElmDebugValue> {
+  const promise = new Promise<IElmDebugValue>((res, rej) => {
+    const app = Elm.Parser.init({flags:message});
+    app.ports.sendParsed.subscribe(value => {
+      res(value as IElmDebugValue );
+    })
+  });
+
+  return promise;
 }
 
 export function register(opts: IOptions | undefined): IOptions {
@@ -50,7 +58,12 @@ export function register(opts: IOptions | undefined): IOptions {
 
     let currentOpts = _.merge(defaultOptions, opts);
 
-    console.log = function() {
+    console.log = async function() {
+        if (!currentOpts.active) {
+            log.apply(console, arguments as any);
+            return;
+        }
+
         if (!arguments || arguments.length > 1) {
             log.apply(console, arguments as any);
             return;
@@ -80,7 +93,8 @@ export function register(opts: IOptions | undefined): IOptions {
                 log.call(console, 'Original message:', msg);
             }
 
-            const parsed = parse(msg);
+            const parsed = await parse(msg);
+            log.call(console, 'Original message:', msg);
 
             log.call(
                 console,
