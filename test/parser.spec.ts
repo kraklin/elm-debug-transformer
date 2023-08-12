@@ -468,10 +468,9 @@ describe('Parsing', () => {
                 { type: 'Function' }
             );
         });
-        it.skip('Internals value', () => {
-            expect(
-                parse('custom type: <internals>').value
-            ).to.deep.equal({ type: 'Internals' });
+        it('Internals value', async () => {
+            const {value} = await parse('custom type: <internals>'); 
+            expect(value).to.deep.equal({ type: 'Internals' });
         });
     });
 

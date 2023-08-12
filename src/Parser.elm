@@ -62,6 +62,9 @@ encodeDebugValue value =
                 ElmFunction ->
                     Json.Encode.object [ ( "type", Json.Encode.string "Function" ) ]
 
+                ElmInternals ->
+                    Json.Encode.object [ ( "type", Json.Encode.string "Internals" ) ]
+
                 ElmUnit ->
                     Json.Encode.object [ ( "type", Json.Encode.string "Unit" ) ]
 
