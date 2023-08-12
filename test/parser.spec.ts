@@ -203,17 +203,17 @@ describe('Parsing', () => {
         });
     });
 
-    describe.skip('Dict', () => {
-        it('Empty dict', () => {
-            expect(parse('dict: Dict.fromList []').value).to.deep.equal({
+    describe('Dict', () => {
+        it('Empty dict', async () => {
+            const {value} = await parse('dict: Dict.fromList []');
+            expect(value).to.deep.equal({
                 type: 'Dict',
                 value: [],
             });
         });
-        it('Filled dict', () => {
-            expect(
-                parse('dict: Dict.fromList [(1,"a"),(2,"b")]').value
-            ).to.deep.equal({
+        it('Filled dict', async () => {
+            const {value} = await parse('dict: Dict.fromList [(1,"a"),(2,"b")]');
+            expect(value).to.deep.equal({
                 type: 'Dict',
                 value: [
                     { key: { type: 'Number', value: 1 }, value: B.str('a') },
