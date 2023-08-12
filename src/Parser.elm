@@ -76,6 +76,9 @@ encodeDebugValue value =
                 ElmSequence SeqTuple values ->
                     encodeType "Tuple" <| Json.Encode.list encodeDebugValue values
 
+                ElmSequence SeqList values ->
+                    encodeType "List" <| Json.Encode.list encodeDebugValue values
+
                 _ ->
                     Json.Encode.object [ ( "type", Json.Encode.string "expandable" ), ( "value", Json.Encode.string "missing..." ) ]
 

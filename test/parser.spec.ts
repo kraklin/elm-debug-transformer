@@ -168,32 +168,32 @@ describe('Parsing', () => {
         }));
     });
 
-    describe.skip('List', () => {
-        it('Empty list', () => {
-            expect(parse('list: []').value).to.deep.equal({
+    describe('List', () => {
+        it('Empty list', async () => {
+            const {value} = await parse('list: []') 
+            expect(value).to.deep.equal({
                 type: 'List',
                 value: [],
             });
         });
 
-        it('Singleton', () => {
-            expect(parse('singleton: [1]').value).to.deep.equal({
+        it('Singleton', async () => {
+            const {value} = await parse('singleton: [1]');
+            expect(value).to.deep.equal({
                 type: 'List',
                 value: [{ type: 'Number', value: 1 }],
             });
         });
-        it('List', () => {
-            expect(
-                parse('list: ["s1","s2","s3","s4"]').value
-            ).to.deep.equal({
+        it('List', async () => {
+            const {value} = await parse('list: ["s1","s2","s3","s4"]');
+            expect(value).to.deep.equal({
                 type: 'List',
                 value: [B.str('s1'), B.str('s2'), B.str('s3'), B.str('s4')],
             });
         });
-        it('List of tuples', () => {
-            expect(
-                parse('list: [("s1","s2"),("s3","s4")]').value
-            ).to.deep.equal({
+        it('List of tuples', async () => {
+            const {value} = await parse('list: [("s1","s2"),("s3","s4")]');
+            expect(value).to.deep.equal({
                 type: 'List',
                 value: [
                     { type: 'Tuple', value: [B.str('s1'), B.str('s2')] },
