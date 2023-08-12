@@ -82,6 +82,9 @@ encodeDebugValue value =
                 ElmSequence SeqSet values ->
                     encodeType "Set" <| Json.Encode.list encodeDebugValue values
 
+                ElmSequence SeqArray values ->
+                    encodeType "Array" <| Json.Encode.list encodeDebugValue values
+
                 ElmDict values ->
                     values
                         |> Json.Encode.list (\( k, v ) -> Json.Encode.object [ ( "key", encodeDebugValue k ), ( "value", encodeDebugValue v ) ])

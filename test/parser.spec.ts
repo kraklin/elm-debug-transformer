@@ -240,16 +240,14 @@ describe('Parsing', () => {
         });
     });
 
-    describe.skip('Array', () => {
-        it('Empty Array', () => {
-            expect(
-                parse('Array: Array.fromList []').value
-            ).to.deep.equal({ type: 'Array', value: [] });
+    describe('Array', () => {
+        it('Empty Array', async () => {
+            const {value} = await parse('Array: Array.fromList []');
+            expect(value).to.deep.equal({ type: 'Array', value: [] });
         });
-        it('Filled Array', () => {
-            expect(
-                parse('Array: Array.fromList ["1","2","3"]').value
-            ).to.deep.equal({
+        it('Filled Array', async () => {
+            const {value} = await parse('Array: Array.fromList ["1","2","3"]');
+            expect(value).to.deep.equal({
                 type: 'Array',
                 value: [B.str('1'), B.str('2'), B.str('3')],
             });
