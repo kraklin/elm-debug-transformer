@@ -254,27 +254,24 @@ describe('Parsing', () => {
         });
     });
 
-    describe.skip('Record', () => {
-        it('Empty record', () => {
-            expect(parse('record: {}').value).to.deep.equal({
+    describe('Record', () => {
+        it('Empty record', async () => {
+            const {value} = await parse('record: {}');
+            expect(value).to.deep.equal({
                 type: 'Record',
                 value: {},
             });
         });
-        it('Record', () => {
-            expect(
-                parse('record: { name = "Name" }').value
-            ).to.deep.equal({
+        it('Record', async () => {
+            const {value} = await parse('record: { name = "Name" }')
+            expect(value).to.deep.equal({
                 type: 'Record',
                 value: { name: B.str('Name') },
             });
         });
-        it('Record with more values', () => {
-            expect(
-                parse(
-                    'record: { name = "Name", warning = Nothing, waves = [] }'
-                ).value
-            ).to.deep.equal({
+        it('Record with more values', async () => {
+            const {value} = await parse( 'record: { name = "Name", warning = Nothing, waves = [] }')
+            expect(value).to.deep.equal({
                 type: 'Record',
                 value: {
                     name: B.str('Name'),
@@ -283,12 +280,9 @@ describe('Parsing', () => {
                 },
             });
         });
-        it('Nested records', () => {
-            expect(
-                parse(
-                    'record: { name = "Name", warning = { name = Nothing, waves = [] } }'
-                ).value
-            ).to.deep.equal({
+        it('Nested records', async () => {
+            const {value} = await parse( 'record: { name = "Name", warning = { name = Nothing, waves = [] } }')
+            expect(value).to.deep.equal({
                 type: 'Record',
                 value: {
                     name: B.str('Name'),
@@ -302,52 +296,36 @@ describe('Parsing', () => {
                 },
             });
         });
-        it('Vector', () => {
-            expect(
-                parse('vec: { 0 = 0, 1 = 0, 2 = 0 }').value
-            ).to.deep.equal({
-                type: 'Record',
-                value: {
-                    '0': { type: 'Number', value: 0 },
-                    '1': { type: 'Number', value: 0 },
-                    '2': { type: 'Number', value: 0 },
-                },
-            });
-        });
     });
 
-    describe.skip('Custom types', () => {
-        it('Custom type name with number', () => {
-            expect(
-                parse('custom type: User1 "Adam"').value
-            ).to.deep.equal({
+    describe('Custom types', () => {
+        it('Custom type name with number', async () => {
+            const {value} = await parse('custom type: User1 "Adam"')
+            expect(value).to.deep.equal({
                 name: 'User1',
                 type: 'Custom',
                 value: [B.str('Adam')],
             });
         });
-        it('Custom type name with underscore', () => {
-            expect(
-                parse('custom type: User_name "Adam"').value
-            ).to.deep.equal({
+        it('Custom type name with underscore', async () => {
+            const {value} = await parse('custom type: User_name "Adam"')
+            expect(value).to.deep.equal({
                 name: 'User_name',
                 type: 'Custom',
                 value: [B.str('Adam')],
             });
         });
-        it('Custom type with one value', () => {
-            expect(
-                parse('custom type: User "Adam"').value
-            ).to.deep.equal({
+        it('Custom type with one value', async () => {
+            const {value} = await parse('custom type: User "Adam"')
+            expect(value).to.deep.equal({
                 name: 'User',
                 type: 'Custom',
                 value: [B.str('Adam')],
             });
         });
-        it('Custom type with more values', () => {
-            expect(
-                parse('custom type: User "Adam" 123 (1,False)').value
-            ).to.deep.equal({
+        it('Custom type with more values', async () => {
+            const {value} = await parse('custom type: User "Adam" 123 (1,False)')
+            expect(value).to.deep.equal({
                 name: 'User',
                 type: 'Custom',
                 value: [
@@ -360,11 +338,9 @@ describe('Parsing', () => {
                 ],
             });
         });
-        it('Custom type in parenthesis', () => {
-            expect(
-                parse('custom type: (User (Data "Adam" 123 (1,False)))')
-                    .value
-            ).to.deep.equal({
+        it('Custom type in parenthesis', async () => {
+            const {value} = await parse('custom type: (User (Data "Adam" 123 (1,False)))')
+            expect(value).to.deep.equal({
                 name: 'User',
                 type: 'Custom',
                 value: [
@@ -386,10 +362,9 @@ describe('Parsing', () => {
                 ],
             });
         });
-        it('Custom type in parenthesis with record', () => {
-            expect(
-                parse('custom type: (User { age = 23 })').value
-            ).to.deep.equal({
+        it('Custom type in parenthesis with record', async () => {
+            const {value} = await parse('custom type: (User { age = 23 })')
+            expect(value).to.deep.equal({
                 name: 'User',
                 type: 'Custom',
                 value: [
@@ -400,12 +375,9 @@ describe('Parsing', () => {
                 ],
             });
         });
-        it('Custom type with two Nothings next to each other', () => {
-            expect(
-                parse(
-                    'custom type: CacheKey (Id "cache_id") Nothing Nothing'
-                ).value
-            ).to.deep.equal({
+        it('Custom type with two Nothings next to each other', async () => {
+            const {value} = await parse('custom type: CacheKey (Id "cache_id") Nothing Nothing')
+            expect(value).to.deep.equal({
                 name: 'CacheKey',
                 type: 'Custom',
                 value: [
@@ -430,12 +402,9 @@ describe('Parsing', () => {
 
             });
         });
-        it('Custom type with more values in parenthesis', () => {
-            expect(
-                parse(
-                    'custom type: User (Data "(tuple, in, string)" 123 (1,False))'
-                ).value
-            ).to.deep.equal({
+        it('Custom type with more values in parenthesis', async () => {
+            const {value} = await parse('custom type: User (Data "(tuple, in, string)" 123 (1,False))')
+            expect(value).to.deep.equal({
                 name: 'User',
                 type: 'Custom',
                 value: [

@@ -94,11 +94,77 @@ encodeDebugValue value =
                     Json.Encode.object [ ( "type", Json.Encode.string "expandable" ), ( "value", Json.Encode.string "missing..." ) ]
 
 
+config : DebugParser.Config Json.Encode.Value
+config =
+    let
+        encodeType typeName valueEncoder =
+            Json.Encode.object [ ( "type", Json.Encode.string typeName ), ( "value", valueEncoder ) ]
+    in
+    { bool = encodeType "Boolean" << Json.Encode.bool
+    , string = encodeType "String" << Json.Encode.string
+    , number =
+        \number ->
+            if isNaN number then
+                encodeType "Number" <| Json.Encode.string "NaN"
+
+            else if isInfinite number && number > 0 then
+                encodeType "Number" <| Json.Encode.string "Infinity"
+
+            else if isInfinite number && number < 0 then
+                encodeType "Number" <| Json.Encode.string "-Infinity"
+
+            else
+                encodeType "Number" <| Json.Encode.float number
+    , file =
+        encodeType "File" << Json.Encode.string
+    , bytes =
+        encodeType "Bytes" << Json.Encode.int
+    , function =
+        Json.Encode.object [ ( "type", Json.Encode.string "Function" ) ]
+    , internals =
+        Json.Encode.object [ ( "type", Json.Encode.string "Internals" ) ]
+    , unit =
+        Json.Encode.object [ ( "type", Json.Encode.string "Unit" ) ]
+    , char =
+        \char ->
+            Json.Encode.object [ ( "type", Json.Encode.string "String" ), ( "value", Json.Encode.string <| String.fromChar char ) ]
+    , array =
+        encodeType "Array" << Json.Encode.list identity
+    , list =
+        encodeType "List" << Json.Encode.list identity
+    , set =
+        encodeType "Set" << Json.Encode.list identity
+    , tuple =
+        encodeType "Tuple" << Json.Encode.list identity
+    , dict =
+        \values ->
+            values
+                |> Json.Encode.list (\( k, v ) -> Json.Encode.object [ ( "key", k ), ( "value", v ) ])
+                |> encodeType "Dict"
+    , record =
+        \values ->
+            values
+                |> Json.Encode.object
+                |> encodeType "Record"
+    , customType =
+        \name values ->
+            if List.isEmpty values then
+                Json.Encode.object <| [ ( "type", Json.Encode.string "Type" ), ( "name", Json.Encode.string name ) ]
+
+            else
+                Json.Encode.object <|
+                    [ ( "type", Json.Encode.string "Custom" )
+                    , ( "name", Json.Encode.string name )
+                    , ( "value", Json.Encode.list identity values )
+                    ]
+    }
+
+
 init : String -> ( Model, Cmd Msg )
 init message =
-    case DebugParser.parse message of
+    case DebugParser.parse config message of
         Ok { tag, value } ->
-            ( (), sendParsed (Json.Encode.object [ ( "type", Json.Encode.string "ElmDebug" ), ( "name", Json.Encode.string tag ), ( "value", encodeDebugValue value ) ]) )
+            ( (), sendParsed (Json.Encode.object [ ( "type", Json.Encode.string "ElmDebug" ), ( "name", Json.Encode.string tag ), ( "value", value ) ]) )
 
         Err error ->
             ( (), sendParsed (Json.Encode.object [ ( "error", Json.Encode.string error ) ]) )
