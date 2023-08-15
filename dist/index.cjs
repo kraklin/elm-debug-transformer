@@ -7335,12 +7335,29 @@ var $elm$core$Result$isOk = function(result) {
   }
 };
 var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$core$Basics$composeL = F3(
+  function(g, f, x) {
+    return g(
+      f(x)
+    );
+  }
+);
 var $elm$json$Json$Encode$float = _Json_wrap;
 var $elm$core$String$cons = _String_cons;
 var $elm$core$String$fromChar = function(_char) {
   return A2($elm$core$String$cons, _char, "");
 };
+var $elm$core$Basics$identity = function(x) {
+  return x;
+};
 var $elm$json$Json$Encode$int = _Json_wrap;
+var $elm$core$List$isEmpty = function(xs) {
+  if (!xs.b) {
+    return true;
+  } else {
+    return false;
+  }
+};
 var $elm$core$Basics$isInfinite = _Basics_isInfinite;
 var $elm$core$Basics$isNaN = _Basics_isNaN;
 var $elm$json$Json$Encode$list = F2(
@@ -7372,7 +7389,7 @@ var $elm$json$Json$Encode$object = function(pairs) {
   );
 };
 var $elm$json$Json$Encode$string = _Json_wrap;
-var $author$project$Parser$encodeDebugValue = function(value) {
+var $author$project$Parser$config = function() {
   var encodeType = F2(
     function(typeName, valueEncoder) {
       return $elm$json$Json$Encode$object(
@@ -7388,192 +7405,180 @@ var $author$project$Parser$encodeDebugValue = function(value) {
       );
     }
   );
-  if (value.$ === "Plain") {
-    var plainValue = value.a;
-    switch (plainValue.$) {
-      case "ElmBool":
-        var bool = plainValue.a;
-        return A2(
-          encodeType,
-          "Boolean",
-          $elm$json$Json$Encode$bool(bool)
-        );
-      case "ElmNumber":
-        var number = plainValue.a;
-        return $elm$core$Basics$isNaN(number) ? A2(
-          encodeType,
-          "Number",
-          $elm$json$Json$Encode$string("NaN")
-        ) : $elm$core$Basics$isInfinite(number) && number > 0 ? A2(
-          encodeType,
-          "Number",
-          $elm$json$Json$Encode$string("Infinity")
-        ) : $elm$core$Basics$isInfinite(number) && number < 0 ? A2(
-          encodeType,
-          "Number",
-          $elm$json$Json$Encode$string("-Infinity")
-        ) : A2(
-          encodeType,
-          "Number",
-          $elm$json$Json$Encode$float(number)
-        );
-      case "ElmString":
-        var string = plainValue.a;
-        return A2(
-          encodeType,
-          "String",
-          $elm$json$Json$Encode$string(string)
-        );
-      case "ElmFile":
-        var name = plainValue.a;
-        return A2(
-          encodeType,
-          "File",
-          $elm$json$Json$Encode$string(name)
-        );
-      case "ElmBytes":
-        var size = plainValue.a;
-        return A2(
-          encodeType,
-          "Bytes",
-          $elm$json$Json$Encode$int(size)
-        );
-      case "ElmFunction":
-        return $elm$json$Json$Encode$object(
+  return {
+    array: A2(
+      $elm$core$Basics$composeL,
+      encodeType("Array"),
+      $elm$json$Json$Encode$list($elm$core$Basics$identity)
+    ),
+    bool: A2(
+      $elm$core$Basics$composeL,
+      encodeType("Boolean"),
+      $elm$json$Json$Encode$bool
+    ),
+    bytes: A2(
+      $elm$core$Basics$composeL,
+      encodeType("Bytes"),
+      $elm$json$Json$Encode$int
+    ),
+    _char: function(_char) {
+      return $elm$json$Json$Encode$object(
+        _List_fromArray(
+          [
+            _Utils_Tuple2(
+              "type",
+              $elm$json$Json$Encode$string("String")
+            ),
+            _Utils_Tuple2(
+              "value",
+              $elm$json$Json$Encode$string(
+                $elm$core$String$fromChar(_char)
+              )
+            )
+          ]
+        )
+      );
+    },
+    customType: F2(
+      function(name, values) {
+        return $elm$core$List$isEmpty(values) ? $elm$json$Json$Encode$object(
           _List_fromArray(
             [
               _Utils_Tuple2(
                 "type",
-                $elm$json$Json$Encode$string("Function")
+                $elm$json$Json$Encode$string("Type")
+              ),
+              _Utils_Tuple2(
+                "name",
+                $elm$json$Json$Encode$string(name)
               )
             ]
           )
-        );
-      case "ElmInternals":
-        return $elm$json$Json$Encode$object(
+        ) : $elm$json$Json$Encode$object(
           _List_fromArray(
             [
               _Utils_Tuple2(
                 "type",
-                $elm$json$Json$Encode$string("Internals")
-              )
-            ]
-          )
-        );
-      case "ElmUnit":
-        return $elm$json$Json$Encode$object(
-          _List_fromArray(
-            [
+                $elm$json$Json$Encode$string("Custom")
+              ),
               _Utils_Tuple2(
-                "type",
-                $elm$json$Json$Encode$string("Unit")
-              )
-            ]
-          )
-        );
-      default:
-        var _char = plainValue.a;
-        return $elm$json$Json$Encode$object(
-          _List_fromArray(
-            [
-              _Utils_Tuple2(
-                "type",
-                $elm$json$Json$Encode$string("String")
+                "name",
+                $elm$json$Json$Encode$string(name)
               ),
               _Utils_Tuple2(
                 "value",
-                $elm$json$Json$Encode$string(
-                  $elm$core$String$fromChar(_char)
-                )
+                A2($elm$json$Json$Encode$list, $elm$core$Basics$identity, values)
               )
             ]
           )
         );
-    }
-  } else {
-    var expandable = value.b;
-    switch (expandable.$) {
-      case "ElmSequence":
-        switch (expandable.a.$) {
-          case "SeqTuple":
-            expandable.a;
-            var values = expandable.b;
-            return A2(
-              encodeType,
-              "Tuple",
-              A2($elm$json$Json$Encode$list, $author$project$Parser$encodeDebugValue, values)
-            );
-          case "SeqList":
-            expandable.a;
-            var values = expandable.b;
-            return A2(
-              encodeType,
-              "List",
-              A2($elm$json$Json$Encode$list, $author$project$Parser$encodeDebugValue, values)
-            );
-          case "SeqSet":
-            expandable.a;
-            var values = expandable.b;
-            return A2(
-              encodeType,
-              "Set",
-              A2($elm$json$Json$Encode$list, $author$project$Parser$encodeDebugValue, values)
-            );
-          default:
-            expandable.a;
-            var values = expandable.b;
-            return A2(
-              encodeType,
-              "Array",
-              A2($elm$json$Json$Encode$list, $author$project$Parser$encodeDebugValue, values)
-            );
-        }
-      case "ElmDict":
-        var values = expandable.a;
-        return A2(
-          encodeType,
-          "Dict",
-          A2(
-            $elm$json$Json$Encode$list,
-            function(_v7) {
-              var k = _v7.a;
-              var v = _v7.b;
-              return $elm$json$Json$Encode$object(
-                _List_fromArray(
-                  [
-                    _Utils_Tuple2(
-                      "key",
-                      $author$project$Parser$encodeDebugValue(k)
-                    ),
-                    _Utils_Tuple2(
-                      "value",
-                      $author$project$Parser$encodeDebugValue(v)
-                    )
-                  ]
-                )
-              );
-            },
-            values
-          )
-        );
-      default:
-        return $elm$json$Json$Encode$object(
-          _List_fromArray(
-            [
-              _Utils_Tuple2(
-                "type",
-                $elm$json$Json$Encode$string("expandable")
-              ),
-              _Utils_Tuple2(
-                "value",
-                $elm$json$Json$Encode$string("missing...")
+      }
+    ),
+    dict: function(values) {
+      return A2(
+        encodeType,
+        "Dict",
+        A2(
+          $elm$json$Json$Encode$list,
+          function(_v0) {
+            var k = _v0.a;
+            var v = _v0.b;
+            return $elm$json$Json$Encode$object(
+              _List_fromArray(
+                [
+                  _Utils_Tuple2("key", k),
+                  _Utils_Tuple2("value", v)
+                ]
               )
-            ]
+            );
+          },
+          values
+        )
+      );
+    },
+    file: A2(
+      $elm$core$Basics$composeL,
+      encodeType("File"),
+      $elm$json$Json$Encode$string
+    ),
+    _function: $elm$json$Json$Encode$object(
+      _List_fromArray(
+        [
+          _Utils_Tuple2(
+            "type",
+            $elm$json$Json$Encode$string("Function")
           )
-        );
-    }
-  }
-};
+        ]
+      )
+    ),
+    internals: $elm$json$Json$Encode$object(
+      _List_fromArray(
+        [
+          _Utils_Tuple2(
+            "type",
+            $elm$json$Json$Encode$string("Internals")
+          )
+        ]
+      )
+    ),
+    list: A2(
+      $elm$core$Basics$composeL,
+      encodeType("List"),
+      $elm$json$Json$Encode$list($elm$core$Basics$identity)
+    ),
+    number: function(number) {
+      return $elm$core$Basics$isNaN(number) ? A2(
+        encodeType,
+        "Number",
+        $elm$json$Json$Encode$string("NaN")
+      ) : $elm$core$Basics$isInfinite(number) && number > 0 ? A2(
+        encodeType,
+        "Number",
+        $elm$json$Json$Encode$string("Infinity")
+      ) : $elm$core$Basics$isInfinite(number) && number < 0 ? A2(
+        encodeType,
+        "Number",
+        $elm$json$Json$Encode$string("-Infinity")
+      ) : A2(
+        encodeType,
+        "Number",
+        $elm$json$Json$Encode$float(number)
+      );
+    },
+    record: function(values) {
+      return A2(
+        encodeType,
+        "Record",
+        $elm$json$Json$Encode$object(values)
+      );
+    },
+    set: A2(
+      $elm$core$Basics$composeL,
+      encodeType("Set"),
+      $elm$json$Json$Encode$list($elm$core$Basics$identity)
+    ),
+    string: A2(
+      $elm$core$Basics$composeL,
+      encodeType("String"),
+      $elm$json$Json$Encode$string
+    ),
+    tuple: A2(
+      $elm$core$Basics$composeL,
+      encodeType("Tuple"),
+      $elm$json$Json$Encode$list($elm$core$Basics$identity)
+    ),
+    unit: $elm$json$Json$Encode$object(
+      _List_fromArray(
+        [
+          _Utils_Tuple2(
+            "type",
+            $elm$json$Json$Encode$string("Unit")
+          )
+        ]
+      )
+    )
+  };
+}();
 var $kraklin$elm_debug_parser$DebugParser$ParsedLog = F2(
   function(tag, value) {
     return { tag, value };
@@ -7589,9 +7594,6 @@ var $elm$parser$Parser$Advanced$Good = F3(
     return { $: "Good", a, b, c };
   }
 );
-var $elm$core$Basics$identity = function(x) {
-  return x;
-};
 var $elm$parser$Parser$Advanced$Parser = function(a) {
   return { $: "Parser", a };
 };
@@ -7616,6 +7618,9 @@ var $elm$parser$Parser$Advanced$fromInfo = F4(
     );
   }
 );
+var $elm$core$Basics$negate = function(n) {
+  return -n;
+};
 var $elm$parser$Parser$Advanced$chompUntil = function(_v0) {
   var str = _v0.a;
   var expecting = _v0.b;
@@ -7919,45 +7924,10 @@ var $elm$core$Result$mapError = F2(
 var $elm$parser$Parser$Done = function(a) {
   return { $: "Done", a };
 };
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmBool = function(a) {
-  return { $: "ElmBool", a };
-};
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmDict = function(a) {
-  return { $: "ElmDict", a };
-};
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmNumber = function(a) {
-  return { $: "ElmNumber", a };
-};
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmRecord = function(a) {
-  return { $: "ElmRecord", a };
-};
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmSequence = F2(
-  function(a, b) {
-    return { $: "ElmSequence", a, b };
-  }
-);
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmType = F2(
-  function(a, b) {
-    return { $: "ElmType", a, b };
-  }
-);
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmUnit = { $: "ElmUnit" };
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$Expandable = F2(
-  function(a, b) {
-    return { $: "Expandable", a, b };
-  }
-);
 var $elm$parser$Parser$Forbidden = { $: "Forbidden" };
 var $elm$parser$Parser$Loop = function(a) {
   return { $: "Loop", a };
 };
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain = function(a) {
-  return { $: "Plain", a };
-};
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$SeqArray = { $: "SeqArray" };
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$SeqList = { $: "SeqList" };
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$SeqSet = { $: "SeqSet" };
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$SeqTuple = { $: "SeqTuple" };
 var $elm$parser$Parser$Advanced$andThen = F2(
   function(callback, _v0) {
     var parseA = _v0.a;
@@ -8161,16 +8131,6 @@ var $elm$parser$Parser$oneOf = $elm$parser$Parser$Advanced$oneOf;
 var $elm$core$Tuple$pair = F2(
   function(a, b) {
     return _Utils_Tuple2(a, b);
-  }
-);
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmBytes = function(a) {
-  return { $: "ElmBytes", a };
-};
-var $elm$core$Basics$composeL = F3(
-  function(g, f, x) {
-    return g(
-      f(x)
-    );
   }
 );
 var $elm$parser$Parser$ExpectingInt = { $: "ExpectingInt" };
@@ -8391,25 +8351,22 @@ var $elm$parser$Parser$token = function(str) {
     $elm$parser$Parser$toToken(str)
   );
 };
-var $kraklin$elm_debug_parser$DebugParser$parseBytes = $elm$parser$Parser$backtrackable(
-  A2(
-    $elm$parser$Parser$keeper,
+var $kraklin$elm_debug_parser$DebugParser$parseBytes = function(config) {
+  return $elm$parser$Parser$backtrackable(
     A2(
-      $elm$parser$Parser$ignorer,
-      $elm$parser$Parser$succeed(
-        A2($elm$core$Basics$composeL, $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain, $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmBytes)
+      $elm$parser$Parser$keeper,
+      A2(
+        $elm$parser$Parser$ignorer,
+        $elm$parser$Parser$succeed(config.bytes),
+        $elm$parser$Parser$token("<")
       ),
-      $elm$parser$Parser$token("<")
-    ),
-    A2(
-      $elm$parser$Parser$ignorer,
-      $elm$parser$Parser$int,
-      $elm$parser$Parser$token(" bytes>")
+      A2(
+        $elm$parser$Parser$ignorer,
+        $elm$parser$Parser$int,
+        $elm$parser$Parser$token(" bytes>")
+      )
     )
-  )
-);
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmChar = function(a) {
-  return { $: "ElmChar", a };
+  );
 };
 var $elm$core$Basics$composeR = F3(
   function(f, g, x) {
@@ -8441,139 +8398,129 @@ var $elm$core$Maybe$withDefault = F2(
     }
   }
 );
-var $kraklin$elm_debug_parser$DebugParser$parseChar = $elm$parser$Parser$oneOf(
-  _List_fromArray(
-    [
-      A2(
-        $elm$parser$Parser$map,
-        function(_v0) {
-          return $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmChar(
+var $kraklin$elm_debug_parser$DebugParser$parseChar = function(config) {
+  return $elm$parser$Parser$oneOf(
+    _List_fromArray(
+      [
+        A2(
+          $elm$parser$Parser$map,
+          function(_v0) {
+            return config._char(
               _Utils_chr("'")
-            )
-          );
-        },
-        A2(
-          $elm$parser$Parser$ignorer,
-          $elm$parser$Parser$succeed($elm$core$Basics$identity),
-          $elm$parser$Parser$token("'\\''")
-        )
-      ),
-      A2(
-        $elm$parser$Parser$map,
-        function(_v1) {
-          return $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmChar(
-              _Utils_chr("	")
-            )
-          );
-        },
-        A2(
-          $elm$parser$Parser$ignorer,
-          $elm$parser$Parser$succeed($elm$core$Basics$identity),
-          $elm$parser$Parser$token("'\\t'")
-        )
-      ),
-      A2(
-        $elm$parser$Parser$map,
-        function(_v2) {
-          return $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmChar(
-              _Utils_chr("\n")
-            )
-          );
-        },
-        A2(
-          $elm$parser$Parser$ignorer,
-          $elm$parser$Parser$succeed($elm$core$Basics$identity),
-          $elm$parser$Parser$token("'\\n'")
-        )
-      ),
-      A2(
-        $elm$parser$Parser$map,
-        function(_v3) {
-          return $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmChar(
-              _Utils_chr("\v")
-            )
-          );
-        },
-        A2(
-          $elm$parser$Parser$ignorer,
-          $elm$parser$Parser$succeed($elm$core$Basics$identity),
-          $elm$parser$Parser$token("'\\v'")
-        )
-      ),
-      A2(
-        $elm$parser$Parser$map,
-        function(_v4) {
-          return $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmChar(
-              _Utils_chr("\r")
-            )
-          );
-        },
-        A2(
-          $elm$parser$Parser$ignorer,
-          $elm$parser$Parser$succeed($elm$core$Basics$identity),
-          $elm$parser$Parser$token("'\\r'")
-        )
-      ),
-      A2(
-        $elm$parser$Parser$map,
-        function(_v5) {
-          return $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmChar(
-              _Utils_chr("\0")
-            )
-          );
-        },
-        A2(
-          $elm$parser$Parser$ignorer,
-          $elm$parser$Parser$succeed($elm$core$Basics$identity),
-          $elm$parser$Parser$token("'\\0'")
-        )
-      ),
-      A2(
-        $elm$parser$Parser$map,
-        A2(
-          $elm$core$Basics$composeR,
-          $elm$core$String$toList,
-          A2(
-            $elm$core$Basics$composeR,
-            $elm$core$List$reverse,
-            A2(
-              $elm$core$Basics$composeR,
-              $elm$core$List$head,
-              A2(
-                $elm$core$Basics$composeR,
-                $elm$core$Maybe$withDefault(
-                  _Utils_chr("x")
-                ),
-                A2($elm$core$Basics$composeR, $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmChar, $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain)
-              )
-            )
-          )
-        ),
-        A2(
-          $elm$parser$Parser$keeper,
+            );
+          },
           A2(
             $elm$parser$Parser$ignorer,
             $elm$parser$Parser$succeed($elm$core$Basics$identity),
-            $elm$parser$Parser$token("'")
-          ),
+            $elm$parser$Parser$token("'\\''")
+          )
+        ),
+        A2(
+          $elm$parser$Parser$map,
+          function(_v1) {
+            return config._char(
+              _Utils_chr("	")
+            );
+          },
           A2(
             $elm$parser$Parser$ignorer,
-            $elm$parser$Parser$getChompedString(
-              $elm$parser$Parser$chompUntil("'")
+            $elm$parser$Parser$succeed($elm$core$Basics$identity),
+            $elm$parser$Parser$token("'\\t'")
+          )
+        ),
+        A2(
+          $elm$parser$Parser$map,
+          function(_v2) {
+            return config._char(
+              _Utils_chr("\n")
+            );
+          },
+          A2(
+            $elm$parser$Parser$ignorer,
+            $elm$parser$Parser$succeed($elm$core$Basics$identity),
+            $elm$parser$Parser$token("'\\n'")
+          )
+        ),
+        A2(
+          $elm$parser$Parser$map,
+          function(_v3) {
+            return config._char(
+              _Utils_chr("\v")
+            );
+          },
+          A2(
+            $elm$parser$Parser$ignorer,
+            $elm$parser$Parser$succeed($elm$core$Basics$identity),
+            $elm$parser$Parser$token("'\\v'")
+          )
+        ),
+        A2(
+          $elm$parser$Parser$map,
+          function(_v4) {
+            return config._char(
+              _Utils_chr("\r")
+            );
+          },
+          A2(
+            $elm$parser$Parser$ignorer,
+            $elm$parser$Parser$succeed($elm$core$Basics$identity),
+            $elm$parser$Parser$token("'\\r'")
+          )
+        ),
+        A2(
+          $elm$parser$Parser$map,
+          function(_v5) {
+            return config._char(
+              _Utils_chr("\0")
+            );
+          },
+          A2(
+            $elm$parser$Parser$ignorer,
+            $elm$parser$Parser$succeed($elm$core$Basics$identity),
+            $elm$parser$Parser$token("'\\0'")
+          )
+        ),
+        A2(
+          $elm$parser$Parser$map,
+          A2(
+            $elm$core$Basics$composeR,
+            $elm$core$String$toList,
+            A2(
+              $elm$core$Basics$composeR,
+              $elm$core$List$reverse,
+              A2(
+                $elm$core$Basics$composeR,
+                $elm$core$List$head,
+                A2(
+                  $elm$core$Basics$composeR,
+                  $elm$core$Maybe$withDefault(
+                    _Utils_chr("x")
+                  ),
+                  config._char
+                )
+              )
+            )
+          ),
+          A2(
+            $elm$parser$Parser$keeper,
+            A2(
+              $elm$parser$Parser$ignorer,
+              $elm$parser$Parser$succeed($elm$core$Basics$identity),
+              $elm$parser$Parser$token("'")
             ),
-            $elm$parser$Parser$token("'")
+            A2(
+              $elm$parser$Parser$ignorer,
+              $elm$parser$Parser$getChompedString(
+                $elm$parser$Parser$chompUntil("'")
+              ),
+              $elm$parser$Parser$token("'")
+            )
           )
         )
-      )
-    ]
-  )
-);
+      ]
+    )
+  );
+};
 var $elm$parser$Parser$UnexpectedChar = { $: "UnexpectedChar" };
 var $elm$parser$Parser$Advanced$isSubChar = _Parser_isSubChar;
 var $elm$parser$Parser$Advanced$chompIf = F2(
@@ -8663,40 +8610,27 @@ var $kraklin$elm_debug_parser$DebugParser$parseTypeName = $elm$parser$Parser$get
     )
   )
 );
-var $kraklin$elm_debug_parser$DebugParser$parseCustomTypeWithoutValue = A2(
-  $elm$parser$Parser$keeper,
-  $elm$parser$Parser$succeed(
-    function(name) {
-      switch (name) {
-        case "True":
-          return $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmBool(true)
-          );
-        case "False":
-          return $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmBool(false)
-          );
-        case "NaN":
-          return $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmNumber(0 / 0)
-          );
-        case "Infinity":
-          return $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmNumber(1 / 0)
-          );
-        default:
-          return A2(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$Expandable,
-            false,
-            A2($kraklin$elm_debug_parser$DebugParser$ElmValue$ElmType, name, _List_Nil)
-          );
+var $kraklin$elm_debug_parser$DebugParser$parseCustomTypeWithoutValue = function(config) {
+  return A2(
+    $elm$parser$Parser$keeper,
+    $elm$parser$Parser$succeed(
+      function(name) {
+        switch (name) {
+          case "True":
+            return config.bool(true);
+          case "False":
+            return config.bool(false);
+          case "NaN":
+            return config.number(0 / 0);
+          case "Infinity":
+            return config.number(1 / 0);
+          default:
+            return A2(config.customType, name, _List_Nil);
+        }
       }
-    }
-  ),
-  $kraklin$elm_debug_parser$DebugParser$parseTypeName
-);
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmFile = function(a) {
-  return { $: "ElmFile", a };
+    ),
+    $kraklin$elm_debug_parser$DebugParser$parseTypeName
+  );
 };
 var $elm$core$Maybe$map = F2(
   function(f, maybe) {
@@ -8887,48 +8821,46 @@ var $kraklin$elm_debug_parser$DebugParser$stringHelp = F3(
     );
   }
 );
-var $kraklin$elm_debug_parser$DebugParser$parseFile = A2(
-  $elm$parser$Parser$andThen,
-  A2(
-    $elm$core$Basics$composeR,
-    $elm$core$Maybe$map(
-      function(str) {
-        return $elm$parser$Parser$succeed(
-          $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmFile(str)
-          )
-        );
-      }
-    ),
-    $elm$core$Maybe$withDefault(
-      $elm$parser$Parser$problem("File has no closing bracket")
-    )
-  ),
-  A2(
-    $elm$parser$Parser$keeper,
+var $kraklin$elm_debug_parser$DebugParser$parseFile = function(config) {
+  return A2(
+    $elm$parser$Parser$andThen,
     A2(
-      $elm$parser$Parser$ignorer,
-      $elm$parser$Parser$succeed($elm$core$Basics$identity),
-      $elm$parser$Parser$token("<")
-    ),
-    A2(
-      $elm$parser$Parser$loop,
-      _List_Nil,
-      A2(
-        $kraklin$elm_debug_parser$DebugParser$stringHelp,
-        ">",
-        function(c) {
-          return !_Utils_eq(
-            c,
-            _Utils_chr(">")
+      $elm$core$Basics$composeR,
+      $elm$core$Maybe$map(
+        function(str) {
+          return $elm$parser$Parser$succeed(
+            config.file(str)
           );
         }
+      ),
+      $elm$core$Maybe$withDefault(
+        $elm$parser$Parser$problem("File has no closing bracket")
+      )
+    ),
+    A2(
+      $elm$parser$Parser$keeper,
+      A2(
+        $elm$parser$Parser$ignorer,
+        $elm$parser$Parser$succeed($elm$core$Basics$identity),
+        $elm$parser$Parser$token("<")
+      ),
+      A2(
+        $elm$parser$Parser$loop,
+        _List_Nil,
+        A2(
+          $kraklin$elm_debug_parser$DebugParser$stringHelp,
+          ">",
+          function(c) {
+            return !_Utils_eq(
+              c,
+              _Utils_chr(">")
+            );
+          }
+        )
       )
     )
-  )
-);
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmFunction = { $: "ElmFunction" };
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmInternals = { $: "ElmInternals" };
+  );
+};
 var $elm$parser$Parser$ExpectingKeyword = function(a) {
   return { $: "ExpectingKeyword", a };
 };
@@ -8974,26 +8906,24 @@ var $elm$parser$Parser$keyword = function(kwd) {
     )
   );
 };
-var $kraklin$elm_debug_parser$DebugParser$parseKeywords = A2(
-  $elm$parser$Parser$map,
-  $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain,
-  $elm$parser$Parser$oneOf(
+var $kraklin$elm_debug_parser$DebugParser$parseKeywords = function(config) {
+  return $elm$parser$Parser$oneOf(
     _List_fromArray(
       [
         A2(
           $elm$parser$Parser$ignorer,
-          $elm$parser$Parser$succeed($kraklin$elm_debug_parser$DebugParser$ElmValue$ElmInternals),
+          $elm$parser$Parser$succeed(config.internals),
           $elm$parser$Parser$keyword("<internals>")
         ),
         A2(
           $elm$parser$Parser$ignorer,
-          $elm$parser$Parser$succeed($kraklin$elm_debug_parser$DebugParser$ElmValue$ElmFunction),
+          $elm$parser$Parser$succeed(config._function),
           $elm$parser$Parser$keyword("<function>")
         )
       ]
     )
-  )
-);
+  );
+};
 var $elm$parser$Parser$ExpectingSymbol = function(a) {
   return { $: "ExpectingSymbol", a };
 };
@@ -9007,16 +8937,14 @@ var $elm$parser$Parser$symbol = function(str) {
     )
   );
 };
-var $kraklin$elm_debug_parser$DebugParser$parseNumber = function() {
+var $kraklin$elm_debug_parser$DebugParser$parseNumber = function(config) {
   var number = A2(
     $elm$parser$Parser$andThen,
     function(str) {
-      var _v1 = $elm$core$String$toFloat(str);
-      if (_v1.$ === "Just") {
-        var _float = _v1.a;
-        return $elm$parser$Parser$succeed(
-          $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmNumber(_float)
-        );
+      var _v0 = $elm$core$String$toFloat(str);
+      if (_v0.$ === "Just") {
+        var _float = _v0.a;
+        return $elm$parser$Parser$succeed(_float);
       } else {
         return $elm$parser$Parser$problem("Unable to parse number");
       }
@@ -9041,39 +8969,25 @@ var $kraklin$elm_debug_parser$DebugParser$parseNumber = function() {
       )
     )
   );
-  var negateNumber = function(value) {
-    if (value.$ === "ElmNumber") {
-      var _float = value.a;
-      return $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmNumber(-_float);
-    } else {
-      return value;
-    }
-  };
   return A2(
     $elm$parser$Parser$map,
-    $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain,
+    config.number,
     $elm$parser$Parser$oneOf(
       _List_fromArray(
         [
           A2(
             $elm$parser$Parser$ignorer,
-            $elm$parser$Parser$succeed(
-              $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmNumber(0 / 0)
-            ),
+            $elm$parser$Parser$succeed(0 / 0),
             $elm$parser$Parser$keyword("NaN")
           ),
           A2(
             $elm$parser$Parser$ignorer,
-            $elm$parser$Parser$succeed(
-              $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmNumber(1 / 0)
-            ),
+            $elm$parser$Parser$succeed(1 / 0),
             $elm$parser$Parser$keyword("Infinity")
           ),
           A2(
             $elm$parser$Parser$ignorer,
-            $elm$parser$Parser$succeed(
-              $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmNumber(-(1 / 0))
-            ),
+            $elm$parser$Parser$succeed(-(1 / 0)),
             $elm$parser$Parser$keyword("-Infinity")
           ),
           $elm$parser$Parser$oneOf(
@@ -9083,7 +8997,7 @@ var $kraklin$elm_debug_parser$DebugParser$parseNumber = function() {
                   $elm$parser$Parser$keeper,
                   A2(
                     $elm$parser$Parser$ignorer,
-                    $elm$parser$Parser$succeed(negateNumber),
+                    $elm$parser$Parser$succeed($elm$core$Basics$negate),
                     $elm$parser$Parser$symbol("-")
                   ),
                   number
@@ -9096,9 +9010,6 @@ var $kraklin$elm_debug_parser$DebugParser$parseNumber = function() {
       )
     )
   );
-}();
-var $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmString = function(a) {
-  return { $: "ElmString", a };
 };
 var $kraklin$elm_debug_parser$DebugParser$isUninteresting = function(_char) {
   return !_Utils_eq(
@@ -9109,37 +9020,37 @@ var $kraklin$elm_debug_parser$DebugParser$isUninteresting = function(_char) {
     _Utils_chr('"')
   );
 };
-var $kraklin$elm_debug_parser$DebugParser$parseString = A2(
-  $elm$parser$Parser$andThen,
-  A2(
-    $elm$core$Basics$composeR,
-    $elm$core$Maybe$map(
-      function(str) {
-        return $elm$parser$Parser$succeed(
-          $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmString(str)
-          )
-        );
-      }
-    ),
-    $elm$core$Maybe$withDefault(
-      $elm$parser$Parser$problem("One string has no closing double quotes")
-    )
-  ),
-  A2(
-    $elm$parser$Parser$keeper,
+var $kraklin$elm_debug_parser$DebugParser$parseString = function(config) {
+  return A2(
+    $elm$parser$Parser$andThen,
     A2(
-      $elm$parser$Parser$ignorer,
-      $elm$parser$Parser$succeed($elm$core$Basics$identity),
-      $elm$parser$Parser$token('"')
+      $elm$core$Basics$composeR,
+      $elm$core$Maybe$map(
+        function(str) {
+          return $elm$parser$Parser$succeed(
+            config.string(str)
+          );
+        }
+      ),
+      $elm$core$Maybe$withDefault(
+        $elm$parser$Parser$problem("One string has no closing double quotes")
+      )
     ),
     A2(
-      $elm$parser$Parser$loop,
-      _List_Nil,
-      A2($kraklin$elm_debug_parser$DebugParser$stringHelp, '"', $kraklin$elm_debug_parser$DebugParser$isUninteresting)
+      $elm$parser$Parser$keeper,
+      A2(
+        $elm$parser$Parser$ignorer,
+        $elm$parser$Parser$succeed($elm$core$Basics$identity),
+        $elm$parser$Parser$token('"')
+      ),
+      A2(
+        $elm$parser$Parser$loop,
+        _List_Nil,
+        A2($kraklin$elm_debug_parser$DebugParser$stringHelp, '"', $kraklin$elm_debug_parser$DebugParser$isUninteresting)
+      )
     )
-  )
-);
+  );
+};
 var $kraklin$elm_debug_parser$DebugParser$parseVariableName = $elm$parser$Parser$getChompedString(
   A2(
     $elm$parser$Parser$ignorer,
@@ -9412,97 +9323,16 @@ var $elm$parser$Parser$Advanced$spaces = $elm$parser$Parser$Advanced$chompWhile(
   }
 );
 var $elm$parser$Parser$spaces = $elm$parser$Parser$Advanced$spaces;
-var $kraklin$elm_debug_parser$DebugParser$typeHelp = function(values) {
-  return $elm$parser$Parser$oneOf(
-    _List_fromArray(
-      [
-        $elm$parser$Parser$backtrackable(
-          A2(
-            $elm$parser$Parser$keeper,
-            A2(
-              $elm$parser$Parser$ignorer,
-              $elm$parser$Parser$succeed(
-                function(value) {
-                  return $elm$parser$Parser$Loop(
-                    A2($elm$core$List$cons, value, values)
-                  );
-                }
-              ),
-              $elm$parser$Parser$token(" ")
-            ),
-            $kraklin$elm_debug_parser$DebugParser$cyclic$parseValueWithoutCustomType()
-          )
-        ),
-        $elm$parser$Parser$succeed(
-          $elm$parser$Parser$Done(values)
-        )
-      ]
-    )
-  );
-};
-function $kraklin$elm_debug_parser$DebugParser$cyclic$parseValueWithoutCustomType() {
-  return $elm$parser$Parser$oneOf(
-    _List_fromArray(
-      [
-        $kraklin$elm_debug_parser$DebugParser$cyclic$parseRecord(),
-        $kraklin$elm_debug_parser$DebugParser$cyclic$parseArray(),
-        $kraklin$elm_debug_parser$DebugParser$cyclic$parseSet(),
-        $kraklin$elm_debug_parser$DebugParser$cyclic$parseDict(),
-        $kraklin$elm_debug_parser$DebugParser$cyclic$parseList(),
-        $kraklin$elm_debug_parser$DebugParser$parseKeywords,
-        $kraklin$elm_debug_parser$DebugParser$parseCustomTypeWithoutValue,
-        $kraklin$elm_debug_parser$DebugParser$parseNumber,
-        $kraklin$elm_debug_parser$DebugParser$cyclic$parseValueWithParenthesis(),
-        $kraklin$elm_debug_parser$DebugParser$parseChar,
-        $kraklin$elm_debug_parser$DebugParser$parseString,
-        $kraklin$elm_debug_parser$DebugParser$parseBytes,
-        $kraklin$elm_debug_parser$DebugParser$parseFile
-      ]
-    )
-  );
-}
-function $kraklin$elm_debug_parser$DebugParser$cyclic$parseValue() {
-  return $elm$parser$Parser$oneOf(
-    _List_fromArray(
-      [
-        $kraklin$elm_debug_parser$DebugParser$cyclic$parseRecord(),
-        $kraklin$elm_debug_parser$DebugParser$cyclic$parseArray(),
-        $kraklin$elm_debug_parser$DebugParser$cyclic$parseSet(),
-        $kraklin$elm_debug_parser$DebugParser$cyclic$parseDict(),
-        $kraklin$elm_debug_parser$DebugParser$cyclic$parseList(),
-        $kraklin$elm_debug_parser$DebugParser$parseKeywords,
-        $elm$parser$Parser$lazy(
-          function(_v10) {
-            return $kraklin$elm_debug_parser$DebugParser$cyclic$parseCustomType();
-          }
-        ),
-        $kraklin$elm_debug_parser$DebugParser$parseCustomTypeWithoutValue,
-        $kraklin$elm_debug_parser$DebugParser$parseNumber,
-        $kraklin$elm_debug_parser$DebugParser$cyclic$parseValueWithParenthesis(),
-        $kraklin$elm_debug_parser$DebugParser$parseChar,
-        $kraklin$elm_debug_parser$DebugParser$parseString,
-        $kraklin$elm_debug_parser$DebugParser$parseBytes,
-        $kraklin$elm_debug_parser$DebugParser$parseFile
-      ]
-    )
-  );
-}
-function $kraklin$elm_debug_parser$DebugParser$cyclic$parseArray() {
+var $kraklin$elm_debug_parser$DebugParser$parseArray = function(config) {
   return A2(
     $elm$parser$Parser$map,
-    function(listVal) {
-      return A2(
-        $kraklin$elm_debug_parser$DebugParser$ElmValue$Expandable,
-        false,
-        A2($kraklin$elm_debug_parser$DebugParser$ElmValue$ElmSequence, $kraklin$elm_debug_parser$DebugParser$ElmValue$SeqArray, listVal)
-      );
-    },
+    config.array,
     $elm$parser$Parser$sequence(
       {
         end: "]",
         item: $elm$parser$Parser$lazy(
-          function(_v9) {
-            return $kraklin$elm_debug_parser$DebugParser$cyclic$parseValue();
+          function(_v10) {
+            return $kraklin$elm_debug_parser$DebugParser$parseValueWith(config);
           }
         ),
         separator: ",",
@@ -9512,35 +9342,27 @@ function $kraklin$elm_debug_parser$DebugParser$cyclic$parseArray() {
       }
     )
   );
-}
-function $kraklin$elm_debug_parser$DebugParser$cyclic$parseCustomType() {
+};
+var $kraklin$elm_debug_parser$DebugParser$parseCustomType = function(config) {
   return A2(
     $elm$parser$Parser$andThen,
     function(name) {
       switch (name) {
         case "True":
           return $elm$parser$Parser$succeed(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-              $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmBool(true)
-            )
+            config.bool(true)
           );
         case "False":
           return $elm$parser$Parser$succeed(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-              $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmBool(false)
-            )
+            config.bool(false)
           );
         case "NaN":
           return $elm$parser$Parser$succeed(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-              $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmNumber(0 / 0)
-            )
+            config.number(0 / 0)
           );
         case "Infinity":
           return $elm$parser$Parser$succeed(
-            $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain(
-              $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmNumber(1 / 0)
-            )
+            config.number(1 / 0)
           );
         default:
           return A2(
@@ -9548,38 +9370,32 @@ function $kraklin$elm_debug_parser$DebugParser$cyclic$parseCustomType() {
             $elm$parser$Parser$succeed(
               function(list) {
                 return A2(
-                  $kraklin$elm_debug_parser$DebugParser$ElmValue$Expandable,
-                  false,
-                  A2(
-                    $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmType,
-                    name,
-                    $elm$core$List$reverse(list)
-                  )
+                  config.customType,
+                  name,
+                  $elm$core$List$reverse(list)
                 );
               }
             ),
-            A2($elm$parser$Parser$loop, _List_Nil, $kraklin$elm_debug_parser$DebugParser$typeHelp)
+            A2(
+              $elm$parser$Parser$loop,
+              _List_Nil,
+              $kraklin$elm_debug_parser$DebugParser$typeHelp(config)
+            )
           );
       }
     },
     $kraklin$elm_debug_parser$DebugParser$parseTypeName
   );
-}
-function $kraklin$elm_debug_parser$DebugParser$cyclic$parseDict() {
+};
+var $kraklin$elm_debug_parser$DebugParser$parseDict = function(config) {
   return A2(
     $elm$parser$Parser$map,
-    function(listVal) {
-      return A2(
-        $kraklin$elm_debug_parser$DebugParser$ElmValue$Expandable,
-        false,
-        $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmDict(listVal)
-      );
-    },
+    config.dict,
     $elm$parser$Parser$sequence(
       {
         end: "]",
         item: $elm$parser$Parser$lazy(
-          function(_v6) {
+          function(_v7) {
             return A2(
               $elm$parser$Parser$keeper,
               A2(
@@ -9600,8 +9416,8 @@ function $kraklin$elm_debug_parser$DebugParser$cyclic$parseDict() {
                     A2(
                       $elm$parser$Parser$ignorer,
                       $elm$parser$Parser$lazy(
-                        function(_v7) {
-                          return $kraklin$elm_debug_parser$DebugParser$cyclic$parseValue();
+                        function(_v8) {
+                          return $kraklin$elm_debug_parser$DebugParser$parseValueWith(config);
                         }
                       ),
                       $elm$parser$Parser$spaces
@@ -9615,7 +9431,7 @@ function $kraklin$elm_debug_parser$DebugParser$cyclic$parseDict() {
                 $elm$parser$Parser$ignorer,
                 A2(
                   $elm$parser$Parser$ignorer,
-                  $kraklin$elm_debug_parser$DebugParser$cyclic$parseValue(),
+                  $kraklin$elm_debug_parser$DebugParser$parseValueWith(config),
                   $elm$parser$Parser$spaces
                 ),
                 $elm$parser$Parser$token(")")
@@ -9630,23 +9446,19 @@ function $kraklin$elm_debug_parser$DebugParser$cyclic$parseDict() {
       }
     )
   );
-}
-function $kraklin$elm_debug_parser$DebugParser$cyclic$parseList() {
+};
+var $kraklin$elm_debug_parser$DebugParser$parseList = function(config) {
   return A2(
     $elm$parser$Parser$map,
     function(listVal) {
-      return A2(
-        $kraklin$elm_debug_parser$DebugParser$ElmValue$Expandable,
-        false,
-        A2($kraklin$elm_debug_parser$DebugParser$ElmValue$ElmSequence, $kraklin$elm_debug_parser$DebugParser$ElmValue$SeqList, listVal)
-      );
+      return config.list(listVal);
     },
     $elm$parser$Parser$sequence(
       {
         end: "]",
         item: $elm$parser$Parser$lazy(
-          function(_v5) {
-            return $kraklin$elm_debug_parser$DebugParser$cyclic$parseValue();
+          function(_v6) {
+            return $kraklin$elm_debug_parser$DebugParser$parseValueWith(config);
           }
         ),
         separator: ",",
@@ -9656,22 +9468,16 @@ function $kraklin$elm_debug_parser$DebugParser$cyclic$parseList() {
       }
     )
   );
-}
-function $kraklin$elm_debug_parser$DebugParser$cyclic$parseRecord() {
+};
+var $kraklin$elm_debug_parser$DebugParser$parseRecord = function(config) {
   return A2(
     $elm$parser$Parser$map,
-    function(listVal) {
-      return A2(
-        $kraklin$elm_debug_parser$DebugParser$ElmValue$Expandable,
-        false,
-        $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmRecord(listVal)
-      );
-    },
+    config.record,
     $elm$parser$Parser$sequence(
       {
         end: "}",
         item: $elm$parser$Parser$lazy(
-          function(_v4) {
+          function(_v5) {
             return A2(
               $elm$parser$Parser$keeper,
               A2(
@@ -9683,7 +9489,7 @@ function $kraklin$elm_debug_parser$DebugParser$cyclic$parseRecord() {
                   $elm$parser$Parser$token(" = ")
                 )
               ),
-              $kraklin$elm_debug_parser$DebugParser$cyclic$parseValue()
+              $kraklin$elm_debug_parser$DebugParser$parseValueWith(config)
             );
           }
         ),
@@ -9694,23 +9500,17 @@ function $kraklin$elm_debug_parser$DebugParser$cyclic$parseRecord() {
       }
     )
   );
-}
-function $kraklin$elm_debug_parser$DebugParser$cyclic$parseSet() {
+};
+var $kraklin$elm_debug_parser$DebugParser$parseSet = function(config) {
   return A2(
     $elm$parser$Parser$map,
-    function(listVal) {
-      return A2(
-        $kraklin$elm_debug_parser$DebugParser$ElmValue$Expandable,
-        false,
-        A2($kraklin$elm_debug_parser$DebugParser$ElmValue$ElmSequence, $kraklin$elm_debug_parser$DebugParser$ElmValue$SeqSet, listVal)
-      );
-    },
+    config.set,
     $elm$parser$Parser$sequence(
       {
         end: "]",
         item: $elm$parser$Parser$lazy(
-          function(_v3) {
-            return $kraklin$elm_debug_parser$DebugParser$cyclic$parseValue();
+          function(_v4) {
+            return $kraklin$elm_debug_parser$DebugParser$parseValueWith(config);
           }
         ),
         separator: ",",
@@ -9720,8 +9520,34 @@ function $kraklin$elm_debug_parser$DebugParser$cyclic$parseSet() {
       }
     )
   );
-}
-function $kraklin$elm_debug_parser$DebugParser$cyclic$parseValueWithParenthesis() {
+};
+var $kraklin$elm_debug_parser$DebugParser$parseValueWith = function(config) {
+  return $elm$parser$Parser$oneOf(
+    _List_fromArray(
+      [
+        $kraklin$elm_debug_parser$DebugParser$parseRecord(config),
+        $kraklin$elm_debug_parser$DebugParser$parseArray(config),
+        $kraklin$elm_debug_parser$DebugParser$parseSet(config),
+        $kraklin$elm_debug_parser$DebugParser$parseDict(config),
+        $kraklin$elm_debug_parser$DebugParser$parseList(config),
+        $kraklin$elm_debug_parser$DebugParser$parseKeywords(config),
+        $elm$parser$Parser$lazy(
+          function(_v3) {
+            return $kraklin$elm_debug_parser$DebugParser$parseCustomType(config);
+          }
+        ),
+        $kraklin$elm_debug_parser$DebugParser$parseCustomTypeWithoutValue(config),
+        $kraklin$elm_debug_parser$DebugParser$parseNumber(config),
+        $kraklin$elm_debug_parser$DebugParser$parseValueWithParenthesis(config),
+        $kraklin$elm_debug_parser$DebugParser$parseChar(config),
+        $kraklin$elm_debug_parser$DebugParser$parseString(config),
+        $kraklin$elm_debug_parser$DebugParser$parseBytes(config),
+        $kraklin$elm_debug_parser$DebugParser$parseFile(config)
+      ]
+    )
+  );
+};
+var $kraklin$elm_debug_parser$DebugParser$parseValueWithParenthesis = function(config) {
   return A2(
     $elm$parser$Parser$keeper,
     A2(
@@ -9752,15 +9578,9 @@ function $kraklin$elm_debug_parser$DebugParser$cyclic$parseValueWithParenthesis(
                                   A2(
                                     $elm$parser$Parser$map,
                                     function(rdValue) {
-                                      return A2(
-                                        $kraklin$elm_debug_parser$DebugParser$ElmValue$Expandable,
-                                        false,
-                                        A2(
-                                          $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmSequence,
-                                          $kraklin$elm_debug_parser$DebugParser$ElmValue$SeqTuple,
-                                          _List_fromArray(
-                                            [fstValue, sndValue, rdValue]
-                                          )
+                                      return config.tuple(
+                                        _List_fromArray(
+                                          [fstValue, sndValue, rdValue]
                                         )
                                       );
                                     },
@@ -9781,21 +9601,15 @@ function $kraklin$elm_debug_parser$DebugParser$cyclic$parseValueWithParenthesis(
                                       ),
                                       $elm$parser$Parser$lazy(
                                         function(_v2) {
-                                          return $kraklin$elm_debug_parser$DebugParser$cyclic$parseValue();
+                                          return $kraklin$elm_debug_parser$DebugParser$parseValueWith(config);
                                         }
                                       )
                                     )
                                   ),
                                   $elm$parser$Parser$succeed(
-                                    A2(
-                                      $kraklin$elm_debug_parser$DebugParser$ElmValue$Expandable,
-                                      false,
-                                      A2(
-                                        $kraklin$elm_debug_parser$DebugParser$ElmValue$ElmSequence,
-                                        $kraklin$elm_debug_parser$DebugParser$ElmValue$SeqTuple,
-                                        _List_fromArray(
-                                          [fstValue, sndValue]
-                                        )
+                                    config.tuple(
+                                      _List_fromArray(
+                                        [fstValue, sndValue]
                                       )
                                     )
                                   )
@@ -9821,7 +9635,7 @@ function $kraklin$elm_debug_parser$DebugParser$cyclic$parseValueWithParenthesis(
                           ),
                           $elm$parser$Parser$lazy(
                             function(_v1) {
-                              return $kraklin$elm_debug_parser$DebugParser$cyclic$parseValue();
+                              return $kraklin$elm_debug_parser$DebugParser$parseValueWith(config);
                             }
                           )
                         )
@@ -9840,61 +9654,70 @@ function $kraklin$elm_debug_parser$DebugParser$cyclic$parseValueWithParenthesis(
                 ),
                 $elm$parser$Parser$lazy(
                   function(_v0) {
-                    return $kraklin$elm_debug_parser$DebugParser$cyclic$parseValue();
+                    return $kraklin$elm_debug_parser$DebugParser$parseValueWith(config);
                   }
                 )
               )
             ),
-            $elm$parser$Parser$succeed(
-              $kraklin$elm_debug_parser$DebugParser$ElmValue$Plain($kraklin$elm_debug_parser$DebugParser$ElmValue$ElmUnit)
-            )
+            $elm$parser$Parser$succeed(config.unit)
           ]
         )
       ),
       $elm$parser$Parser$token(")")
     )
   );
-}
-try {
-  var $kraklin$elm_debug_parser$DebugParser$parseValueWithoutCustomType = $kraklin$elm_debug_parser$DebugParser$cyclic$parseValueWithoutCustomType();
-  $kraklin$elm_debug_parser$DebugParser$cyclic$parseValueWithoutCustomType = function() {
-    return $kraklin$elm_debug_parser$DebugParser$parseValueWithoutCustomType;
-  };
-  var $kraklin$elm_debug_parser$DebugParser$parseValue = $kraklin$elm_debug_parser$DebugParser$cyclic$parseValue();
-  $kraklin$elm_debug_parser$DebugParser$cyclic$parseValue = function() {
-    return $kraklin$elm_debug_parser$DebugParser$parseValue;
-  };
-  var $kraklin$elm_debug_parser$DebugParser$parseArray = $kraklin$elm_debug_parser$DebugParser$cyclic$parseArray();
-  $kraklin$elm_debug_parser$DebugParser$cyclic$parseArray = function() {
-    return $kraklin$elm_debug_parser$DebugParser$parseArray;
-  };
-  var $kraklin$elm_debug_parser$DebugParser$parseCustomType = $kraklin$elm_debug_parser$DebugParser$cyclic$parseCustomType();
-  $kraklin$elm_debug_parser$DebugParser$cyclic$parseCustomType = function() {
-    return $kraklin$elm_debug_parser$DebugParser$parseCustomType;
-  };
-  var $kraklin$elm_debug_parser$DebugParser$parseDict = $kraklin$elm_debug_parser$DebugParser$cyclic$parseDict();
-  $kraklin$elm_debug_parser$DebugParser$cyclic$parseDict = function() {
-    return $kraklin$elm_debug_parser$DebugParser$parseDict;
-  };
-  var $kraklin$elm_debug_parser$DebugParser$parseList = $kraklin$elm_debug_parser$DebugParser$cyclic$parseList();
-  $kraklin$elm_debug_parser$DebugParser$cyclic$parseList = function() {
-    return $kraklin$elm_debug_parser$DebugParser$parseList;
-  };
-  var $kraklin$elm_debug_parser$DebugParser$parseRecord = $kraklin$elm_debug_parser$DebugParser$cyclic$parseRecord();
-  $kraklin$elm_debug_parser$DebugParser$cyclic$parseRecord = function() {
-    return $kraklin$elm_debug_parser$DebugParser$parseRecord;
-  };
-  var $kraklin$elm_debug_parser$DebugParser$parseSet = $kraklin$elm_debug_parser$DebugParser$cyclic$parseSet();
-  $kraklin$elm_debug_parser$DebugParser$cyclic$parseSet = function() {
-    return $kraklin$elm_debug_parser$DebugParser$parseSet;
-  };
-  var $kraklin$elm_debug_parser$DebugParser$parseValueWithParenthesis = $kraklin$elm_debug_parser$DebugParser$cyclic$parseValueWithParenthesis();
-  $kraklin$elm_debug_parser$DebugParser$cyclic$parseValueWithParenthesis = function() {
-    return $kraklin$elm_debug_parser$DebugParser$parseValueWithParenthesis;
-  };
-} catch ($) {
-  throw "Some top-level definitions from `DebugParser` are causing infinite recursion:\n\n  ┌─────┐\n  │    parseValueWithoutCustomType\n  │     ↓\n  │    parseValue\n  │     ↓\n  │    parseArray\n  │     ↓\n  │    parseCustomType\n  │     ↓\n  │    parseDict\n  │     ↓\n  │    parseList\n  │     ↓\n  │    parseRecord\n  │     ↓\n  │    parseSet\n  │     ↓\n  │    parseValueWithParenthesis\n  │     ↓\n  │    typeHelp\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.1/bad-recursion to learn how to fix it!";
-}
+};
+var $kraklin$elm_debug_parser$DebugParser$parseValueWithoutCustomType = function(config) {
+  return $elm$parser$Parser$oneOf(
+    _List_fromArray(
+      [
+        $kraklin$elm_debug_parser$DebugParser$parseRecord(config),
+        $kraklin$elm_debug_parser$DebugParser$parseArray(config),
+        $kraklin$elm_debug_parser$DebugParser$parseSet(config),
+        $kraklin$elm_debug_parser$DebugParser$parseDict(config),
+        $kraklin$elm_debug_parser$DebugParser$parseList(config),
+        $kraklin$elm_debug_parser$DebugParser$parseKeywords(config),
+        $kraklin$elm_debug_parser$DebugParser$parseCustomTypeWithoutValue(config),
+        $kraklin$elm_debug_parser$DebugParser$parseNumber(config),
+        $kraklin$elm_debug_parser$DebugParser$parseValueWithParenthesis(config),
+        $kraklin$elm_debug_parser$DebugParser$parseChar(config),
+        $kraklin$elm_debug_parser$DebugParser$parseString(config),
+        $kraklin$elm_debug_parser$DebugParser$parseBytes(config),
+        $kraklin$elm_debug_parser$DebugParser$parseFile(config)
+      ]
+    )
+  );
+};
+var $kraklin$elm_debug_parser$DebugParser$typeHelp = F2(
+  function(config, values) {
+    return $elm$parser$Parser$oneOf(
+      _List_fromArray(
+        [
+          $elm$parser$Parser$backtrackable(
+            A2(
+              $elm$parser$Parser$keeper,
+              A2(
+                $elm$parser$Parser$ignorer,
+                $elm$parser$Parser$succeed(
+                  function(value) {
+                    return $elm$parser$Parser$Loop(
+                      A2($elm$core$List$cons, value, values)
+                    );
+                  }
+                ),
+                $elm$parser$Parser$token(" ")
+              ),
+              $kraklin$elm_debug_parser$DebugParser$parseValueWithoutCustomType(config)
+            )
+          ),
+          $elm$parser$Parser$succeed(
+            $elm$parser$Parser$Done(values)
+          )
+        ]
+      )
+    );
+  }
+);
 var $elm$parser$Parser$DeadEnd = F3(
   function(row, col, problem) {
     return { col, problem, row };
@@ -9960,34 +9783,40 @@ var $elm$parser$Parser$run = F2(
   }
 );
 var $elm$core$String$trim = _String_trim;
-var $kraklin$elm_debug_parser$DebugParser$parse = function(stringToParse) {
-  return A2(
-    $elm$core$Result$mapError,
-    $kraklin$elm_debug_parser$DebugParser$deadEndsToString,
-    A2(
-      $elm$parser$Parser$run,
+var $kraklin$elm_debug_parser$DebugParser$parse = F2(
+  function(config, stringToParse) {
+    return A2(
+      $elm$core$Result$mapError,
+      $kraklin$elm_debug_parser$DebugParser$deadEndsToString,
       A2(
-        $elm$parser$Parser$keeper,
+        $elm$parser$Parser$run,
         A2(
           $elm$parser$Parser$keeper,
-          $elm$parser$Parser$succeed($kraklin$elm_debug_parser$DebugParser$ParsedLog),
+          A2(
+            $elm$parser$Parser$keeper,
+            $elm$parser$Parser$succeed($kraklin$elm_debug_parser$DebugParser$ParsedLog),
+            A2(
+              $elm$parser$Parser$ignorer,
+              $elm$parser$Parser$getChompedString(
+                $elm$parser$Parser$chompUntil(": ")
+              ),
+              $elm$parser$Parser$token(": ")
+            )
+          ),
           A2(
             $elm$parser$Parser$ignorer,
-            $elm$parser$Parser$getChompedString(
-              $elm$parser$Parser$chompUntil(": ")
-            ),
-            $elm$parser$Parser$token(": ")
+            $kraklin$elm_debug_parser$DebugParser$parseValueWith(config),
+            $elm$parser$Parser$end
           )
         ),
-        A2($elm$parser$Parser$ignorer, $kraklin$elm_debug_parser$DebugParser$parseValue, $elm$parser$Parser$end)
-      ),
-      $elm$core$String$trim(stringToParse)
-    )
-  );
-};
+        $elm$core$String$trim(stringToParse)
+      )
+    );
+  }
+);
 var $author$project$Parser$sendParsed = _Platform_outgoingPort("sendParsed", $elm$core$Basics$identity);
 var $author$project$Parser$init = function(message) {
-  var _v0 = $kraklin$elm_debug_parser$DebugParser$parse(message);
+  var _v0 = A2($kraklin$elm_debug_parser$DebugParser$parse, $author$project$Parser$config, message);
   if (_v0.$ === "Ok") {
     var tag = _v0.a.tag;
     var value = _v0.a.value;
@@ -10005,10 +9834,7 @@ var $author$project$Parser$init = function(message) {
                 "name",
                 $elm$json$Json$Encode$string(tag)
               ),
-              _Utils_Tuple2(
-                "value",
-                $author$project$Parser$encodeDebugValue(value)
-              )
+              _Utils_Tuple2("value", value)
             ]
           )
         )
