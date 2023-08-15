@@ -27,7 +27,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "elm": "elm-esm make src/Parser.elm --output=src/elm-debug-parser.js",
+    "elm": "elm-esm make src/Parser.elm --output=src/elm-debug-parser.js --compiler=./node_modules/elm-optimize-level-2/bin/elm-optimize-level-2",
     "test": "vitest run",
     "build": "npm run elm && vite build",
     "build:watch": "npm run elm && vite build --watch",
